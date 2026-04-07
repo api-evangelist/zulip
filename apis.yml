@@ -10,9 +10,9 @@ position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - Team Chat
-  - Messaging
   - Collaboration
+  - Messaging
+  - Team Chat
   - Webhooks
 created: '2026-01-02'
 modified: '2026-03-16'
@@ -29,9 +29,9 @@ apis:
       do with the REST API.
     humanURL: https://zulip.com/api/rest
     tags:
-      - Team Chat
       - Messaging
       - REST
+      - Team Chat
     properties:
       - type: Documentation
         url: https://zulip.com/api/rest
@@ -45,9 +45,9 @@ apis:
       POST payloads to external services when messages are sent).
     humanURL: https://zulip.com/api/incoming-webhooks-overview
     tags:
-      - Webhooks
-      - Integrations
       - Events
+      - Integrations
+      - Webhooks
     properties:
       - type: Documentation
         url: https://zulip.com/api/incoming-webhooks-overview
