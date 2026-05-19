@@ -1,0 +1,1615 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — users
+  description: 'Zulip REST API — users. 43 operations. Lead operation: Get attachments. Self-contained Naftiko capability
+    covering one Zulip business surface.'
+  tags:
+  - Zulip
+  - users
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-users
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — users business capability. Self-contained, no shared references.
+    resources:
+    - name: attachments
+      path: /attachments
+      operations:
+      - name: getattachments
+        method: GET
+        description: Get attachments
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: attachments-attachment_id
+      path: /attachments/{attachment_id}
+      operations:
+      - name: removeattachment
+        method: DELETE
+        description: Delete an attachment
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: attachment_id
+          in: path
+          type: integer
+          description: The ID of the attachment to be deleted.
+          required: true
+    - name: bots-bot_id-api_key
+      path: /bots/{bot_id}/api_key
+      operations:
+      - name: getbotapikey
+        method: GET
+        description: Get a bot's API key
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: bots-bot_id-api_key-regenerate
+      path: /bots/{bot_id}/api_key/regenerate
+      operations:
+      - name: regeneratebotapikey
+        method: POST
+        description: Regenerate a bot's API key
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: messages-message_id-typing
+      path: /messages/{message_id}/typing
+      operations:
+      - name: settypingstatusformessageedit
+        method: POST
+        description: Set "typing" status for message editing
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: message_id
+          in: path
+          type: integer
+          description: The target message's ID.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: settings
+      path: /settings
+      operations:
+      - name: updatesettings
+        method: PATCH
+        description: Update settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: typing
+      path: /typing
+      operations:
+      - name: settypingstatus
+        method: POST
+        description: Set "typing" status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: user_groups
+      path: /user_groups
+      operations:
+      - name: getusergroups
+        method: GET
+        description: Get user groups
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: user_groups-create
+      path: /user_groups/create
+      operations:
+      - name: createusergroup
+        method: POST
+        description: Create a user group
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: user_groups-user_group_id
+      path: /user_groups/{user_group_id}
+      operations:
+      - name: updateusergroup
+        method: PATCH
+        description: Update a user group
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: user_groups-user_group_id-deactivate
+      path: /user_groups/{user_group_id}/deactivate
+      operations:
+      - name: deactivateusergroup
+        method: POST
+        description: Deactivate a user group
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: user_groups-user_group_id-members
+      path: /user_groups/{user_group_id}/members
+      operations:
+      - name: updateusergroupmembers
+        method: POST
+        description: Update user group members
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: getusergroupmembers
+        method: GET
+        description: Get user group members
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: user_groups-user_group_id-members-user_id
+      path: /user_groups/{user_group_id}/members/{user_id}
+      operations:
+      - name: getisusergroupmember
+        method: GET
+        description: Get user group membership status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: user_groups-user_group_id-subgroups
+      path: /user_groups/{user_group_id}/subgroups
+      operations:
+      - name: updateusergroupsubgroups
+        method: POST
+        description: Update subgroups of a user group
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: getusergroupsubgroups
+        method: GET
+        description: Get subgroups of a user group
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: direct_subgroup_only
+          in: query
+          type: boolean
+          description: Whether to consider only direct subgroups of the user group
+    - name: users
+      path: /users
+      operations:
+      - name: getusers
+        method: GET
+        description: Get users
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: user_ids
+          in: query
+          type: string
+          description: Limits the results to the specified user IDs. If not
+      - name: createuser
+        method: POST
+        description: Create a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: users-me
+      path: /users/me
+      operations:
+      - name: getownuser
+        method: GET
+        description: Get own user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: deactivateownuser
+        method: DELETE
+        description: Deactivate own user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: users-me-alert_words
+      path: /users/me/alert_words
+      operations:
+      - name: getalertwords
+        method: GET
+        description: Get all alert words
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: addalertwords
+        method: POST
+        description: Add alert words
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: removealertwords
+        method: DELETE
+        description: Remove alert words
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: users-me-android_gcm_reg_id
+      path: /users/me/android_gcm_reg_id
+      operations:
+      - name: addfcmtoken
+        method: POST
+        description: Add an FCM registration token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: removefcmtoken
+        method: DELETE
+        description: Remove an FCM registration token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: users-me-api_key-regenerate
+      path: /users/me/api_key/regenerate
+      operations:
+      - name: regenerateapikey
+        method: POST
+        description: Regenerate your API key
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: users-me-apns_device_token
+      path: /users/me/apns_device_token
+      operations:
+      - name: addapnstoken
+        method: POST
+        description: Add an APNs device token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: removeapnstoken
+        method: DELETE
+        description: Remove an APNs device token
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: users-me-muted_users-muted_user_id
+      path: /users/me/muted_users/{muted_user_id}
+      operations:
+      - name: muteuser
+        method: POST
+        description: Mute a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: unmuteuser
+        method: DELETE
+        description: Unmute a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: users-me-presence
+      path: /users/me/presence
+      operations:
+      - name: updatepresence
+        method: POST
+        description: Update your presence
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: users-me-profile_data
+      path: /users/me/profile_data
+      operations:
+      - name: updateprofiledata
+        method: PATCH
+        description: Update your profile data
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: removeprofiledata
+        method: DELETE
+        description: Remove your profile data
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: users-me-status
+      path: /users/me/status
+      operations:
+      - name: updatestatus
+        method: POST
+        description: Update your status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: users-email
+      path: /users/{email}
+      operations:
+      - name: getuserbyemail
+        method: GET
+        description: Get a user by email
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: email
+          in: path
+          type: string
+          description: 'The email address of the user to fetch. Two forms are supported:'
+          required: true
+      - name: updateuserbyemail
+        method: PATCH
+        description: Update a user by email
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: email
+          in: path
+          type: string
+          description: The email address of the user, specified following the same rules as
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: users-user_id_or_email-presence
+      path: /users/{user_id_or_email}/presence
+      operations:
+      - name: getuserpresence
+        method: GET
+        description: Get a user's presence
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: user_id_or_email
+          in: path
+          type: string
+          description: The ID or Zulip API email address of the user whose presence you want to fetch.
+          required: true
+    - name: users-user_id
+      path: /users/{user_id}
+      operations:
+      - name: getuser
+        method: GET
+        description: Get a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updateuser
+        method: PATCH
+        description: Update a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: deactivateuser
+        method: DELETE
+        description: Deactivate a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: actions
+          in: query
+          type: string
+          description: Additional actions for the server to perform while deactivating the user.
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: users-user_id-reactivate
+      path: /users/{user_id}/reactivate
+      operations:
+      - name: reactivateuser
+        method: POST
+        description: Reactivate a user
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: users-user_id-status
+      path: /users/{user_id}/status
+      operations:
+      - name: updatestatusforuser
+        method: POST
+        description: Update user status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: getuserstatus
+        method: GET
+        description: Get a user's status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-users-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — users. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/attachments
+      name: attachments
+      description: REST surface for attachments.
+      operations:
+      - method: GET
+        name: getattachments
+        description: Get attachments
+        call: zulip-users.getattachments
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/attachments/{attachment-id}
+      name: attachments-attachment-id
+      description: REST surface for attachments-attachment_id.
+      operations:
+      - method: DELETE
+        name: removeattachment
+        description: Delete an attachment
+        call: zulip-users.removeattachment
+        with:
+          attachment_id: rest.attachment_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/bots/{bot-id}/api-key
+      name: bots-bot-id-api-key
+      description: REST surface for bots-bot_id-api_key.
+      operations:
+      - method: GET
+        name: getbotapikey
+        description: Get a bot's API key
+        call: zulip-users.getbotapikey
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/bots/{bot-id}/api-key/regenerate
+      name: bots-bot-id-api-key-regenerate
+      description: REST surface for bots-bot_id-api_key-regenerate.
+      operations:
+      - method: POST
+        name: regeneratebotapikey
+        description: Regenerate a bot's API key
+        call: zulip-users.regeneratebotapikey
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/messages/{message-id}/typing
+      name: messages-message-id-typing
+      description: REST surface for messages-message_id-typing.
+      operations:
+      - method: POST
+        name: settypingstatusformessageedit
+        description: Set "typing" status for message editing
+        call: zulip-users.settypingstatusformessageedit
+        with:
+          message_id: rest.message_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/settings
+      name: settings
+      description: REST surface for settings.
+      operations:
+      - method: PATCH
+        name: updatesettings
+        description: Update settings
+        call: zulip-users.updatesettings
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/typing
+      name: typing
+      description: REST surface for typing.
+      operations:
+      - method: POST
+        name: settypingstatus
+        description: Set "typing" status
+        call: zulip-users.settypingstatus
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups
+      name: user-groups
+      description: REST surface for user_groups.
+      operations:
+      - method: GET
+        name: getusergroups
+        description: Get user groups
+        call: zulip-users.getusergroups
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups/create
+      name: user-groups-create
+      description: REST surface for user_groups-create.
+      operations:
+      - method: POST
+        name: createusergroup
+        description: Create a user group
+        call: zulip-users.createusergroup
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups/{user-group-id}
+      name: user-groups-user-group-id
+      description: REST surface for user_groups-user_group_id.
+      operations:
+      - method: PATCH
+        name: updateusergroup
+        description: Update a user group
+        call: zulip-users.updateusergroup
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups/{user-group-id}/deactivate
+      name: user-groups-user-group-id-deactivate
+      description: REST surface for user_groups-user_group_id-deactivate.
+      operations:
+      - method: POST
+        name: deactivateusergroup
+        description: Deactivate a user group
+        call: zulip-users.deactivateusergroup
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups/{user-group-id}/members
+      name: user-groups-user-group-id-members
+      description: REST surface for user_groups-user_group_id-members.
+      operations:
+      - method: POST
+        name: updateusergroupmembers
+        description: Update user group members
+        call: zulip-users.updateusergroupmembers
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getusergroupmembers
+        description: Get user group members
+        call: zulip-users.getusergroupmembers
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups/{user-group-id}/members/{user-id}
+      name: user-groups-user-group-id-members-user-id
+      description: REST surface for user_groups-user_group_id-members-user_id.
+      operations:
+      - method: GET
+        name: getisusergroupmember
+        description: Get user group membership status
+        call: zulip-users.getisusergroupmember
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/user-groups/{user-group-id}/subgroups
+      name: user-groups-user-group-id-subgroups
+      description: REST surface for user_groups-user_group_id-subgroups.
+      operations:
+      - method: POST
+        name: updateusergroupsubgroups
+        description: Update subgroups of a user group
+        call: zulip-users.updateusergroupsubgroups
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getusergroupsubgroups
+        description: Get subgroups of a user group
+        call: zulip-users.getusergroupsubgroups
+        with:
+          direct_subgroup_only: rest.direct_subgroup_only
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users
+      name: users
+      description: REST surface for users.
+      operations:
+      - method: GET
+        name: getusers
+        description: Get users
+        call: zulip-users.getusers
+        with:
+          user_ids: rest.user_ids
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createuser
+        description: Create a user
+        call: zulip-users.createuser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me
+      name: users-me
+      description: REST surface for users-me.
+      operations:
+      - method: GET
+        name: getownuser
+        description: Get own user
+        call: zulip-users.getownuser
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deactivateownuser
+        description: Deactivate own user
+        call: zulip-users.deactivateownuser
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/alert-words
+      name: users-me-alert-words
+      description: REST surface for users-me-alert_words.
+      operations:
+      - method: GET
+        name: getalertwords
+        description: Get all alert words
+        call: zulip-users.getalertwords
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: addalertwords
+        description: Add alert words
+        call: zulip-users.addalertwords
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: removealertwords
+        description: Remove alert words
+        call: zulip-users.removealertwords
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/android-gcm-reg-id
+      name: users-me-android-gcm-reg-id
+      description: REST surface for users-me-android_gcm_reg_id.
+      operations:
+      - method: POST
+        name: addfcmtoken
+        description: Add an FCM registration token
+        call: zulip-users.addfcmtoken
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: removefcmtoken
+        description: Remove an FCM registration token
+        call: zulip-users.removefcmtoken
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/api-key/regenerate
+      name: users-me-api-key-regenerate
+      description: REST surface for users-me-api_key-regenerate.
+      operations:
+      - method: POST
+        name: regenerateapikey
+        description: Regenerate your API key
+        call: zulip-users.regenerateapikey
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/apns-device-token
+      name: users-me-apns-device-token
+      description: REST surface for users-me-apns_device_token.
+      operations:
+      - method: POST
+        name: addapnstoken
+        description: Add an APNs device token
+        call: zulip-users.addapnstoken
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: removeapnstoken
+        description: Remove an APNs device token
+        call: zulip-users.removeapnstoken
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/muted-users/{muted-user-id}
+      name: users-me-muted-users-muted-user-id
+      description: REST surface for users-me-muted_users-muted_user_id.
+      operations:
+      - method: POST
+        name: muteuser
+        description: Mute a user
+        call: zulip-users.muteuser
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: unmuteuser
+        description: Unmute a user
+        call: zulip-users.unmuteuser
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/presence
+      name: users-me-presence
+      description: REST surface for users-me-presence.
+      operations:
+      - method: POST
+        name: updatepresence
+        description: Update your presence
+        call: zulip-users.updatepresence
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/profile-data
+      name: users-me-profile-data
+      description: REST surface for users-me-profile_data.
+      operations:
+      - method: PATCH
+        name: updateprofiledata
+        description: Update your profile data
+        call: zulip-users.updateprofiledata
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: removeprofiledata
+        description: Remove your profile data
+        call: zulip-users.removeprofiledata
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/me/status
+      name: users-me-status
+      description: REST surface for users-me-status.
+      operations:
+      - method: POST
+        name: updatestatus
+        description: Update your status
+        call: zulip-users.updatestatus
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/{email}
+      name: users-email
+      description: REST surface for users-email.
+      operations:
+      - method: GET
+        name: getuserbyemail
+        description: Get a user by email
+        call: zulip-users.getuserbyemail
+        with:
+          email: rest.email
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateuserbyemail
+        description: Update a user by email
+        call: zulip-users.updateuserbyemail
+        with:
+          email: rest.email
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/{user-id-or-email}/presence
+      name: users-user-id-or-email-presence
+      description: REST surface for users-user_id_or_email-presence.
+      operations:
+      - method: GET
+        name: getuserpresence
+        description: Get a user's presence
+        call: zulip-users.getuserpresence
+        with:
+          user_id_or_email: rest.user_id_or_email
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/{user-id}
+      name: users-user-id
+      description: REST surface for users-user_id.
+      operations:
+      - method: GET
+        name: getuser
+        description: Get a user
+        call: zulip-users.getuser
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updateuser
+        description: Update a user
+        call: zulip-users.updateuser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deactivateuser
+        description: Deactivate a user
+        call: zulip-users.deactivateuser
+        with:
+          actions: rest.actions
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/{user-id}/reactivate
+      name: users-user-id-reactivate
+      description: REST surface for users-user_id-reactivate.
+      operations:
+      - method: POST
+        name: reactivateuser
+        description: Reactivate a user
+        call: zulip-users.reactivateuser
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/users/{user-id}/status
+      name: users-user-id-status
+      description: REST surface for users-user_id-status.
+      operations:
+      - method: POST
+        name: updatestatusforuser
+        description: Update user status
+        call: zulip-users.updatestatusforuser
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: getuserstatus
+        description: Get a user's status
+        call: zulip-users.getuserstatus
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-users-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — users. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: get-attachments
+      description: Get attachments
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getattachments
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-attachment
+      description: Delete an attachment
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.removeattachment
+      with:
+        attachment_id: tools.attachment_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-bot-s-api-key
+      description: Get a bot's API key
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getbotapikey
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: regenerate-bot-s-api-key
+      description: Regenerate a bot's API key
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.regeneratebotapikey
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: set-typing-status-message-editing
+      description: Set "typing" status for message editing
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.settypingstatusformessageedit
+      with:
+        message_id: tools.message_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-settings
+      description: Update settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-users.updatesettings
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: set-typing-status
+      description: Set "typing" status
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.settypingstatus
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-groups
+      description: Get user groups
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getusergroups
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-user-group
+      description: Create a user group
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.createusergroup
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-user-group
+      description: Update a user group
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-users.updateusergroup
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: deactivate-user-group
+      description: Deactivate a user group
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.deactivateusergroup
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-user-group-members
+      description: Update user group members
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.updateusergroupmembers
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-group-members
+      description: Get user group members
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getusergroupmembers
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-group-membership-status
+      description: Get user group membership status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getisusergroupmember
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-subgroups-user-group
+      description: Update subgroups of a user group
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.updateusergroupsubgroups
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-subgroups-user-group
+      description: Get subgroups of a user group
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getusergroupsubgroups
+      with:
+        direct_subgroup_only: tools.direct_subgroup_only
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-users
+      description: Get users
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getusers
+      with:
+        user_ids: tools.user_ids
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-user
+      description: Create a user
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.createuser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-own-user
+      description: Get own user
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getownuser
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: deactivate-own-user
+      description: Deactivate own user
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.deactivateownuser
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-all-alert-words
+      description: Get all alert words
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getalertwords
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-alert-words
+      description: Add alert words
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.addalertwords
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-alert-words
+      description: Remove alert words
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.removealertwords
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-fcm-registration-token
+      description: Add an FCM registration token
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.addfcmtoken
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-fcm-registration-token
+      description: Remove an FCM registration token
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.removefcmtoken
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: regenerate-your-api-key
+      description: Regenerate your API key
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.regenerateapikey
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: add-apns-device-token
+      description: Add an APNs device token
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.addapnstoken
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-apns-device-token
+      description: Remove an APNs device token
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.removeapnstoken
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: mute-user
+      description: Mute a user
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.muteuser
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: unmute-user
+      description: Unmute a user
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.unmuteuser
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-your-presence
+      description: Update your presence
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.updatepresence
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-your-profile-data
+      description: Update your profile data
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-users.updateprofiledata
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-your-profile-data
+      description: Remove your profile data
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.removeprofiledata
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-your-status
+      description: Update your status
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.updatestatus
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-email
+      description: Get a user by email
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getuserbyemail
+      with:
+        email: tools.email
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-user-email
+      description: Update a user by email
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-users.updateuserbyemail
+      with:
+        email: tools.email
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-s-presence
+      description: Get a user's presence
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getuserpresence
+      with:
+        user_id_or_email: tools.user_id_or_email
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user
+      description: Get a user
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getuser
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-user
+      description: Update a user
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-users.updateuser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: deactivate-user
+      description: Deactivate a user
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-users.deactivateuser
+      with:
+        actions: tools.actions
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: reactivate-user
+      description: Reactivate a user
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.reactivateuser
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-user-status
+      description: Update user status
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-users.updatestatusforuser
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-s-status
+      description: Get a user's status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-users.getuserstatus
+      outputParameters:
+      - type: object
+        mapping: $.

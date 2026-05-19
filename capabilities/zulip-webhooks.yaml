@@ -1,0 +1,71 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — webhooks
+  description: 'Zulip REST API — webhooks. 1 operations. Lead operation: Outgoing webhooks. Self-contained Naftiko capability
+    covering one Zulip business surface.'
+  tags:
+  - Zulip
+  - webhooks
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-webhooks
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — webhooks business capability. Self-contained, no shared references.
+    resources:
+    - name: zulip-outgoing-webhook
+      path: /zulip-outgoing-webhook
+      operations:
+      - name: zulipoutgoingwebhooks
+        method: POST
+        description: Outgoing webhooks
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-webhooks-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — webhooks. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/zulip-outgoing-webhook
+      name: zulip-outgoing-webhook
+      description: REST surface for zulip-outgoing-webhook.
+      operations:
+      - method: POST
+        name: zulipoutgoingwebhooks
+        description: Outgoing webhooks
+        call: zulip-webhooks.zulipoutgoingwebhooks
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-webhooks-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — webhooks. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: outgoing-webhooks
+      description: Outgoing webhooks
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-webhooks.zulipoutgoingwebhooks
+      outputParameters:
+      - type: object
+        mapping: $.

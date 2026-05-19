@@ -1,0 +1,341 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — drafts
+  description: 'Zulip REST API — drafts. 8 operations. Lead operation: Get drafts. Self-contained Naftiko capability covering
+    one Zulip business surface.'
+  tags:
+  - Zulip
+  - drafts
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-drafts
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — drafts business capability. Self-contained, no shared references.
+    resources:
+    - name: drafts
+      path: /drafts
+      operations:
+      - name: getdrafts
+        method: GET
+        description: Get drafts
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createdrafts
+        method: POST
+        description: Create drafts
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: drafts-draft_id
+      path: /drafts/{draft_id}
+      operations:
+      - name: editdraft
+        method: PATCH
+        description: Edit a draft
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: draft_id
+          in: path
+          type: integer
+          description: The ID of the draft to be edited.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletedraft
+        method: DELETE
+        description: Delete a draft
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: draft_id
+          in: path
+          type: integer
+          description: The ID of the draft you want to delete.
+          required: true
+    - name: saved_snippets
+      path: /saved_snippets
+      operations:
+      - name: getsavedsnippets
+        method: GET
+        description: Get all saved snippets
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createsavedsnippet
+        method: POST
+        description: Create a saved snippet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: saved_snippets-saved_snippet_id
+      path: /saved_snippets/{saved_snippet_id}
+      operations:
+      - name: editsavedsnippet
+        method: PATCH
+        description: Edit a saved snippet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: saved_snippet_id
+          in: path
+          type: integer
+          description: The ID of the saved snippet to edit.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+      - name: deletesavedsnippet
+        method: DELETE
+        description: Delete a saved snippet
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: saved_snippet_id
+          in: path
+          type: integer
+          description: The ID of the saved snippet to delete.
+          required: true
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-drafts-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — drafts. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/drafts
+      name: drafts
+      description: REST surface for drafts.
+      operations:
+      - method: GET
+        name: getdrafts
+        description: Get drafts
+        call: zulip-drafts.getdrafts
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createdrafts
+        description: Create drafts
+        call: zulip-drafts.createdrafts
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/drafts/{draft-id}
+      name: drafts-draft-id
+      description: REST surface for drafts-draft_id.
+      operations:
+      - method: PATCH
+        name: editdraft
+        description: Edit a draft
+        call: zulip-drafts.editdraft
+        with:
+          draft_id: rest.draft_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletedraft
+        description: Delete a draft
+        call: zulip-drafts.deletedraft
+        with:
+          draft_id: rest.draft_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/saved-snippets
+      name: saved-snippets
+      description: REST surface for saved_snippets.
+      operations:
+      - method: GET
+        name: getsavedsnippets
+        description: Get all saved snippets
+        call: zulip-drafts.getsavedsnippets
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createsavedsnippet
+        description: Create a saved snippet
+        call: zulip-drafts.createsavedsnippet
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/saved-snippets/{saved-snippet-id}
+      name: saved-snippets-saved-snippet-id
+      description: REST surface for saved_snippets-saved_snippet_id.
+      operations:
+      - method: PATCH
+        name: editsavedsnippet
+        description: Edit a saved snippet
+        call: zulip-drafts.editsavedsnippet
+        with:
+          saved_snippet_id: rest.saved_snippet_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletesavedsnippet
+        description: Delete a saved snippet
+        call: zulip-drafts.deletesavedsnippet
+        with:
+          saved_snippet_id: rest.saved_snippet_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-drafts-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — drafts. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: get-drafts
+      description: Get drafts
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-drafts.getdrafts
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-drafts
+      description: Create drafts
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-drafts.createdrafts
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: edit-draft
+      description: Edit a draft
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-drafts.editdraft
+      with:
+        draft_id: tools.draft_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-draft
+      description: Delete a draft
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-drafts.deletedraft
+      with:
+        draft_id: tools.draft_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-all-saved-snippets
+      description: Get all saved snippets
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-drafts.getsavedsnippets
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-saved-snippet
+      description: Create a saved snippet
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-drafts.createsavedsnippet
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: edit-saved-snippet
+      description: Edit a saved snippet
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-drafts.editsavedsnippet
+      with:
+        saved_snippet_id: tools.saved_snippet_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-saved-snippet
+      description: Delete a saved snippet
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-drafts.deletesavedsnippet
+      with:
+        saved_snippet_id: tools.saved_snippet_id
+      outputParameters:
+      - type: object
+        mapping: $.

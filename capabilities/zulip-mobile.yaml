@@ -1,0 +1,281 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — mobile
+  description: 'Zulip REST API — mobile. 6 operations. Lead operation: Send an E2EE test notification to mobile device(s).
+    Self-contained Naftiko capability covering one Zulip business surface.'
+  tags:
+  - Zulip
+  - mobile
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-mobile
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — mobile business capability. Self-contained, no shared references.
+    resources:
+    - name: mobile_push-e2ee-test_notification
+      path: /mobile_push/e2ee/test_notification
+      operations:
+      - name: e2eetestnotify
+        method: POST
+        description: Send an E2EE test notification to mobile device(s)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: mobile_push-register
+      path: /mobile_push/register
+      operations:
+      - name: registerpushdevice
+        method: POST
+        description: Register E2EE push device
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: mobile_push-test_notification
+      path: /mobile_push/test_notification
+      operations:
+      - name: testnotify
+        method: POST
+        description: Send a test notification to mobile device(s)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    - name: register_client_device
+      path: /register_client_device
+      operations:
+      - name: registerclientdevice
+        method: POST
+        description: Register a logged-in device
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: remotes-push-e2ee-register
+      path: /remotes/push/e2ee/register
+      operations:
+      - name: registerremotepushdevice
+        method: POST
+        description: Register E2EE push device to bouncer
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: remove_client_device
+      path: /remove_client_device
+      operations:
+      - name: removeclientdevice
+        method: POST
+        description: Remove a registered device
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-mobile-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — mobile. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/mobile-push/e2ee/test-notification
+      name: mobile-push-e2ee-test-notification
+      description: REST surface for mobile_push-e2ee-test_notification.
+      operations:
+      - method: POST
+        name: e2eetestnotify
+        description: Send an E2EE test notification to mobile device(s)
+        call: zulip-mobile.e2eetestnotify
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/mobile-push/register
+      name: mobile-push-register
+      description: REST surface for mobile_push-register.
+      operations:
+      - method: POST
+        name: registerpushdevice
+        description: Register E2EE push device
+        call: zulip-mobile.registerpushdevice
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/mobile-push/test-notification
+      name: mobile-push-test-notification
+      description: REST surface for mobile_push-test_notification.
+      operations:
+      - method: POST
+        name: testnotify
+        description: Send a test notification to mobile device(s)
+        call: zulip-mobile.testnotify
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/register-client-device
+      name: register-client-device
+      description: REST surface for register_client_device.
+      operations:
+      - method: POST
+        name: registerclientdevice
+        description: Register a logged-in device
+        call: zulip-mobile.registerclientdevice
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/remotes/push/e2ee/register
+      name: remotes-push-e2ee-register
+      description: REST surface for remotes-push-e2ee-register.
+      operations:
+      - method: POST
+        name: registerremotepushdevice
+        description: Register E2EE push device to bouncer
+        call: zulip-mobile.registerremotepushdevice
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/remove-client-device
+      name: remove-client-device
+      description: REST surface for remove_client_device.
+      operations:
+      - method: POST
+        name: removeclientdevice
+        description: Remove a registered device
+        call: zulip-mobile.removeclientdevice
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-mobile-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — mobile. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: send-e2ee-test-notification-mobile
+      description: Send an E2EE test notification to mobile device(s)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: zulip-mobile.e2eetestnotify
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: register-e2ee-push-device
+      description: Register E2EE push device
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-mobile.registerpushdevice
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: send-test-notification-mobile-device-s
+      description: Send a test notification to mobile device(s)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: zulip-mobile.testnotify
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: register-logged-device
+      description: Register a logged-in device
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-mobile.registerclientdevice
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: register-e2ee-push-device-bouncer
+      description: Register E2EE push device to bouncer
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-mobile.registerremotepushdevice
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-registered-device
+      description: Remove a registered device
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-mobile.removeclientdevice
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

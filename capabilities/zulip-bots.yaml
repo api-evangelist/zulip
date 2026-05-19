@@ -1,0 +1,150 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — bots
+  description: 'Zulip REST API — bots. 3 operations. Lead operation: Get a bot''s stored data. Self-contained Naftiko capability
+    covering one Zulip business surface.'
+  tags:
+  - Zulip
+  - bots
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-bots
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — bots business capability. Self-contained, no shared references.
+    resources:
+    - name: bot_storage
+      path: /bot_storage
+      operations:
+      - name: getbotstorage
+        method: GET
+        description: Get a bot's stored data
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: keys
+          in: query
+          type: string
+          description: A JSON-encoded list of keys for data in the bot's storage.
+      - name: updatebotstorage
+        method: PUT
+        description: Update a bot's stored data
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: removebotstorage
+        method: DELETE
+        description: Remove a bot's stored data
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-bots-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — bots. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/bot-storage
+      name: bot-storage
+      description: REST surface for bot_storage.
+      operations:
+      - method: GET
+        name: getbotstorage
+        description: Get a bot's stored data
+        call: zulip-bots.getbotstorage
+        with:
+          keys: rest.keys
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatebotstorage
+        description: Update a bot's stored data
+        call: zulip-bots.updatebotstorage
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: removebotstorage
+        description: Remove a bot's stored data
+        call: zulip-bots.removebotstorage
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-bots-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — bots. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: get-bot-s-stored-data
+      description: Get a bot's stored data
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-bots.getbotstorage
+      with:
+        keys: tools.keys
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-bot-s-stored-data
+      description: Update a bot's stored data
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: zulip-bots.updatebotstorage
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: remove-bot-s-stored-data
+      description: Remove a bot's stored data
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-bots.removebotstorage
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

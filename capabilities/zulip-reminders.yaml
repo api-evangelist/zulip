@@ -1,0 +1,148 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — reminders
+  description: 'Zulip REST API — reminders. 3 operations. Lead operation: Get reminders. Self-contained Naftiko capability
+    covering one Zulip business surface.'
+  tags:
+  - Zulip
+  - reminders
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-reminders
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — reminders business capability. Self-contained, no shared references.
+    resources:
+    - name: reminders
+      path: /reminders
+      operations:
+      - name: getreminders
+        method: GET
+        description: Get reminders
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createmessagereminder
+        method: POST
+        description: Create a message reminder
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: reminders-reminder_id
+      path: /reminders/{reminder_id}
+      operations:
+      - name: deletereminder
+        method: DELETE
+        description: Delete a reminder
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: reminder_id
+          in: path
+          type: integer
+          description: The ID of the reminder to delete.
+          required: true
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-reminders-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — reminders. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/reminders
+      name: reminders
+      description: REST surface for reminders.
+      operations:
+      - method: GET
+        name: getreminders
+        description: Get reminders
+        call: zulip-reminders.getreminders
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createmessagereminder
+        description: Create a message reminder
+        call: zulip-reminders.createmessagereminder
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/reminders/{reminder-id}
+      name: reminders-reminder-id
+      description: REST surface for reminders-reminder_id.
+      operations:
+      - method: DELETE
+        name: deletereminder
+        description: Delete a reminder
+        call: zulip-reminders.deletereminder
+        with:
+          reminder_id: rest.reminder_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-reminders-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — reminders. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: get-reminders
+      description: Get reminders
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-reminders.getreminders
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-message-reminder
+      description: Create a message reminder
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: zulip-reminders.createmessagereminder
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-reminder
+      description: Delete a reminder
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: zulip-reminders.deletereminder
+      with:
+        reminder_id: tools.reminder_id
+      outputParameters:
+      - type: object
+        mapping: $.

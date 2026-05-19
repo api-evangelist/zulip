@@ -1,0 +1,197 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Zulip REST API — authentication
+  description: 'Zulip REST API — authentication. 4 operations. Lead operation: Fetch an API key (development only). Self-contained
+    Naftiko capability covering one Zulip business surface.'
+  tags:
+  - Zulip
+  - authentication
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    ZULIP_API_KEY: ZULIP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: zulip-authentication
+    baseUri: https://{subdomain}.zulipchat.com/api/v1
+    description: Zulip REST API — authentication business capability. Self-contained, no shared references.
+    resources:
+    - name: dev_fetch_api_key
+      path: /dev_fetch_api_key
+      operations:
+      - name: devfetchapikey
+        method: POST
+        description: Fetch an API key (development only)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: dev_list_users
+      path: /dev_list_users
+      operations:
+      - name: devlistusers
+        method: GET
+        description: List users (development only)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: fetch_api_key
+      path: /fetch_api_key
+      operations:
+      - name: fetchapikey
+        method: POST
+        description: Fetch an API key (production)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: jwt-fetch_api_key
+      path: /jwt/fetch_api_key
+      operations:
+      - name: jwtfetchapikey
+        method: POST
+        description: Fetch an API key (JWT)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: basic
+      username: '{{env.ZULIP_USER}}'
+      password: '{{env.ZULIP_PASS}}'
+  exposes:
+  - type: rest
+    namespace: zulip-authentication-rest
+    port: 8080
+    description: REST adapter for Zulip REST API — authentication. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/dev-fetch-api-key
+      name: dev-fetch-api-key
+      description: REST surface for dev_fetch_api_key.
+      operations:
+      - method: POST
+        name: devfetchapikey
+        description: Fetch an API key (development only)
+        call: zulip-authentication.devfetchapikey
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/dev-list-users
+      name: dev-list-users
+      description: REST surface for dev_list_users.
+      operations:
+      - method: GET
+        name: devlistusers
+        description: List users (development only)
+        call: zulip-authentication.devlistusers
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/fetch-api-key
+      name: fetch-api-key
+      description: REST surface for fetch_api_key.
+      operations:
+      - method: POST
+        name: fetchapikey
+        description: Fetch an API key (production)
+        call: zulip-authentication.fetchapikey
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/jwt/fetch-api-key
+      name: jwt-fetch-api-key
+      description: REST surface for jwt-fetch_api_key.
+      operations:
+      - method: POST
+        name: jwtfetchapikey
+        description: Fetch an API key (JWT)
+        call: zulip-authentication.jwtfetchapikey
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: zulip-authentication-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Zulip REST API — authentication. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: fetch-api-key-development-only
+      description: Fetch an API key (development only)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: zulip-authentication.devfetchapikey
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: list-users-development-only
+      description: List users (development only)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: zulip-authentication.devlistusers
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: fetch-api-key-production
+      description: Fetch an API key (production)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: zulip-authentication.fetchapikey
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: fetch-api-key-jwt
+      description: Fetch an API key (JWT)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: zulip-authentication.jwtfetchapikey
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
