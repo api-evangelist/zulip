@@ -8,188 +8,190 @@ position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-- Collaboration
-- Messaging
-- Team Chat
-- Webhooks
+  - Collaboration
+  - Messaging
+  - Team Chat
+  - Webhooks
 created: '2026-01-02'
 modified: '2026-05-19'
 url: https://raw.githubusercontent.com/api-evangelist/zulip/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
-- aid: zulip:rest-api
-  name: Zulip REST API
-  description: The Zulip REST API powers the Zulip web and mobile apps. It provides programmatic access to messages, streams,
-    users, organizations, and all other Zulip functionality. Anything you can do in Zulip, you can do with the REST API.
-  humanURL: https://zulip.com/api/rest
-  tags:
-  - Messaging
-  - REST
-  - Team Chat
-  properties:
-  - type: Documentation
-    url: https://zulip.com/api/rest
-  - type: Reference
-    url: https://zulip.com/api/
-  - type: NaftikoCapability
-    url: capabilities/zulip-authentication.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-bots.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-channels.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-drafts.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-invites.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-messages.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-mobile.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-navigation-views.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-real-time-events.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-reminders.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-scheduled-messages.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-server-and-organizations.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-users.yaml
-  - type: NaftikoCapability
-    url: capabilities/zulip-webhooks.yaml
-- aid: zulip:webhooks
-  name: Zulip Webhooks
-  description: Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing webhooks
-    (allowing Zulip to send HTTP POST payloads to external services when messages are sent).
-  humanURL: https://zulip.com/api/incoming-webhooks-overview
-  tags:
-  - Events
-  - Integrations
-  - Webhooks
-  properties:
-  - type: Documentation
-    url: https://zulip.com/api/incoming-webhooks-overview
-  - type: Reference
-    url: https://zulip.com/api/outgoing-webhooks
+  - aid: zulip:rest-api
+    name: Zulip REST API
+    description: The Zulip REST API powers the Zulip web and mobile apps. It provides programmatic access to messages, streams,
+      users, organizations, and all other Zulip functionality. Anything you can do in Zulip, you can do with the REST API.
+    humanURL: https://zulip.com/api/rest
+    tags:
+    - Messaging
+    - REST
+    - Team Chat
+    properties:
+    - type: Documentation
+      url: https://zulip.com/api/rest
+    - type: Reference
+      url: https://zulip.com/api/
+    - type: NaftikoCapability
+      url: capabilities/zulip-authentication.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-bots.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-channels.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-drafts.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-invites.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-messages.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-mobile.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-navigation-views.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-real-time-events.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-reminders.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-scheduled-messages.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-server-and-organizations.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-users.yaml
+    - type: NaftikoCapability
+      url: capabilities/zulip-webhooks.yaml
+  - aid: zulip:webhooks
+    name: Zulip Webhooks
+    description: Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing webhooks
+      (allowing Zulip to send HTTP POST payloads to external services when messages are sent).
+    humanURL: https://zulip.com/api/incoming-webhooks-overview
+    tags:
+    - Events
+    - Integrations
+    - Webhooks
+    properties:
+    - type: Documentation
+      url: https://zulip.com/api/incoming-webhooks-overview
+    - type: Reference
+      url: https://zulip.com/api/outgoing-webhooks
 common:
-- url: https://zulip.com/
-  name: Zulip - Team Chat
-  type: Website
-  description: 'null'
-- url: https://zulip.com/api/
-  name: Zulip API Documentation
-  type: Documentation
-  description: 'null'
-- url: https://zulip.com/api/integrations-overview
-  name: Zulip Integrations Overview
-  type: Integrations
-  description: 'null'
-- url: https://github.com/zulip
-  name: Zulip GitHub Organization
-  type: GitHubOrganization
-  description: 'null'
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/zulip-by-kandra-labs
+  - url: https://zulip.com/
+    name: Zulip - Team Chat
+    type: Website
+    description: 'null'
+  - url: https://zulip.com/api/
+    name: Zulip API Documentation
+    type: Documentation
+    description: 'null'
+  - url: https://zulip.com/api/integrations-overview
+    name: Zulip Integrations Overview
+    type: Integrations
+    description: 'null'
+  - url: https://github.com/zulip
+    name: Zulip GitHub Organization
+    type: GitHubOrganization
+    description: 'null'
 integrations:
-- name: Zapier
-- name: IFTTT
-- name: Airbyte Deployment
-- name: Ansible Tower Deployment
-- name: AppFollow Marketing
-- name: AppVeyor Continuous integration
-- name: Asana Project management
-- name: Atolio Productivity
-- name: AzureDevOps Continuous integration
-- name: Basecamp Project management
-- name: Beanstalk Version control
-- name: Beeminder Productivity
-- name: BigBlueButton Video calling
-- name: Bitbucket Version control
-- name: Buildbot Continuous integration
-- name: Capistrano Deployment
-- name: CircleCI Continuous integration
-- name: Codebase Version control
-- name: Constructor Groups Video calling
-- name: dbt Deployment
-- name: Delighted Customer support
-- name: Dialogflow Customer support
-- name: Discourse Communication
-- name: Dropbox Productivity
-- name: Dropbox Sign Productivity
-- name: Errbot Integration frameworks
-- name: Flock Communication
-- name: Freshdesk Customer support
-- name: Front Customer support
-- name: GIPHY Miscellaneous
-- name: Git Version control
-- name: Gitea Version control
-- name: GitHub Version control
-- name: GitHub Actions Continuous integration
-- name: GitHub Detail Bot Version control
-- name: GitHub Sponsors Financial
-- name: GitLab Version control
-- name: GoCD Continuous integration
-- name: Gogs Version control
-- name: Google Calendar Productivity
-- name: GoSquared Marketing
-- name: Groove Customer support
-- name: Harbor Deployment
-- name: Hello World Miscellaneous
-- name: Heroku Deployment
-- name: Home Assistant Miscellaneous
-- name: IRC Communication
-- name: Jenkins Continuous integration
-- name: Jira Project management
-- name: Jitsi Meet Video calling
-- name: Jotform Productivity
-- name: JSON formatter Miscellaneous
-- name: KLIPY Miscellaneous
-- name: Lidarr Entertainment
-- name: Linear Project management
-- name: Mastodon Communication
-- name: Matrix Communication
-- name: Mention Marketing
-- name: Mercurial (hg) Version control
-- name: n8n Integration frameworks
-- name: Netlify Deployment
-- name: Nextcloud Productivity
-- name: Nextcloud Talk Video calling
-- name: Notion Productivity
-- name: Onyx Productivity
-- name: Open Collective Financial
-- name: OpenProject Project management
-- name: OpenShift Deployment
-- name: Patreon Financial
-- name: Perforce Version control
-- name: Puppet Deployment
-- name: Radarr Entertainment
-- name: Redmine Project management
-- name: Review Board Productivity
-- name: RhodeCode Version control
-- name: RSS Communication
-- name: Rundeck Deployment
-- name: Semaphore Continuous integration
-- name: Shortcut Project management
-- name: Slack Communication
-- name: Slack-compatible webhook Communication
-- name: SonarQube Continuous integration
-- name: Sonarr Entertainment
-- name: Statuspage Customer support
-- name: Stripe Financial
-- name: Subversion Version control
-- name: Taiga Project management
-- name: Teamcity Continuous integration
-- name: Tenor Miscellaneous
-- name: Trac Project management
-- name: Transifex Miscellaneous
-- name: Travis CI Continuous integration
-- name: Trello Project management
-- name: Webex Video calling
-- name: Wekan Productivity
-- name: WordPress Marketing
-- name: xkcd Bot Interactive bots
-- name: Zendesk Customer support
-- name: Zoom Video calling
+  - name: Zapier
+  - name: IFTTT
+  - name: Airbyte Deployment
+  - name: Ansible Tower Deployment
+  - name: AppFollow Marketing
+  - name: AppVeyor Continuous integration
+  - name: Asana Project management
+  - name: Atolio Productivity
+  - name: AzureDevOps Continuous integration
+  - name: Basecamp Project management
+  - name: Beanstalk Version control
+  - name: Beeminder Productivity
+  - name: BigBlueButton Video calling
+  - name: Bitbucket Version control
+  - name: Buildbot Continuous integration
+  - name: Capistrano Deployment
+  - name: CircleCI Continuous integration
+  - name: Codebase Version control
+  - name: Constructor Groups Video calling
+  - name: dbt Deployment
+  - name: Delighted Customer support
+  - name: Dialogflow Customer support
+  - name: Discourse Communication
+  - name: Dropbox Productivity
+  - name: Dropbox Sign Productivity
+  - name: Errbot Integration frameworks
+  - name: Flock Communication
+  - name: Freshdesk Customer support
+  - name: Front Customer support
+  - name: GIPHY Miscellaneous
+  - name: Git Version control
+  - name: Gitea Version control
+  - name: GitHub Version control
+  - name: GitHub Actions Continuous integration
+  - name: GitHub Detail Bot Version control
+  - name: GitHub Sponsors Financial
+  - name: GitLab Version control
+  - name: GoCD Continuous integration
+  - name: Gogs Version control
+  - name: Google Calendar Productivity
+  - name: GoSquared Marketing
+  - name: Groove Customer support
+  - name: Harbor Deployment
+  - name: Hello World Miscellaneous
+  - name: Heroku Deployment
+  - name: Home Assistant Miscellaneous
+  - name: IRC Communication
+  - name: Jenkins Continuous integration
+  - name: Jira Project management
+  - name: Jitsi Meet Video calling
+  - name: Jotform Productivity
+  - name: JSON formatter Miscellaneous
+  - name: KLIPY Miscellaneous
+  - name: Lidarr Entertainment
+  - name: Linear Project management
+  - name: Mastodon Communication
+  - name: Matrix Communication
+  - name: Mention Marketing
+  - name: Mercurial (hg) Version control
+  - name: n8n Integration frameworks
+  - name: Netlify Deployment
+  - name: Nextcloud Productivity
+  - name: Nextcloud Talk Video calling
+  - name: Notion Productivity
+  - name: Onyx Productivity
+  - name: Open Collective Financial
+  - name: OpenProject Project management
+  - name: OpenShift Deployment
+  - name: Patreon Financial
+  - name: Perforce Version control
+  - name: Puppet Deployment
+  - name: Radarr Entertainment
+  - name: Redmine Project management
+  - name: Review Board Productivity
+  - name: RhodeCode Version control
+  - name: RSS Communication
+  - name: Rundeck Deployment
+  - name: Semaphore Continuous integration
+  - name: Shortcut Project management
+  - name: Slack Communication
+  - name: Slack-compatible webhook Communication
+  - name: SonarQube Continuous integration
+  - name: Sonarr Entertainment
+  - name: Statuspage Customer support
+  - name: Stripe Financial
+  - name: Subversion Version control
+  - name: Taiga Project management
+  - name: Teamcity Continuous integration
+  - name: Tenor Miscellaneous
+  - name: Trac Project management
+  - name: Transifex Miscellaneous
+  - name: Travis CI Continuous integration
+  - name: Trello Project management
+  - name: Webex Video calling
+  - name: Wekan Productivity
+  - name: WordPress Marketing
+  - name: xkcd Bot Interactive bots
+  - name: Zendesk Customer support
+  - name: Zoom Video calling
 maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
+  - FN: Kin Lane
+    email: kin@apievangelist.com
