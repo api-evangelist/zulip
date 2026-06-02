@@ -1,0 +1,1223 @@
+asyncapi: 2.6.0
+info:
+  title: Zulip Events API
+  version: '1.0'
+  description: >-
+    The Zulip Events API delivers real-time updates from a Zulip server to a
+    client via an HTTPS long-poll. Clients first register an event queue by
+    calling POST /api/v1/register, then repeatedly call GET /api/v1/events with
+    the returned queue_id and last_event_id to receive batches of events. The
+    server holds each long-poll request open until new events are available,
+    the configured queue timeout elapses, or the optional dont_block flag is
+    set. Events include new messages, message edits and deletions, reactions,
+    subscriptions, presence updates, typing notifications, channel (stream)
+    changes, user and organization updates, custom emoji changes, alert words,
+    message-flag changes, drafts, scheduled messages, reminders, user groups,
+    and system heartbeat / restart signals.
+  contact:
+    name: Zulip API Support
+    url: https://zulip.com/api/
+  termsOfService: https://zulip.com/policies/terms
+  license:
+    name: Apache License 2.0
+    url: https://github.com/zulip/zulip/blob/main/LICENSE
+externalDocs:
+  description: Zulip — Get events from an event queue
+  url: https://zulip.com/api/get-events
+servers:
+  zulipCloud:
+    url: 'https://{subdomain}.zulipchat.com/api/v1'
+    protocol: https
+    description: >-
+      Zulip Cloud server. Replace {subdomain} with your organization's Zulip
+      Cloud subdomain.
+    variables:
+      subdomain:
+        description: The organization's Zulip Cloud subdomain.
+        default: your-org
+    security:
+      - basicAuth: []
+  zulipSelfHosted:
+    url: 'https://{host}/api/v1'
+    protocol: https
+    description: Self-hosted Zulip server.
+    variables:
+      host:
+        description: Hostname of the self-hosted Zulip server.
+        default: zulip.example.com
+    security:
+      - basicAuth: []
+defaultContentType: application/json
+channels:
+  /events:
+    description: >-
+      Long-poll endpoint for retrieving new events from a previously
+      registered queue. The client issues a GET request with queue_id and
+      last_event_id; the server holds the connection open until new events
+      arrive (or dont_block=true is supplied). The response body contains an
+      events array of typed event objects whose schemas are documented below.
+    parameters:
+      queue_id:
+        description: >-
+          Identifier of an event queue previously returned by
+          POST /api/v1/register.
+        schema:
+          type: string
+      last_event_id:
+        description: >-
+          The highest event ID the client has already received and is
+          acknowledging. The server will return only events with a higher ID.
+        schema:
+          type: integer
+      dont_block:
+        description: >-
+          If true, the server returns immediately with whatever events are
+          currently queued (possibly an empty array). Defaults to false,
+          which causes the server to long-poll for new events.
+        schema:
+          type: boolean
+          default: false
+    bindings:
+      http:
+        type: request
+        method: GET
+        bindingVersion: 0.3.0
+    subscribe:
+      operationId: getEvents
+      summary: Long-poll for new events from the registered event queue
+      description: >-
+        Returns a JSON object with two top-level fields: events (an array of
+        typed event objects ordered by increasing id, possibly non-consecutive)
+        and queue_id (the queue identifier). Clients should set their HTTP
+        timeout to at least event_queue_longpoll_timeout_seconds returned by
+        the register call.
+      bindings:
+        http:
+          bindingVersion: 0.3.0
+      message:
+        $ref: '#/components/messages/EventBatch'
+  /register:
+    description: >-
+      Endpoint to register a new event queue. The returned queue_id and
+      last_event_id are required inputs to /events.
+    bindings:
+      http:
+        type: request
+        method: POST
+        bindingVersion: 0.3.0
+    publish:
+      operationId: registerEventQueue
+      summary: Register a new event queue
+      description: >-
+        Registers a new event queue for the authenticated user and returns
+        queue_id, last_event_id, and any requested initial fetch data.
+        Optionally accepts event_types, fetch_event_types, narrow,
+        apply_markdown, client_gravatar, slim_presence, all_public_streams,
+        include_subscribers, and client_capabilities.
+      message:
+        $ref: '#/components/messages/RegisterResponse'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: >-
+        Zulip uses HTTP Basic authentication. The username is the bot or user
+        email address and the password is the Zulip API key.
+  messages:
+    EventBatch:
+      name: EventBatch
+      title: Event Batch
+      summary: A long-poll response containing zero or more events
+      description: >-
+        The response body returned by GET /events. Contains the queue_id and
+        an events array whose elements conform to the per-type event schemas.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/EventBatch'
+    RegisterResponse:
+      name: RegisterResponse
+      title: Register Event Queue Response
+      summary: Response body from POST /register
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/RegisterResponse'
+  schemas:
+    RegisterResponse:
+      type: object
+      description: Response object returned by POST /api/v1/register.
+      required:
+        - queue_id
+        - last_event_id
+      properties:
+        queue_id:
+          type: string
+          description: Identifier of the newly allocated event queue.
+        last_event_id:
+          type: integer
+          description: Initial event ID to supply to the first /events call.
+        zulip_feature_level:
+          type: integer
+          description: Server feature level.
+        zulip_version:
+          type: string
+          description: Zulip server version.
+        event_queue_longpoll_timeout_seconds:
+          type: integer
+          description: Recommended HTTP timeout for /events long-poll requests.
+    EventBatch:
+      type: object
+      description: Long-poll response envelope returned by GET /events.
+      required:
+        - events
+        - queue_id
+      properties:
+        queue_id:
+          type: string
+          description: The event queue identifier.
+        events:
+          type: array
+          description: >-
+            Array of event objects. Event IDs are strictly increasing but
+            are not guaranteed to be consecutive.
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MessageEvent'
+              - $ref: '#/components/schemas/UpdateMessageEvent'
+              - $ref: '#/components/schemas/DeleteMessageEvent'
+              - $ref: '#/components/schemas/SubmessageEvent'
+              - $ref: '#/components/schemas/ReactionEvent'
+              - $ref: '#/components/schemas/SubscriptionEvent'
+              - $ref: '#/components/schemas/StreamEvent'
+              - $ref: '#/components/schemas/RealmUserEvent'
+              - $ref: '#/components/schemas/UserSettingsEvent'
+              - $ref: '#/components/schemas/UserStatusEvent'
+              - $ref: '#/components/schemas/UserTopicEvent'
+              - $ref: '#/components/schemas/PresenceEvent'
+              - $ref: '#/components/schemas/TypingEvent'
+              - $ref: '#/components/schemas/TypingEditMessageEvent'
+              - $ref: '#/components/schemas/UpdateMessageFlagsEvent'
+              - $ref: '#/components/schemas/RealmEvent'
+              - $ref: '#/components/schemas/RealmEmojiEvent'
+              - $ref: '#/components/schemas/RealmDomainsEvent'
+              - $ref: '#/components/schemas/RealmLinkifiersEvent'
+              - $ref: '#/components/schemas/RealmFiltersEvent'
+              - $ref: '#/components/schemas/RealmPlaygroundsEvent'
+              - $ref: '#/components/schemas/RealmBotEvent'
+              - $ref: '#/components/schemas/RealmUserSettingsDefaultsEvent'
+              - $ref: '#/components/schemas/RealmExportEvent'
+              - $ref: '#/components/schemas/RealmExportConsentEvent'
+              - $ref: '#/components/schemas/UserGroupEvent'
+              - $ref: '#/components/schemas/AlertWordsEvent'
+              - $ref: '#/components/schemas/MutedTopicsEvent'
+              - $ref: '#/components/schemas/MutedUsersEvent'
+              - $ref: '#/components/schemas/DraftsEvent'
+              - $ref: '#/components/schemas/SavedSnippetsEvent'
+              - $ref: '#/components/schemas/ScheduledMessagesEvent'
+              - $ref: '#/components/schemas/RemindersEvent'
+              - $ref: '#/components/schemas/NavigationViewEvent'
+              - $ref: '#/components/schemas/ChannelFolderEvent'
+              - $ref: '#/components/schemas/HasZoomTokenEvent'
+              - $ref: '#/components/schemas/HasWebexTokenEvent'
+              - $ref: '#/components/schemas/DeviceEvent'
+              - $ref: '#/components/schemas/AttachmentEvent'
+              - $ref: '#/components/schemas/InvitesChangedEvent'
+              - $ref: '#/components/schemas/CustomProfileFieldsEvent'
+              - $ref: '#/components/schemas/DefaultStreamsEvent'
+              - $ref: '#/components/schemas/DefaultStreamGroupsEvent'
+              - $ref: '#/components/schemas/OnboardingStepsEvent'
+              - $ref: '#/components/schemas/HeartbeatEvent'
+              - $ref: '#/components/schemas/RestartEvent'
+              - $ref: '#/components/schemas/WebReloadClientEvent'
+    EventBase:
+      type: object
+      description: Common base fields present on every event object.
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: integer
+          description: Unique event ID within the queue.
+        type:
+          type: string
+          description: Event type discriminator.
+    MessageEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - message
+          properties:
+            type:
+              type: string
+              enum: [message]
+            flags:
+              type: array
+              items:
+                type: string
+              description: Message flags for the recipient (e.g., read, mentioned).
+            message:
+              type: object
+              description: The full message object.
+              properties:
+                id:
+                  type: integer
+                sender_id:
+                  type: integer
+                sender_email:
+                  type: string
+                sender_full_name:
+                  type: string
+                sender_realm_str:
+                  type: string
+                recipient_id:
+                  type: integer
+                type:
+                  type: string
+                  description: stream or direct
+                stream_id:
+                  type: integer
+                display_recipient:
+                  description: Channel name (string) or array of recipient objects.
+                subject:
+                  type: string
+                  description: Topic name.
+                content:
+                  type: string
+                content_type:
+                  type: string
+                avatar_url:
+                  type: string
+                  nullable: true
+                client:
+                  type: string
+                is_me_message:
+                  type: boolean
+                reactions:
+                  type: array
+                  items:
+                    type: object
+                submessages:
+                  type: array
+                  items:
+                    type: object
+                timestamp:
+                  type: integer
+                topic_links:
+                  type: array
+                  items:
+                    type: object
+    UpdateMessageEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - message_id
+          properties:
+            type:
+              type: string
+              enum: [update_message]
+            message_id:
+              type: integer
+            rendering_only:
+              type: boolean
+            user_id:
+              type: integer
+              nullable: true
+            edit_timestamp:
+              type: integer
+            content:
+              type: string
+            rendered_content:
+              type: string
+            content_html_diff:
+              type: string
+            subject:
+              type: string
+            orig_subject:
+              type: string
+            propagate_mode:
+              type: string
+              enum: [change_one, change_later, change_all]
+            stream_id:
+              type: integer
+            new_stream_id:
+              type: integer
+            topic_links:
+              type: array
+              items:
+                type: object
+            message_ids:
+              type: array
+              items:
+                type: integer
+            flags:
+              type: array
+              items:
+                type: string
+    DeleteMessageEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [delete_message]
+            message_id:
+              type: integer
+            message_ids:
+              type: array
+              items:
+                type: integer
+            message_type:
+              type: string
+              enum: [stream, private]
+            stream_id:
+              type: integer
+            topic:
+              type: string
+    SubmessageEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [submessage]
+            message_id:
+              type: integer
+            submessage_id:
+              type: integer
+            sender_id:
+              type: integer
+            msg_type:
+              type: string
+            content:
+              type: string
+    ReactionEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [reaction]
+            op:
+              type: string
+              enum: [add, remove]
+            message_id:
+              type: integer
+            reaction_type:
+              type: string
+              enum: [unicode_emoji, realm_emoji, zulip_extra_emoji]
+            emoji_name:
+              type: string
+            emoji_code:
+              type: string
+            user_id:
+              type: integer
+            user:
+              type: object
+              description: Legacy user object (deprecated in favor of user_id).
+    SubscriptionEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [subscription]
+            op:
+              type: string
+              enum: [add, remove, update, peer_add, peer_remove]
+            subscriptions:
+              type: array
+              items:
+                type: object
+              description: Present on op=add and op=remove.
+            stream_id:
+              type: integer
+              description: Present on op=update.
+            stream_ids:
+              type: array
+              items:
+                type: integer
+              description: Present on op=peer_add and op=peer_remove.
+            user_ids:
+              type: array
+              items:
+                type: integer
+              description: Present on op=peer_add and op=peer_remove.
+            property:
+              type: string
+              description: Subscription property changed (op=update).
+            value:
+              description: New value of the changed property (op=update).
+    StreamEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [stream]
+            op:
+              type: string
+              enum: [create, delete, update]
+            streams:
+              type: array
+              items:
+                type: object
+              description: Present on op=create and op=delete.
+            stream_id:
+              type: integer
+              description: Present on op=update.
+            name:
+              type: string
+              description: Present on op=update.
+            property:
+              type: string
+              description: Property name changed on op=update.
+            value:
+              description: New value on op=update.
+    RealmUserEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [realm_user]
+            op:
+              type: string
+              enum: [add, remove, update]
+            person:
+              type: object
+              description: User object (add/update) or minimal user reference (remove).
+    UserSettingsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [user_settings]
+            op:
+              type: string
+              enum: [update]
+            property:
+              type: string
+            value:
+              description: New value of the changed setting.
+            language_name:
+              type: string
+              description: Present when property=default_language.
+    UserStatusEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - user_id
+          properties:
+            type:
+              type: string
+              enum: [user_status]
+            user_id:
+              type: integer
+            status_text:
+              type: string
+            away:
+              type: boolean
+            emoji_name:
+              type: string
+            emoji_code:
+              type: string
+            reaction_type:
+              type: string
+              enum: [unicode_emoji, realm_emoji, zulip_extra_emoji]
+            status_emoji:
+              type: string
+    UserTopicEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [user_topic]
+            stream_id:
+              type: integer
+            topic_name:
+              type: string
+            last_updated:
+              type: integer
+            visibility_policy:
+              type: integer
+              description: 0 inherit, 1 muted, 2 unmuted, 3 followed.
+    PresenceEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [presence]
+            email:
+              type: string
+            user_id:
+              type: integer
+            server_timestamp:
+              type: number
+            presence:
+              type: object
+              description: Legacy per-client presence map.
+            presences:
+              type: object
+              description: Modern slim presence map (when slim_presence is enabled).
+    TypingEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [typing]
+            op:
+              type: string
+              enum: [start, stop]
+            message_type:
+              type: string
+              enum: [direct, stream]
+            sender:
+              type: object
+            recipients:
+              type: array
+              items:
+                type: object
+            user_id:
+              type: integer
+            stream_id:
+              type: integer
+            topic:
+              type: string
+    TypingEditMessageEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [typing_edit_message]
+            op:
+              type: string
+              enum: [start, stop]
+            message_id:
+              type: integer
+            user_id:
+              type: integer
+            recipients:
+              type: array
+              items:
+                type: object
+    UpdateMessageFlagsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [update_message_flags]
+            op:
+              type: string
+              enum: [add, remove]
+            operation:
+              type: string
+              description: Deprecated alias for op.
+            flag:
+              type: string
+              description: The flag name (e.g., read, starred, mentioned).
+            messages:
+              type: array
+              items:
+                type: integer
+              description: Message IDs affected.
+            all:
+              type: boolean
+              description: If true, applies to all messages.
+    RealmEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [realm]
+            op:
+              type: string
+              enum: [update, update_dict, deactivated]
+            property:
+              type: string
+            value:
+              description: New value (op=update).
+            data:
+              type: object
+              description: Map of changed properties (op=update_dict).
+            property_type:
+              type: string
+              description: Category of the changed properties (op=update_dict).
+            realm_id:
+              type: integer
+              description: Present on op=deactivated.
+    RealmEmojiEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [realm_emoji]
+            op:
+              type: string
+              enum: [add, update, update_one]
+            realm_emoji:
+              type: object
+              description: Full mapping of custom emoji (legacy).
+            custom_emoji:
+              type: object
+              description: Single emoji or mapping, depending on op.
+    RealmDomainsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [realm_domains]
+            op:
+              type: string
+              enum: [add, change, remove]
+            realm_domain:
+              type: object
+            domain:
+              type: string
+    RealmLinkifiersEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [realm_linkifiers]
+            realm_linkifiers:
+              type: array
+              items:
+                type: object
+    RealmFiltersEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [realm_filters]
+            realm_filters:
+              type: array
+              items:
+                type: array
+                description: Legacy [pattern, url_format_string, id] triples.
+    RealmPlaygroundsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [realm_playgrounds]
+            realm_playgrounds:
+              type: array
+              items:
+                type: object
+    RealmBotEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [realm_bot]
+            op:
+              type: string
+              enum: [add, update, delete, remove]
+            bot:
+              type: object
+    RealmUserSettingsDefaultsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [realm_user_settings_defaults]
+            op:
+              type: string
+              enum: [update]
+            property:
+              type: string
+            value:
+              description: New default value.
+    RealmExportEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [realm_export]
+            exports:
+              type: array
+              items:
+                type: object
+    RealmExportConsentEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [realm_export_consent]
+            user_id:
+              type: integer
+            consented:
+              type: boolean
+    UserGroupEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [user_group]
+            op:
+              type: string
+              enum:
+                - add
+                - update
+                - remove
+                - add_members
+                - remove_members
+                - add_subgroups
+                - remove_subgroups
+            group:
+              type: object
+            group_id:
+              type: integer
+            data:
+              type: object
+              description: Updated fields on op=update.
+            user_ids:
+              type: array
+              items:
+                type: integer
+            direct_subgroup_ids:
+              type: array
+              items:
+                type: integer
+    AlertWordsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - alert_words
+          properties:
+            type:
+              type: string
+              enum: [alert_words]
+            alert_words:
+              type: array
+              items:
+                type: string
+    MutedTopicsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [muted_topics]
+            muted_topics:
+              type: array
+              items:
+                type: array
+                description: Legacy [stream_name, topic_name, timestamp] triples.
+    MutedUsersEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [muted_users]
+            muted_users:
+              type: array
+              items:
+                type: object
+    DraftsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [drafts]
+            op:
+              type: string
+              enum: [add, update, remove]
+            drafts:
+              type: array
+              items:
+                type: object
+            draft:
+              type: object
+            draft_id:
+              type: integer
+    SavedSnippetsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [saved_snippets]
+            op:
+              type: string
+              enum: [add, update, remove]
+            saved_snippet:
+              type: object
+            saved_snippet_id:
+              type: integer
+    ScheduledMessagesEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [scheduled_messages]
+            op:
+              type: string
+              enum: [add, update, remove]
+            scheduled_messages:
+              type: array
+              items:
+                type: object
+            scheduled_message_id:
+              type: integer
+    RemindersEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [reminders]
+            op:
+              type: string
+              enum: [add, remove]
+            reminders:
+              type: array
+              items:
+                type: object
+            reminder_id:
+              type: integer
+    NavigationViewEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [navigation_view]
+            op:
+              type: string
+              enum: [add, update, remove]
+            navigation_view:
+              type: object
+            fragment:
+              type: string
+            data:
+              type: object
+    ChannelFolderEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [channel_folder]
+            op:
+              type: string
+              enum: [add, update, reorder]
+            channel_folder:
+              type: object
+            channel_folders:
+              type: array
+              items:
+                type: object
+            order:
+              type: array
+              items:
+                type: integer
+    HasZoomTokenEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - value
+          properties:
+            type:
+              type: string
+              enum: [has_zoom_token]
+            value:
+              type: boolean
+    HasWebexTokenEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - value
+          properties:
+            type:
+              type: string
+              enum: [has_webex_token]
+            value:
+              type: boolean
+    DeviceEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [device]
+            op:
+              type: string
+              enum: [add, update, remove]
+            device:
+              type: object
+            device_id:
+              type: integer
+    AttachmentEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+            - op
+          properties:
+            type:
+              type: string
+              enum: [attachment]
+            op:
+              type: string
+              enum: [add, update, remove]
+            attachment:
+              type: object
+            upload_space_used:
+              type: integer
+    InvitesChangedEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [invites_changed]
+    CustomProfileFieldsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [custom_profile_fields]
+            fields:
+              type: array
+              items:
+                type: object
+    DefaultStreamsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [default_streams]
+            default_streams:
+              type: array
+              items:
+                type: object
+    DefaultStreamGroupsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [default_stream_groups]
+            default_stream_groups:
+              type: array
+              items:
+                type: object
+    OnboardingStepsEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [onboarding_steps]
+            onboarding_steps:
+              type: array
+              items:
+                type: object
+    HeartbeatEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [heartbeat]
+    RestartEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [restart]
+            server_generation:
+              type: integer
+            immediate:
+              type: boolean
+            zulip_version:
+              type: string
+            zulip_merge_base:
+              type: string
+            zulip_feature_level:
+              type: integer
+    WebReloadClientEvent:
+      allOf:
+        - $ref: '#/components/schemas/EventBase'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum: [web_reload_client]
+            immediate:
+              type: boolean

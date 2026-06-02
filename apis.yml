@@ -13,7 +13,7 @@ tags:
   - Team Chat
   - Webhooks
 created: '2026-01-02'
-modified: '2026-05-19'
+modified: '2026-05-29'
 url: https://raw.githubusercontent.com/api-evangelist/zulip/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
@@ -59,6 +59,30 @@ apis:
       url: capabilities/zulip-users.yaml
     - type: NaftikoCapability
       url: capabilities/zulip-webhooks.yaml
+    - type: AsyncAPI
+      url: asyncapi/zulip-events-asyncapi.yml
+  - aid: zulip:events-api
+    name: Zulip Events API
+    description: The Zulip Events API delivers real-time updates from a Zulip server to a client via an HTTPS long-poll. Clients
+      register an event queue via POST /api/v1/register, then call GET /api/v1/events with the returned queue_id and last_event_id
+      to receive batches of typed events covering messages, reactions, subscriptions, presence, typing, channel/stream changes,
+      user and organization updates, custom emoji, alert words, message-flag changes, drafts, scheduled messages, reminders,
+      user groups, and system heartbeat/restart signals.
+    humanURL: https://zulip.com/api/get-events
+    tags:
+    - Events
+    - Long Polling
+    - Real Time
+    - Team Chat
+    properties:
+    - type: Documentation
+      url: https://zulip.com/api/get-events
+    - type: Reference
+      url: https://zulip.com/api/real-time-events
+    - type: AsyncAPI
+      url: asyncapi/zulip-events-asyncapi.yml
+    - type: NaftikoCapability
+      url: capabilities/zulip-real-time-events.yaml
   - aid: zulip:webhooks
     name: Zulip Webhooks
     description: Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing webhooks
