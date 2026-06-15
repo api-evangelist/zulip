@@ -1,8 +1,9 @@
 aid: zulip
 name: Zulip
-description: Zulip is an open-source team chat application with a unique topic-based threading model. Zulip's APIs power the
-  web and mobile apps and provide REST endpoints, incoming webhooks, outgoing webhooks, and event-driven integrations to connect
-  Zulip with external services.
+description: >-
+  Zulip is an open-source team chat application with a unique topic-based threading model. Zulip's APIs power the web
+  and mobile apps and provide REST endpoints, incoming webhooks, outgoing webhooks, and event-driven integrations to
+  connect Zulip with external services.
 type: Index
 position: Consumer
 access: 3rd-Party
@@ -19,84 +20,58 @@ specificationVersion: '0.19'
 apis:
   - aid: zulip:rest-api
     name: Zulip REST API
-    description: The Zulip REST API powers the Zulip web and mobile apps. It provides programmatic access to messages, streams,
-      users, organizations, and all other Zulip functionality. Anything you can do in Zulip, you can do with the REST API.
+    description: >-
+      The Zulip REST API powers the Zulip web and mobile apps. It provides programmatic access to messages, streams,
+      users, organizations, and all other Zulip functionality. Anything you can do in Zulip, you can do with the REST
+      API.
     humanURL: https://zulip.com/api/rest
     tags:
-    - Messaging
-    - REST
-    - Team Chat
+      - Messaging
+      - REST
+      - Team Chat
     properties:
-    - type: Documentation
-      url: https://zulip.com/api/rest
-    - type: Reference
-      url: https://zulip.com/api/
-    - type: NaftikoCapability
-      url: capabilities/zulip-authentication.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-bots.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-channels.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-drafts.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-invites.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-messages.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-mobile.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-navigation-views.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-real-time-events.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-reminders.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-scheduled-messages.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-server-and-organizations.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-users.yaml
-    - type: NaftikoCapability
-      url: capabilities/zulip-webhooks.yaml
-    - type: AsyncAPI
-      url: asyncapi/zulip-events-asyncapi.yml
+      - type: Documentation
+        url: https://zulip.com/api/rest
+      - type: Reference
+        url: https://zulip.com/api/
+      - type: AsyncAPI
+        url: asyncapi/zulip-events-asyncapi.yml
   - aid: zulip:events-api
     name: Zulip Events API
-    description: The Zulip Events API delivers real-time updates from a Zulip server to a client via an HTTPS long-poll. Clients
-      register an event queue via POST /api/v1/register, then call GET /api/v1/events with the returned queue_id and last_event_id
-      to receive batches of typed events covering messages, reactions, subscriptions, presence, typing, channel/stream changes,
-      user and organization updates, custom emoji, alert words, message-flag changes, drafts, scheduled messages, reminders,
-      user groups, and system heartbeat/restart signals.
+    description: >-
+      The Zulip Events API delivers real-time updates from a Zulip server to a client via an HTTPS long-poll. Clients
+      register an event queue via POST /api/v1/register, then call GET /api/v1/events with the returned queue_id and
+      last_event_id to receive batches of typed events covering messages, reactions, subscriptions, presence, typing,
+      channel/stream changes, user and organization updates, custom emoji, alert words, message-flag changes, drafts,
+      scheduled messages, reminders, user groups, and system heartbeat/restart signals.
     humanURL: https://zulip.com/api/get-events
     tags:
-    - Events
-    - Long Polling
-    - Real Time
-    - Team Chat
+      - Events
+      - Long Polling
+      - Real Time
+      - Team Chat
     properties:
-    - type: Documentation
-      url: https://zulip.com/api/get-events
-    - type: Reference
-      url: https://zulip.com/api/real-time-events
-    - type: AsyncAPI
-      url: asyncapi/zulip-events-asyncapi.yml
-    - type: NaftikoCapability
-      url: capabilities/zulip-real-time-events.yaml
+      - type: Documentation
+        url: https://zulip.com/api/get-events
+      - type: Reference
+        url: https://zulip.com/api/real-time-events
+      - type: AsyncAPI
+        url: asyncapi/zulip-events-asyncapi.yml
   - aid: zulip:webhooks
     name: Zulip Webhooks
-    description: Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing webhooks
+    description: >-
+      Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing webhooks
       (allowing Zulip to send HTTP POST payloads to external services when messages are sent).
     humanURL: https://zulip.com/api/incoming-webhooks-overview
     tags:
-    - Events
-    - Integrations
-    - Webhooks
+      - Events
+      - Integrations
+      - Webhooks
     properties:
-    - type: Documentation
-      url: https://zulip.com/api/incoming-webhooks-overview
-    - type: Reference
-      url: https://zulip.com/api/outgoing-webhooks
+      - type: Documentation
+        url: https://zulip.com/api/incoming-webhooks-overview
+      - type: Reference
+        url: https://zulip.com/api/outgoing-webhooks
 common:
   - type: LinkedIn
     url: https://www.linkedin.com/company/zulip-by-kandra-labs
