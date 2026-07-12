@@ -1,0 +1,16 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/zulip-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: BasicAuth
+  type: http
+  scheme: basic
+  description: |-
+    Basic authentication, with the user's email as the username, and the API
+    key as the password. The API key can be fetched using the
+    `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+  sources:
+  - openapi/zulip-openapi.yml

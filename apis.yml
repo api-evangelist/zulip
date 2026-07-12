@@ -73,6 +73,14 @@ apis:
       - type: Reference
         url: https://zulip.com/api/outgoing-webhooks
 common:
+  - type: TrustCenter
+    url: security/zulip-trust-center.yml
+  - type: VulnerabilityDisclosure
+    url: security/zulip-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/zulip-domain-security.yml
+  - type: Authentication
+    url: authentication/zulip-authentication.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/zulip-by-kandra-labs
   - url: https://zulip.com/

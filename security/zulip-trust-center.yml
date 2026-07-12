@@ -1,0 +1,13 @@
+generated: '2026-07-11'
+method: searched
+probe: true
+source: https://zulip.com/security/
+url: https://zulip.com/security/
+certifications:
+- HIPAA
+- GDPR
+evidence:
+- source: https://zulip.com/security/
+  keywords:
+  - hipaa
+  - gdpr
