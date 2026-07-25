@@ -1,0 +1,622 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Zulip REST authentication API
+  description: 'Powerful open source group chat
+
+    '
+  contact:
+    url: https://zulip.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{subdomain}.zulipchat.com/api/v1
+  variables:
+    subdomain:
+      default: example
+- url: '{server}/api/v1'
+  variables:
+    server:
+      default: https://
+- url: https://chat.zulip.org/api/v1
+- url: http://localhost:9991/api/v1
+- url: http://{subdomain}.testserver/json
+security:
+- basicAuth: []
+tags:
+- name: authentication
+paths:
+  /fetch_api_key:
+    post:
+      operationId: fetch-api-key
+      summary: Fetch an API key (production)
+      tags:
+      - authentication
+      description: "This API endpoint is used by clients such as the Zulip mobile and\nterminal apps to implement password-based authentication. Given the\nuser's Zulip login credentials, it returns a Zulip API key that the client\ncan use to make requests as the user.\n\nThis endpoint is only useful for Zulip servers/organizations with\nEmailAuthBackend or LDAPAuthBackend enabled.\n\nThe Zulip mobile apps also support SSO/social authentication (GitHub\nauth, Google auth, SAML, etc.) that does not use this endpoint. Instead,\nthe mobile apps reuse the web login flow passing the `mobile_flow_otp` in\na webview, and the credentials are returned to the app (encrypted) via a redirect\nto a `zulip://` URL.\n\n!!! warn \"\"\n\n    **Note:** If you signed up using passwordless authentication and\n    never had a password, you can [reset your password](/help/change-your-password).\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to download an API key manually.\n\nIn a [Zulip development environment](https://zulip.readthedocs.io/en/latest/development/overview.html),\nsee also [the unauthenticated variant](/api/dev-fetch-api-key).\n"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: 'The username to be used for authentication (typically, the email
+
+                    address, but depending on configuration, it could be an LDAP username).
+
+
+                    See the `require_email_format_usernames` parameter documented in
+
+                    [GET /server_settings](/api/get-server-settings) for details.
+
+                    '
+                  type: string
+                  example: iago@zulip.com
+                password:
+                  type: string
+                  example: abcd1234
+                  description: 'The user''s Zulip password (or LDAP password, if LDAP authentication is in use).
+
+                    '
+              required:
+              - username
+              - password
+      security: []
+      responses:
+        '200':
+          description: 'Valid credentials the client can use to access the Zulip API:
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyResponse'
+  /jwt/fetch_api_key:
+    post:
+      operationId: jwt-fetch-api-key
+      summary: Fetch an API key (JWT)
+      tags:
+      - authentication
+      description: "This API endpoint is used by clients to implement JSON Web Token\n(JWT) authentication. Given a JWT identifying a Zulip user, it\nreturns a Zulip API key that the client can use to make requests\nas the user.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only useful for Zulip servers/organizations\n    with [JSON web token authentication][prod-jwt-auth] enabled.\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to manage API keys manually.\n\n**Changes**: New in Zulip 7.0 (feature level 160).\n\n[prod-jwt-auth]: https://zulip.readthedocs.io/en/latest/production/authentication-methods.html#json-web-tokens-jwt\n"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                token:
+                  description: 'A JSON Web Token for the target user.
+
+
+                    The token payload must contain a custom `email` claim with the target
+
+                    user''s email address, e.g., `{"email": "<target user email>"}`.
+
+                    '
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhbWxldEB6dWxpcC5jb20ifQ.EsHxSVt54zPR-ywgPH54TB1FYmrGKsfq7hsQEhp_9w0
+                include_profile:
+                  type: boolean
+                  default: false
+                  example: false
+                  description: 'Whether to include a `user` object containing the target
+
+                    user''s profile details in the response.
+
+                    '
+              required:
+              - token
+      security: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - required:
+                  - api_key
+                  - email
+                  additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    api_key:
+                      type: string
+                      description: 'The API key that can be used to authenticate as the requested user.
+
+                        '
+                    email:
+                      type: string
+                      description: 'The email address of the user who owns the API key.
+
+                        '
+                    user:
+                      description: 'Only present if `include_profile` parameter was set to `true`.
+
+
+                        A dictionary with data on the target user.
+
+                        '
+                      allOf:
+                      - $ref: '#/components/schemas/UserBase'
+                      - additionalProperties: false
+                        properties:
+                          user_id: {}
+                          delivery_email:
+                            nullable: true
+                          email: {}
+                          full_name: {}
+                          date_joined: {}
+                          is_active: {}
+                          is_owner: {}
+                          is_admin: {}
+                          is_guest: {}
+                          is_bot: {}
+                          bot_type:
+                            nullable: true
+                          bot_owner_id:
+                            nullable: true
+                          role: {}
+                          timezone: {}
+                          avatar_url:
+                            nullable: true
+                          avatar_version: {}
+                          is_imported_stub: {}
+                  example:
+                    api_key: gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv
+                    email: hamlet@zulip.com
+                    msg: ''
+                    result: success
+  /dev_fetch_api_key:
+    post:
+      operationId: dev-fetch-api-key
+      summary: Fetch an API key (development only)
+      tags:
+      - authentication
+      description: "For easy testing of mobile apps and other clients and against Zulip\ndevelopment servers, we support fetching a Zulip API key for any user\non the development server without authentication (so that they can\nimplement analogues of the one-click login process available for Zulip\ndevelopment servers on the web).\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: 'The email address for the user that owns the API key.
+
+                    '
+                  type: string
+                  example: iago@zulip.com
+              required:
+              - username
+      security: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyResponse'
+  /dev_list_users:
+    get:
+      operationId: dev-list-users
+      summary: List users (development only)
+      tags:
+      - authentication
+      description: "Get a list of all, non-bot users in a [Zulip development\nserver](https://zulip.readthedocs.io/en/latest/development/overview.html).\nThis endpoint is used by mobile developers to fetch users for the\ndevelopment login flow.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n"
+      security: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - type: object
+                  additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    direct_admins:
+                      type: array
+                      description: 'A list of administrators in the development server.
+
+                        '
+                      items:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          email:
+                            type: string
+                            description: 'The email of the dev admin user.
+
+                              '
+                          realm_url:
+                            type: string
+                            description: 'The URL of the dev admin user''s organization.
+
+                              '
+                    direct_users:
+                      type: array
+                      description: 'A list of non-admin users in the development server.
+
+                        '
+                      items:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          email:
+                            type: string
+                            description: 'The email of the dev user.
+
+                              '
+                          realm_url:
+                            type: string
+                            description: 'The URL of the dev user''s organization.
+
+                              '
+                  example:
+                    msg: ''
+                    result: success
+                    direct_admins:
+                    - email: iago@zulip.com
+                      realm_url: http://localhost:9991
+                    direct_users:
+                    - email: hamlet@zulip.com
+                      realm_url: http://localhost:9991
+components:
+  schemas:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    UserBase:
+      type: object
+      description: 'A dictionary containing basic data on a given Zulip user.
+
+
+        **Changes**: Removed `is_billing_admin` field in Zulip 10.0 (feature level 363), as it was
+
+        replaced by the `can_manage_billing_group` realm setting.
+
+        '
+      properties:
+        user_id:
+          type: integer
+          description: 'The unique ID of the user.
+
+            '
+        delivery_email:
+          type: string
+          nullable: true
+          description: 'The user''s real email address. This value will be `null` if you cannot
+
+            access user''s real email address. For bot users, this field is always
+
+            set to the real email of the bot, because bot users always have
+
+            `email_address_visibility` set to everyone.
+
+
+            **Changes**: Prior to Zulip 7.0 (feature level 163), this field was
+
+            present only when `email_address_visibility` was restricted and you had
+
+            access to the user''s real email. As of this feature level, this field
+
+            is always present, including the case when `email_address_visibility`
+
+            is set to everyone (and therefore not restricted).
+
+            '
+        email:
+          type: string
+          description: 'The Zulip API email address of the user or bot.
+
+
+            If you do not have permission to view the email address of the target user,
+
+            this will be a fake email address that is usable for the Zulip API but nothing else.
+
+            '
+        full_name:
+          type: string
+          description: 'Full name of the user or bot, used for all display purposes.
+
+            '
+        date_joined:
+          type: string
+          description: 'The time when the user joined. For users imported from other
+
+            applications and users created via the API, this is set to the
+
+            account creation time until the user logs in for the first time,
+
+            after which it is updated to that login time.
+
+
+            For imported users, clients can use the `is_imported_stub` flag
+
+            to determine how to display this field: when `is_imported_stub`
+
+            is `true`, the user has not yet logged in and this value is the
+
+            account creation time during import; when `is_imported_stub` is
+
+            `false`, this value reflects when the user first logged in.
+
+
+            **Changes**: Starting with Zulip 12.0 (feature level 475),
+
+            this field is updated when an imported stub user or a user created
+
+            via the API logs in for the first time.
+
+            '
+        is_active:
+          type: boolean
+          description: 'A boolean specifying whether the user account has been deactivated.
+
+            '
+        is_owner:
+          type: boolean
+          description: 'A boolean specifying whether the user is an organization owner.
+
+            If true, `is_admin` will also be true.
+
+
+            **Changes**: New in Zulip 3.0 (feature level 8).
+
+            '
+        is_admin:
+          type: boolean
+          description: 'A boolean specifying whether the user is an organization administrator.
+
+            '
+        is_guest:
+          type: boolean
+          description: 'A boolean specifying whether the user is a guest user.
+
+            '
+        is_bot:
+          type: boolean
+          description: 'A boolean specifying whether the user is a bot or full account.
+
+            '
+        bot_type:
+          type: integer
+          nullable: true
+          description: 'An integer describing the type of bot:
+
+
+            - `null` if the user isn''t a bot.
+
+            - `1` for a `Generic` bot.
+
+            - `2` for an `Incoming webhook` bot.
+
+            - `3` for an `Outgoing webhook` bot.
+
+            - `4` for an `Embedded` bot.
+
+            '
+        bot_owner_id:
+          type: integer
+          nullable: true
+          description: 'If the user is a bot (i.e. `is_bot` is true), then `bot_owner_id`
+
+            is the user ID of the bot''s owner (usually, whoever created the bot).
+
+
+            Will be `null` for legacy bots that do not have an owner.
+
+
+            **Changes**: New in Zulip 3.0 (feature level 1). In previous
+
+            versions, there was a `bot_owner` field containing the email
+
+            address of the bot''s owner.
+
+            '
+        role:
+          type: integer
+          enum:
+          - 100
+          - 200
+          - 300
+          - 400
+          - 600
+          description: '[Organization-level role](/api/roles-and-permissions) of the user.
+
+            Possible values are:
+
+
+            - 100 = Organization owner
+
+            - 200 = Organization administrator
+
+            - 300 = Organization moderator
+
+            - 400 = Member
+
+            - 600 = Guest
+
+
+            **Changes**: New in Zulip 4.0 (feature level 59).
+
+            '
+        timezone:
+          type: string
+          description: 'The IANA identifier of the user''s [profile time zone](/help/change-your-timezone),
+
+            which is used primarily to display the user''s local time to other users.
+
+            '
+        avatar_url:
+          type: string
+          nullable: true
+          description: 'URL for the user''s avatar.
+
+
+            Will be `null` if the `client_gravatar`
+
+            query parameter was set to `true`, the current user has access to
+
+            this user''s real email address, and this user''s avatar is hosted by
+
+            the Gravatar provider (i.e. this user has never uploaded an avatar).
+
+
+            **Changes**: Before Zulip 7.0 (feature level 163), access to a
+
+            user''s real email address was a realm-level setting. As of this
+
+            feature level, `email_address_visibility` is a user setting.
+
+
+            In Zulip 3.0 (feature level 18), if the client has the
+
+            `user_avatar_url_field_optional` capability, this will be missing at
+
+            the server''s sole discretion.
+
+            '
+        avatar_version:
+          type: integer
+          description: 'Version for the user''s avatar. Used for cache-busting requests
+
+            for the user''s avatar. Clients generally shouldn''t need to use this;
+
+            most avatar URLs sent by Zulip will already end with `?v={avatar_version}`.
+
+            '
+        is_imported_stub:
+          type: boolean
+          description: 'Indicates whether this user object is a stub account imported from
+
+            another chat system. Stub accounts are used to represent the senders
+
+            for imported messages. Stub accounts can be converted to regular Zulip
+
+            accounts when the user starts using Zulip, preserving that imported
+
+            user''s message history.
+
+
+            **Changes**: New in Zulip 12.0 (feature level 433).
+
+            '
+          example: false
+        is_deleted:
+          type: boolean
+          description: 'A boolean specifying whether the user has been permanently
+
+            deleted. Deleted users are a subset of deactivated users
+
+            (`is_active=false`) who have had their account data removed.
+
+
+            This field is only present when `true`.
+
+
+            **Changes**: New in Zulip 12.0 (feature level 490).
+
+            '
+    ApiKeyResponse:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - required:
+        - api_key
+        - email
+        additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+          api_key:
+            type: string
+            description: 'The API key that can be used to authenticate as the requested user.
+
+              '
+          email:
+            type: string
+            description: 'The email address of the user who owns the API key.
+
+              '
+          user_id:
+            type: integer
+            description: 'The unique ID of the user who owns the API key.
+
+
+              **Changes**: New in Zulip 7.0 (feature level 171).
+
+              '
+        example:
+          api_key: gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv
+          email: iago@zulip.com
+          msg: ''
+          result: success
+          user_id: 5
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: 'Basic authentication, with the user''s email as the username, and the API
+
+        key as the password. The API key can be fetched using the
+
+        `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+
+        '

@@ -1,0 +1,4128 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Zulip REST authentication messages API
+  description: 'Powerful open source group chat
+
+    '
+  contact:
+    url: https://zulip.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{subdomain}.zulipchat.com/api/v1
+  variables:
+    subdomain:
+      default: example
+- url: '{server}/api/v1'
+  variables:
+    server:
+      default: https://
+- url: https://chat.zulip.org/api/v1
+- url: http://localhost:9991/api/v1
+- url: http://{subdomain}.testserver/json
+security:
+- basicAuth: []
+tags:
+- name: messages
+paths:
+  /mark_all_as_read:
+    post:
+      deprecated: true
+      operationId: mark-all-as-read
+      summary: Mark all messages as read
+      tags:
+      - messages
+      description: 'Marks all of the current user''s unread messages as read.
+
+
+        Because this endpoint marks messages as read in batches, it is possible
+
+        for the request to time out after only marking some messages as read.
+
+        When this happens, the `complete` boolean field in the success response
+
+        will be `false`. Clients should repeat the request when handling such a
+
+        response. If all messages were marked as read, then the success response
+
+        will return `"complete": true`.
+
+
+        **Changes**: Deprecated; clients should use the [update personal message
+
+        flags for narrow](/api/update-message-flags-for-narrow) endpoint instead
+
+        as this endpoint will be removed in a future release.
+
+
+        Before Zulip 8.0 (feature level 211), if the server''s
+
+        processing was interrupted by a timeout, but some messages were marked
+
+        as read, then it would return `"result": "partially_completed"`, along
+
+        with a `code` field for an error string, in the success response to
+
+        indicate that there was a timeout and that the client should repeat the
+
+        request.
+
+
+        Before Zulip 6.0 (feature level 153), this request did a single atomic
+
+        operation, which could time out with 10,000s of unread messages to mark
+
+        as read. As of this feature level, messages are marked as read in
+
+        batches, starting with the newest messages, so that progress is made
+
+        even if the request times out. And, instead of returning an error when
+
+        the request times out and some messages have been marked as read, a
+
+        success response with `"result": "partially_completed"` is returned.
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  required:
+                  - complete
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    complete:
+                      type: boolean
+                      description: 'Whether all unread messages were marked as read.
+
+
+                        Will be `false` if the request successfully marked
+
+                        some, but not all, messages as read.
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    complete: true
+  /mark_stream_as_read:
+    post:
+      deprecated: true
+      operationId: mark-stream-as-read
+      summary: Mark messages in a channel as read
+      tags:
+      - messages
+      description: 'Mark all the unread messages in a channel as read.
+
+
+        **Changes**: Deprecated; clients should use the [update personal message
+
+        flags for narrow](/api/update-message-flags-for-narrow) endpoint instead
+
+        as this endpoint will be removed in a future release.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                stream_id:
+                  description: 'The ID of the channel to access.
+
+                    '
+                  type: integer
+                  example: 43
+              required:
+              - stream_id
+            encoding:
+              stream_id:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+  /mark_topic_as_read:
+    post:
+      deprecated: true
+      operationId: mark-topic-as-read
+      summary: Mark messages in a topic as read
+      tags:
+      - messages
+      description: 'Mark all the unread messages in a topic as read.
+
+
+        **Changes**: Deprecated; clients should use the [update personal message
+
+        flags for narrow](/api/update-message-flags-for-narrow) endpoint instead
+
+        as this endpoint will be removed in a future release.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                stream_id:
+                  description: 'The ID of the channel to access.
+
+                    '
+                  type: integer
+                  example: 43
+                topic_name:
+                  description: 'The name of the topic whose messages should be marked as read.
+
+
+                    Note: When the value of `realm_empty_topic_display_name` found in
+
+                    the [POST /register](/api/register-queue) response is used for this
+
+                    parameter, it is interpreted as an empty string.
+
+
+                    **Changes**: Before Zulip 10.0 (feature level 334), empty string
+
+                    was not a valid topic name for channel messages.
+
+                    '
+                  type: string
+                  example: new coffee machine
+              required:
+              - stream_id
+              - topic_name
+            encoding:
+              stream_id:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+  /messages:
+    get:
+      operationId: get-messages
+      summary: Get messages
+      tags:
+      - messages
+      description: "This endpoint is the primary way to fetch a messages. It is used by all official\nZulip clients (e.g. the web, desktop, mobile, and terminal clients) as well as\nmany bots, API clients, backup scripts, etc.\n\nMost queries will specify a [narrow filter](/api/get-messages#parameter-narrow),\nto fetch the messages matching any supported [search\nquery](/help/search-for-messages). If not specified, it will return messages\ncorresponding to the user's [combined feed](/help/combined-feed). There are two\nways to specify which messages matching the narrow filter to fetch:\n\n- A range of messages, described by an `anchor` message ID (or a string-format\n  specification of how the server should computer an anchor to use) and a maximum\n  number of messages in each direction from that anchor.\n\n- A rarely used variant (`message_ids`) where the client specifies the message IDs\n  to fetch.\n\nThe server returns the matching messages, sorted by message ID, as well as some\nmetadata that makes it easy for a client to determine whether there are more\nmessages matching the query that were not returned due to the `num_before` and\n`num_after` limits.\n\nNote that a user's message history does not contain messages sent to\nchannels before they [subscribe](/api/subscribe), and newly created\nbot users are not usually subscribed to any channels.\n\nWe recommend requesting at most 1000 messages in a batch, to avoid generating very\nlarge HTTP responses. A maximum of 5000 messages can be obtained per request;\nattempting to exceed this will result in an error.\n\n**Changes**: The `message_ids` option is new in Zulip 10.0 (feature level 300).\n"
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - client_gravatar
+            - apply_markdown
+            - use_first_unread_anchor
+            - include_anchor
+            - message_ids
+            - anchor_date
+      parameters:
+      - name: anchor
+        in: query
+        description: "Integer message ID to anchor fetching of new messages. Supports special\nstring values for when the client wants the server to compute the anchor\nto use:\n\n- `newest`: The most recent message.\n- `oldest`: The oldest message.\n- `first_unread`: The oldest unread message matching the\n  query, if any; otherwise, the most recent message.\n- `date`: The first message on or after the datetime indicated by the\n  [`anchor_date`](#parameter-anchor_date), if any; otherwise, the most\n  recent message.\n\n**Changes**: The `date` value is new in Zulip 12.0 (feature level 445).\n\nString values are new in Zulip 3.0 (feature level 1). The\n`first_unread` functionality was supported in Zulip 2.1.x\nand older by not sending `anchor` and using `use_first_unread_anchor`.\n\nIn Zulip 2.1.x and older, `oldest` can be emulated with\n`\"anchor\": 0`, and `newest` with `\"anchor\": 10000000000000000`\n(that specific large value works around a bug in Zulip\n2.1.x and older in the `found_newest` return value).\n"
+        schema:
+          $ref: '#/components/schemas/Anchor'
+        example: '43'
+      - name: include_anchor
+        in: query
+        description: 'Whether a message with the specified ID matching the narrow
+
+          should be included.
+
+
+          **Changes**: New in Zulip 6.0 (feature level 155).
+
+          '
+        schema:
+          type: boolean
+          default: true
+        example: false
+      - name: anchor_date
+        in: query
+        description: 'The date or datetime to use for finding the anchor message when `anchor` is
+
+          `date`. Accepted formats include ISO 8601 date-only strings
+
+          (e.g. `2005-04-18`) as well as full datetime strings
+
+          (e.g. `2005-04-18T12:34:56Z`). If only a date is provided, the datetime is set to
+
+          midnight (00:00) on that day in UTC. If no timezone is provided, UTC is
+
+          assumed.
+
+
+          **Changes**: New in Zulip 12.0 (feature level 445).
+
+          '
+        schema:
+          type: string
+        example: '2005-04-18T12:34:56Z'
+      - name: num_before
+        in: query
+        description: 'The number of messages with IDs less than the anchor to retrieve.
+
+          Required if `message_ids` is not provided.
+
+          '
+        schema:
+          type: integer
+          minimum: 0
+        example: 4
+        required: false
+      - name: num_after
+        in: query
+        description: 'The number of messages with IDs greater than the anchor to retrieve.
+
+          Required if `message_ids` is not provided.
+
+          '
+        schema:
+          type: integer
+          minimum: 0
+        example: 8
+        required: false
+      - name: narrow
+        in: query
+        description: 'The narrow where you want to fetch the messages from. See how to
+
+          [construct a narrow](/api/construct-narrow).
+
+
+          Note that many narrows, including all that lack a `channel`, `channels`,
+
+          `stream`, or `streams` operator, search the user''s personal message
+
+          history. See [searching shared
+
+          history](/help/search-for-messages#search-shared-history)
+
+          for details.
+
+
+          For example, if you would like to fetch messages from all public channels instead
+
+          of only the user''s message history, then a specific narrow for
+
+          messages sent to all public channels can be used:
+
+          `{"operator": "channels", "operand": "public"}`.
+
+
+          Newly created bot users are not usually subscribed to any
+
+          channels, so bots using this API should either be
+
+          subscribed to appropriate channels or use a shared history
+
+          search narrow with this endpoint.
+
+
+          **Changes**: See [changes section](/api/construct-narrow#changes)
+
+          of search/narrow filter documentation.
+
+          '
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                oneOf:
+                - type: object
+                  required:
+                  - operator
+                  - operand
+                  additionalProperties: false
+                  properties:
+                    operator:
+                      type: string
+                    operand:
+                      oneOf:
+                      - type: string
+                      - type: integer
+                      - type: array
+                        items:
+                          type: integer
+                    negated:
+                      type: boolean
+                - type: array
+                  items:
+                    type: string
+                  minItems: 2
+                  maxItems: 2
+              default: []
+            example:
+            - operand: Denmark
+              operator: channel
+      - $ref: '#/components/parameters/ClientGravatar'
+      - name: apply_markdown
+        in: query
+        description: 'If `true`, message content is returned in the rendered HTML
+
+          format. If `false`, message content is returned in the raw
+
+          Markdown-format text that user entered.
+
+
+          See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+          '
+        schema:
+          type: boolean
+          default: true
+        example: false
+      - name: use_first_unread_anchor
+        in: query
+        deprecated: true
+        description: 'Legacy way to specify `"anchor": "first_unread"` in Zulip 2.1.x and older.
+
+
+          Whether to use the (computed by the server) first unread message
+
+          matching the narrow as the `anchor`. Mutually exclusive with `anchor`.
+
+
+          **Changes**: Deprecated in Zulip 3.0 (feature level 1) and replaced by
+
+          `"anchor": "first_unread"`.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: message_ids
+        in: query
+        description: 'A list of message IDs to fetch. The server will return messages corresponding to the
+
+          subset of the requested message IDs that exist and the current user has access to,
+
+          potentially filtered by the narrow (if that parameter is provided).
+
+
+          It is an error to pass this parameter as well as any of the parameters involved in
+
+          specifying a range of messages: `anchor`, `include_anchor`, `use_first_unread_anchor`,
+
+          `num_before`, and `num_after`.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 300). Previously, there was
+
+          no way to request a specific set of messages IDs.
+
+          '
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+            example:
+            - 1
+            - 2
+            - 3
+      - name: allow_empty_topic_name
+        in: query
+        description: 'Whether the client supports processing the empty string as a topic in the
+
+          topic name fields in the returned data, including in returned edit_history data.
+
+
+          If `false`, the server will use the value of `realm_empty_topic_display_name`
+
+          found in the [`POST /register`](/api/register-queue) response instead of empty string
+
+          to represent the empty string topic in its response.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 334). Previously, the empty string
+
+          was not a valid topic.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  required:
+                  - result
+                  - msg
+                  - messages
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    anchor:
+                      type: integer
+                      description: 'The same `anchor` specified in the request (or the computed one, if
+
+                        `use_first_unread_anchor` is `true`).
+
+
+                        Only present if `message_ids` is not provided.
+
+                        '
+                    found_newest:
+                      type: boolean
+                      description: 'Whether the server promises that the `messages` list includes the very
+
+                        newest messages matching the narrow (used by clients that paginate their
+
+                        requests to decide whether there may be more messages to fetch).
+
+                        '
+                    found_oldest:
+                      type: boolean
+                      description: 'Whether the server promises that the `messages` list includes the very
+
+                        oldest messages matching the narrow (used by clients that paginate their
+
+                        requests to decide whether there may be more messages to fetch).
+
+                        '
+                    found_anchor:
+                      type: boolean
+                      description: 'Whether the anchor message is included in the
+
+                        response. If the message with the ID specified
+
+                        in the request does not exist, did not match
+
+                        the narrow, or was excluded via
+
+                        `"include_anchor": false`, this will be false.
+
+                        '
+                    history_limited:
+                      type: boolean
+                      description: 'Whether the message history was limited due to
+
+                        plan restrictions. This flag is set to `true`
+
+                        only when the oldest messages(`found_oldest`)
+
+                        matching the narrow is fetched.
+
+                        '
+                    messages:
+                      type: array
+                      description: 'An array of `message` objects.
+
+
+                        **Changes**: In Zulip 3.1 (feature level 26), the
+
+                        `sender_short_name` field was removed from message
+
+                        objects.
+
+                        '
+                      items:
+                        allOf:
+                        - $ref: '#/components/schemas/MessagesBase'
+                        - additionalProperties: false
+                          properties:
+                            avatar_url:
+                              nullable: true
+                            client: {}
+                            content: {}
+                            content_type: {}
+                            display_recipient: {}
+                            edit_history: {}
+                            id: {}
+                            is_me_message: {}
+                            last_edit_timestamp: {}
+                            last_moved_timestamp: {}
+                            reactions: {}
+                            recipient_id: {}
+                            sender_email: {}
+                            sender_full_name: {}
+                            sender_id: {}
+                            sender_realm_str: {}
+                            stream_id: {}
+                            subject: {}
+                            submessages: {}
+                            timestamp: {}
+                            topic_links: {}
+                            type: {}
+                            flags:
+                              type: array
+                              description: 'The user''s [message flags][message-flags] for the message.
+
+
+                                **Changes**: In Zulip 8.0 (feature level 224), the `wildcard_mentioned`
+
+                                flag was deprecated in favor of the `stream_wildcard_mentioned` and
+
+                                `topic_wildcard_mentioned` flags. The `wildcard_mentioned` flag exists
+
+                                for backwards compatibility with older clients and equals
+
+                                `stream_wildcard_mentioned || topic_wildcard_mentioned`. Clients
+
+                                supporting older server versions should treat this field as a previous
+
+                                name for the `stream_wildcard_mentioned` flag as topic wildcard mentions
+
+                                were not available prior to this feature level.
+
+
+                                [message-flags]: /api/update-message-flags#available-flags
+
+                                '
+                              items:
+                                type: string
+                            match_content:
+                              type: string
+                              description: 'Only present if keyword search was included among the narrow parameters.
+
+
+                                HTML content of a queried message that matches the narrow, with
+
+                                `<span class="highlight">` elements wrapping the matches for the
+
+                                search keywords.
+
+                                '
+                            match_subject:
+                              type: string
+                              description: 'Only present if keyword search was included among the narrow parameters.
+
+
+                                HTML-escaped topic of a queried message that matches the narrow, with
+
+                                `<span class="highlight">` elements wrapping the matches for the
+
+                                search keywords.
+
+                                '
+                  example:
+                    anchor: 21
+                    found_newest: true
+                    found_anchor: true
+                    result: success
+                    msg: ''
+                    messages:
+                    - subject: ''
+                      sender_realm_str: zulip
+                      type: private
+                      content: <p>Security experts agree that relational algorithms are an interesting new topic in the field of networking, and scholars concur.</p>
+                      flags:
+                      - read
+                      id: 16
+                      display_recipient:
+                      - id: 4
+                        is_mirror_dummy: false
+                        email: hamlet@zulip.com
+                        full_name: King Hamlet
+                      - id: 5
+                        is_mirror_dummy: false
+                        email: iago@zulip.com
+                        full_name: Iago
+                      - id: 8
+                        is_mirror_dummy: false
+                        email: prospero@zulip.com
+                        full_name: Prospero from The Tempest
+                      content_type: text/html
+                      is_me_message: false
+                      timestamp: 1527921326
+                      sender_id: 4
+                      sender_full_name: King Hamlet
+                      recipient_id: 27
+                      topic_links: []
+                      client: ZulipDataImport
+                      avatar_url: https://secure.gravatar.com/avatar/6d8cad0fd00256e7b40691d27ddfd466?d=identicon&version=1
+                      submessages: []
+                      sender_email: hamlet@zulip.com
+                      reactions: []
+                    - subject: Verona3
+                      stream_id: 5
+                      sender_realm_str: zulip
+                      type: stream
+                      content: <p>Wait, is this from the frontend js code or backend python code</p>
+                      flags:
+                      - read
+                      id: 21
+                      display_recipient: Verona
+                      content_type: text/html
+                      is_me_message: false
+                      timestamp: 1527939746
+                      sender_id: 4
+                      sender_full_name: King Hamlet
+                      recipient_id: 20
+                      topic_links: []
+                      client: ZulipDataImport
+                      avatar_url: https://secure.gravatar.com/avatar/6d8cad0fd00256e7b40691d27ddfd466?d=identicon&version=1
+                      submessages: []
+                      sender_email: hamlet@zulip.com
+                      reactions: []
+    post:
+      operationId: send-message
+      summary: Send a message
+      tags:
+      - messages
+      description: 'Send a [channel message](/help/introduction-to-topics) or a
+
+        [direct message](/help/direct-messages).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                type:
+                  description: 'The type of message to be sent.
+
+
+                    `"direct"` for a direct message and `"stream"` or `"channel"` for a
+
+                    channel message.
+
+
+                    **Changes**: In Zulip 9.0 (feature level 248), `"channel"` was added as
+
+                    an additional value for this parameter to request a channel message.
+
+
+                    In Zulip 7.0 (feature level 174), `"direct"` was added as
+
+                    the preferred way to request a direct message, deprecating the original
+
+                    `"private"`. While `"private"` is still supported for requesting direct
+
+                    messages, clients are encouraged to use to the modern convention with
+
+                    servers that support it, because support for `"private"` will eventually
+
+                    be removed.
+
+                    '
+                  type: string
+                  enum:
+                  - direct
+                  - channel
+                  - stream
+                  - private
+                  example: direct
+                to:
+                  description: 'The channel or users receiving the message.
+
+
+                    For channel messages, this is either the name or integer ID of the
+
+                    channel.
+
+
+                    For direct messages, this is either a list containing integer user IDs or
+
+                    a list containing string Zulip API email addresses. The ID or email
+
+                    address of the user sending the message can be included in the list, but
+
+                    will be ignored by the server, unless the user sending the message is the
+
+                    only recipient of the message.
+
+
+                    **Changes**: In Zulip 2.0.0, support for using user/channel IDs was added.
+
+                    '
+                  oneOf:
+                  - type: string
+                  - type: integer
+                  - type: array
+                    items:
+                      type: string
+                  - type: array
+                    items:
+                      type: integer
+                    minLength: 1
+                  example:
+                  - 9
+                  - 10
+                content:
+                  $ref: '#/components/schemas/RequiredContent'
+                topic:
+                  description: 'The topic of the message. Only required for channel messages
+
+                    (`"type": "stream"` or `"type": "channel"`), ignored otherwise.
+
+
+                    Clients should use the `max_topic_length` returned by the
+
+                    [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum topic length.
+
+
+                    Note: When `"(no topic)"` or the value of `realm_empty_topic_display_name`
+
+                    found in the [POST /register](/api/register-queue) response is used for this
+
+                    parameter, it is interpreted as an empty string.
+
+
+                    When [topics are required](/help/require-topics), this parameter can''t
+
+                    be `"(no topic)"`, an empty string, or the value of `realm_empty_topic_display_name`.
+
+
+                    **Changes**: Before Zulip 10.0 (feature level 370), `"(no topic)"`
+
+                    was not interpreted as an empty string.
+
+
+                    Before Zulip 10.0 (feature level 334), empty string
+
+                    was not a valid topic name for channel messages.
+
+
+                    New in Zulip 2.0.0. Previous Zulip releases encoded
+
+                    this as `subject`, which is currently a deprecated alias.
+
+                    '
+                  type: string
+                  example: Castle
+                queue_id:
+                  type: string
+                  description: 'For clients supporting
+
+                    [local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),
+
+                    the [event queue](/api/register-queue) ID for the client.
+
+
+                    If passed, `local_id` is required.
+
+
+                    If the message is successfully sent, the server will include
+
+                    `local_message_id` in the [`message` event](/api/get-events#message) that
+
+                    the client with this `queue_id` will receive.
+
+                    '
+                  example: fb67bf8a-c031-47cc-84cf-ed80accacda8
+                local_id:
+                  type: string
+                  description: 'For clients supporting
+
+                    [local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),
+
+                    a unique string-format identifier chosen freely by the client.
+
+
+                    If passed, `queue_id` is required.
+
+
+                    If the message is successfully sent, the server will pass it back to
+
+                    the client without inspecting it as `local_message_id` in the
+
+                    [`message` event](/api/get-events#message) that the client with the
+
+                    above `queue_id` will receive.
+
+                    '
+                  example: '100.01'
+                read_by_sender:
+                  type: boolean
+                  description: 'Whether the message should be initially marked read by its
+
+                    sender. If unspecified, the server uses a heuristic based
+
+                    on the client name.
+
+
+                    **Changes**: New in Zulip 8.0 (feature level 236).
+
+                    '
+                  example: true
+              required:
+              - type
+              - to
+              - content
+            encoding:
+              to:
+                contentType: application/json
+              read_by_sender:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  required:
+                  - id
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    id:
+                      type: integer
+                      description: 'The unique ID assigned to the sent message.
+
+                        '
+                    automatic_new_visibility_policy:
+                      type: integer
+                      enum:
+                      - 2
+                      - 3
+                      description: 'If the message''s sender had configured their [visibility policy settings](/help/mute-a-topic)
+
+                        to potentially automatically follow or unmute topics when sending messages,
+
+                        and one of these policies did in fact change the user''s visibility policy
+
+                        for the topic where this message was sent, the new value for that user''s
+
+                        visibility policy for the recipient topic.
+
+
+                        Only present if the sender''s visibility was in fact changed.
+
+
+                        The value can be either [unmuted or followed](/api/update-user-topic#parameter-visibility_policy).
+
+
+                        Clients will also be notified about the change in policy via a
+
+                        `user_topic` event as usual. This field is intended to be used by clients
+
+                        to explicitly inform the user when a topic''s visibility policy was changed
+
+                        automatically due to sending a message.
+
+
+                        For example, the Zulip web application uses this field to decide whether
+
+                        to display a warning or notice suggesting to unmute the topic after
+
+                        sending a message to a muted channel. Such a notice would be confusing in
+
+                        the event that the act of sending the message had already resulted in the
+
+                        user automatically unmuting or following the topic in question.
+
+
+                        **Changes**: New in Zulip 8.0 (feature level 218).
+
+                        '
+                  example:
+                    msg: ''
+                    id: 42
+                    automatic_new_visibility_policy: 2
+                    result: success
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/NonExistingChannelNameError'
+                  - description: 'A typical failed JSON response for when a channel message is sent to a channel
+
+                      that does not exist:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: Invalid email 'eeshan@zulip.com'
+                      result: error
+                    description: 'A typical failed JSON response for when a direct message is sent to a user
+
+                      that does not exist:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: You do not have permission to use channel wildcard mentions in this channel.
+                      code: STREAM_WILDCARD_MENTION_NOT_ALLOWED
+                    description: 'An example JSON error response for when the message was rejected because
+
+                      the message contains a stream wildcard mention, but the user doesn''t have
+
+                      permission to use such a mention in this channel as the user is not present
+
+                      in `can_mention_many_users_group` and the channel contains a large number
+
+                      of subscribers.
+
+
+                      **Changes**: New in Zulip 8.0 (feature level 229). Previously, this
+
+                      error returned the `"BAD_REQUEST"` code.
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: You do not have permission to use topic wildcard mentions in this topic.
+                      code: TOPIC_WILDCARD_MENTION_NOT_ALLOWED
+                    description: 'An example JSON error response for when the message was rejected because
+
+                      the message contains a topic wildcard mention, but the user doesn''t have
+
+                      permission to use such a mention in this topic as the user is not present
+
+                      in `can_mention_many_users_group` and the topic contains a large number
+
+                      of participants.
+
+
+                      **Changes**: New in Zulip 8.0 (feature level 229). Previously,
+
+                      `wildcard_mention_policy` was not enforced for topic mentions.
+
+                      '
+  /messages/{message_id}/history:
+    get:
+      operationId: get-message-history
+      summary: Get a message's edit history
+      tags:
+      - messages
+      description: 'Fetch the message edit history of a previously edited message.
+
+
+        Note that edit history may be disabled in some organizations; see the
+
+        [Zulip help center documentation on editing messages][edit-settings].
+
+
+        [edit-settings]: /help/view-a-messages-edit-history
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      - name: allow_empty_topic_name
+        in: query
+        description: 'Whether the topic names i.e. `topic` and `prev_topic` fields in
+
+          the `message_history` objects returned can be empty string.
+
+
+          If `false`, the value of `realm_empty_topic_display_name`
+
+          found in the [`POST /register`](/api/register-queue) response is
+
+          returned replacing the empty string as the topic name.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 334).
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      x-response-description: 'Please note that the original message''s snapshot only contains the fields
+
+        `topic`, `content`, `rendered_content`, `timestamp` and `user_id`. This
+
+        snapshot will be the only one present if the message has never been edited.
+
+
+        Also note that each snapshot object will only contain additional data for the
+
+        modified fields for that particular edit (e.g. if only the topic or channel
+
+        was edited, `prev_content`, `prev_rendered_content`, and
+
+        `content_html_diff` will not appear).
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    message_history:
+                      type: array
+                      items:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          topic:
+                            type: string
+                            description: 'The topic of the message immediately
+
+                              after this edit event.
+
+                              '
+                          prev_topic:
+                            type: string
+                            description: 'Only present if message''s topic was edited.
+
+
+                              The topic of the message immediately
+
+                              prior to this edit event.
+
+                              '
+                          stream:
+                            type: integer
+                            description: 'Only present if message''s channel was edited.
+
+
+                              The ID of the channel containing the message
+
+                              immediately after this edit event.
+
+
+                              **Changes**: New in Zulip 5.0 (feature level 118).
+
+                              '
+                          prev_stream:
+                            type: integer
+                            description: 'Only present if message''s channel was edited.
+
+
+                              The ID of the channel containing the message immediately
+
+                              prior to this edit event.
+
+
+                              **Changes**: New in Zulip 3.0 (feature level 1).
+
+                              '
+                          content:
+                            type: string
+                            description: 'The raw [Zulip-flavored Markdown](/help/format-your-message-using-markdown) content of the message
+
+                              immediately after this edit event.
+
+                              '
+                          rendered_content:
+                            type: string
+                            description: 'The rendered HTML representation of `content`.
+
+
+                              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+                              '
+                          prev_content:
+                            type: string
+                            description: 'Only present if message''s content was edited.
+
+
+                              The raw [Zulip-flavored Markdown](/help/format-your-message-using-markdown) content of the message immediately
+
+                              prior to this edit event.
+
+                              '
+                          prev_rendered_content:
+                            type: string
+                            description: 'Only present if message''s content was edited.
+
+
+                              The rendered HTML representation of `prev_content`.
+
+
+                              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+                              '
+                          user_id:
+                            type: integer
+                            nullable: true
+                            description: 'The ID of the user that made the edit.
+
+
+                              Will be `null` only for edit history
+
+                              events predating March 2017.
+
+
+                              Clients can display edit history events where this
+
+                              is `null` as modified by either the sender (for content
+
+                              edits) or an unknown user (for topic edits).
+
+                              '
+                          content_html_diff:
+                            type: string
+                            description: 'Only present if message''s content was edited.
+
+
+                              An HTML diff between this version of the message
+
+                              and the previous one.
+
+                              '
+                          timestamp:
+                            type: integer
+                            description: 'The UNIX timestamp for this edit.
+
+                              '
+                      description: 'A chronologically sorted, oldest to newest, array
+
+                        of `snapshot` objects, each one with the values of
+
+                        the message after the edit.
+
+                        '
+                  example:
+                    message_history:
+                    - content: Hello!
+                      topic: party at my houz
+                      rendered_content: <p>Hello!</p>
+                      timestamp: 1530129122
+                      user_id: 5
+                    - topic: party at my house
+                      content: Howdy!
+                      prev_content: Hello!
+                      rendered_content: <p>Howdy!</p>
+                      user_id: 5
+                      prev_rendered_content: <p>Hello!</p>
+                      content_html_diff: <div><p><span class="highlight_text_inserted">Howdy!</span></p> <p><span class="highlight_text_deleted">Hello!</span></p></div>
+                      prev_topic: party at my houz
+                      timestamp: 1530129134
+                    msg: ''
+                    result: success
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidMessageError'
+                - description: 'An example JSON response for when the specified message does not exist:
+
+                    '
+  /messages/flags:
+    post:
+      operationId: update-message-flags
+      summary: Update personal message flags
+      tags:
+      - messages
+      description: 'Add or remove personal message flags like `read` and `starred`
+
+        on a collection of message IDs.
+
+
+        See also the endpoint for [updating flags on a range of
+
+        messages within a narrow](/api/update-message-flags-for-narrow).
+
+        '
+      x-parameter-description: "## Available flags\n<div>\n    <table>\n        <thead>\n            <tr>\n                <th style=\"width:30%\">Flag</th>\n                <th style=\"width:70%\">Purpose</th>\n            </tr>\n        </thead>\n        <tbody>\n            <tr>\n                <td><code>read</code></td>\n                <td>\n                    Whether the user has read the message.  Messages\n                    start out unread (except for messages the user\n                    themself sent using a non-API client) and can\n                    later be marked as read.\n                </td>\n            </tr>\n            <tr>\n                <td><code>starred</code></td>\n                <td>Whether the user has <a href=\"/help/star-a-message\">starred this message</a>.</td>\n            </tr>\n            <tr>\n                <td><code>collapsed</code></td>\n                <td>Whether the user has <a href=\"/help/collapse-a-message\">collapsed this message</a>.</td>\n            </tr>\n            <tr>\n                <td><code>mentioned</code></td>\n                <td>\n                    Whether the current user\n                    <a href=\"/help/mention-a-user-or-group\">was mentioned</a>\n                    by this message, either directly or via a user\n                    group. Cannot be changed by the user directly, but\n                    can change if the message is edited to add/remove\n                    a mention of the current user.\n                </td>\n            </tr>\n            <tr>\n                <td><code>stream_wildcard_mentioned</code></td>\n                <td>\n                    Whether this message contained a\n                    <a href=\"/help/mention-a-user-or-group#mention-everyone-on-a-channel\">channel wildcard mention</a>\n                    (like @**all**). Cannot be changed by the user directly, but\n                    can change if the message is edited to add/remove\n                    a channel wildcard mention.\n                    <br /><br />\n                    <b>Changes</b>: New in Zulip 8.0 (feature level 224).\n                </td>\n            </tr>\n            <tr>\n                <td><code>topic_wildcard_mentioned</code></td>\n                <td>\n                    Whether this message contained a\n                    <a href=\"/help/mention-a-user-or-group#mention-all-topic-participants\">topic wildcard mention</a>\n                    (@**topic**).\n                    Cannot be changed by the user directly, but can change if\n                    the message is edited to add/remove a topic wildcard mention.\n                    <br /><br />\n                    <b>Changes</b>: New in Zulip 8.0 (feature level 224).\n                </td>\n            <tr>\n                <td><code>has_alert_word</code></td>\n                <td>\n                    Whether the message contains any of the current user's\n                    <a href=\"/help/dm-mention-alert-notifications#alert-words\">configured alert words</a>.\n                    Cannot be changed by the user directly, but\n                    can change if the message is edited to add/remove\n                    one of the current user's alert words.\n                </td>\n            </tr>\n            <tr>\n                <td><code>historical</code></td>\n                <td>\n                    Is <code>true</code> for messages that the user did not receive\n                    at the time they were sent but later was added to\n                    the user's history (e.g. because they starred or\n                    reacted to a message sent to a public channel\n                    before they subscribed to that channel). Cannot be\n                    changed by the user directly.\n                </td>\n            </tr>\n            <tr>\n                <td><code>wildcard_mentioned</code></td>\n                <td>\n                    Whether this message contained either a\n                    <a href=\"/help/mention-a-user-or-group#mention-everyone-on-a-channel\">channel wildcard mention</a>\n                    (like @**all**) or a\n                    <a href=\"/help/mention-a-user-or-group#mention-all-topic-participants\">topic wildcard mention</a>\n                    (@**topic**). Cannot be changed by the user directly, but can change if\n                    the message is edited to add/remove a channel and/or topic wildcard\n                    mention.\n                    <br /><br />\n                    <b>Changes</b>: Deprecated in Zulip 8.0 (feature level 224), in favor of\n                    the <code>stream_wildcard_mentioned</code> and\n                    <code>topic_wildcard_mentioned</code> flags. The\n                    <code>wildcard_mentioned</code> flag exists for backwards compatibility\n                    with older clients and equals\n                    <code>stream_wildcard_mentioned || topic_wildcard_mentioned</code>.\n                    Clients supporting older server versions should treat this field as a\n                    previous name for the <code>stream_wildcard_mentioned</code> flag as\n                    topic wildcard mentions were not available prior to this feature level.\n                </td>\n            </tr>\n        </tbody>\n    </table>\n</div>\n"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                messages:
+                  description: 'An array containing the IDs of the target messages.
+
+                    '
+                  type: array
+                  items:
+                    type: integer
+                  example:
+                  - 4
+                  - 8
+                  - 15
+                op:
+                  description: 'Whether to `add` the flag or `remove` it.
+
+                    '
+                  type: string
+                  enum:
+                  - add
+                  - remove
+                  example: add
+                flag:
+                  description: 'The flag that should be added/removed.
+
+                    '
+                  type: string
+                  example: read
+              required:
+              - messages
+              - op
+              - flag
+            encoding:
+              messages:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    messages:
+                      type: array
+                      items:
+                        type: integer
+                      description: 'An array with the IDs of the modified messages.
+
+                        '
+                    ignored_because_not_subscribed_channels:
+                      type: array
+                      items:
+                        type: integer
+                      description: 'Only present if the flag is `read` and the operation is `remove`.
+
+
+                        Zulip has an invariant that all unread messages must be in channels
+
+                        the user is subscribed to. This field will contain a list of the
+
+                        channels whose messages were skipped to mark as unread because the
+
+                        user is not subscribed to them.
+
+
+                        **Changes**: New in Zulip 10.0 (feature level 355).
+
+                        '
+                  example:
+                    msg: ''
+                    messages:
+                    - 4
+                    - 18
+                    - 15
+                    ignored_because_not_subscribed_channels:
+                    - 12
+                    - 13
+                    - 9
+                    result: success
+  /messages/flags/narrow:
+    post:
+      operationId: update-message-flags-for-narrow
+      summary: Update personal message flags for narrow
+      tags:
+      - messages
+      description: 'Add or remove personal message flags like `read` and `starred`
+
+        on a range of messages within a narrow.
+
+
+        See also [the endpoint for updating flags on specific message
+
+        IDs](/api/update-message-flags).
+
+
+        **Changes**: New in Zulip 6.0 (feature level 155).
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - include_anchor
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                anchor:
+                  allOf:
+                  - $ref: '#/components/schemas/Anchor'
+                  - description: "Integer message ID to anchor updating of flags. Supports special\nstring values for when the client wants the server to compute the anchor\nto use:\n\n- `newest`: The most recent message.\n- `oldest`: The oldest message.\n- `first_unread`: The oldest unread message matching the\n  query, if any; otherwise, the most recent message.\n"
+                    example: '43'
+                include_anchor:
+                  description: 'Whether a message with the specified ID matching the narrow
+
+                    should be included in the update range.
+
+                    '
+                  type: boolean
+                  default: true
+                  example: false
+                num_before:
+                  description: 'Limit the number of messages preceding the anchor in the
+
+                    update range. The server may decrease this to bound
+
+                    transaction sizes.
+
+                    '
+                  type: integer
+                  minimum: 0
+                  example: 4
+                num_after:
+                  description: 'Limit the number of messages following the anchor in the
+
+                    update range. The server may decrease this to bound
+
+                    transaction sizes.
+
+                    '
+                  type: integer
+                  minimum: 0
+                  example: 8
+                narrow:
+                  description: 'The narrow you want update flags within. See how to
+
+                    [construct a narrow](/api/construct-narrow).
+
+
+                    Note that, when adding the `read` flag to messages, clients should
+
+                    consider including a narrow with the `is:unread` filter as an
+
+                    optimization. Including that filter takes advantage of the fact that
+
+                    the server has a database index for unread messages.
+
+
+                    **Changes**: See [changes section](/api/construct-narrow#changes)
+
+                    of search/narrow filter documentation.
+
+                    '
+                  type: array
+                  items:
+                    oneOf:
+                    - type: object
+                      required:
+                      - operator
+                      - operand
+                      additionalProperties: false
+                      properties:
+                        operator:
+                          type: string
+                        operand:
+                          oneOf:
+                          - type: string
+                          - type: integer
+                          - type: array
+                            items:
+                              type: integer
+                        negated:
+                          type: boolean
+                    - type: array
+                      items:
+                        type: string
+                      minItems: 2
+                      maxItems: 2
+                  default: []
+                  example:
+                  - operand: Denmark
+                    operator: channel
+                op:
+                  description: 'Whether to `add` the flag or `remove` it.
+
+                    '
+                  type: string
+                  enum:
+                  - add
+                  - remove
+                  example: add
+                flag:
+                  description: 'The flag that should be added/removed. See [available
+
+                    flags](/api/update-message-flags#available-flags).
+
+                    '
+                  type: string
+                  example: read
+              required:
+              - anchor
+              - num_before
+              - num_after
+              - narrow
+              - op
+              - flag
+            encoding:
+              include_anchor:
+                contentType: application/json
+              num_before:
+                contentType: application/json
+              num_after:
+                contentType: application/json
+              narrow:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  required:
+                  - processed_count
+                  - updated_count
+                  - first_processed_id
+                  - last_processed_id
+                  - found_oldest
+                  - found_newest
+                  properties:
+                    result: {}
+                    msg: {}
+                    processed_count:
+                      type: integer
+                      description: 'The number of messages that were within the
+
+                        update range (at most `num_before + 1 +
+
+                        num_after`).
+
+                        '
+                    updated_count:
+                      type: integer
+                      description: 'The number of messages where the flag''s
+
+                        value was changed (at most
+
+                        `processed_count`).
+
+                        '
+                    first_processed_id:
+                      type: integer
+                      nullable: true
+                      description: 'The ID of the oldest message within the
+
+                        update range, or `null` if the range was
+
+                        empty.
+
+                        '
+                    last_processed_id:
+                      type: integer
+                      nullable: true
+                      description: 'The ID of the newest message within the
+
+                        update range, or `null` if the range was
+
+                        empty.
+
+                        '
+                    found_oldest:
+                      type: boolean
+                      description: 'Whether the update range reached backward
+
+                        far enough to include very oldest message
+
+                        matching the narrow (used by clients doing a
+
+                        bulk update to decide whether to issue
+
+                        another request anchored at
+
+                        `first_processed_id`).
+
+                        '
+                    found_newest:
+                      type: boolean
+                      description: 'Whether the update range reached forward far
+
+                        enough to include very oldest message
+
+                        matching the narrow (used by clients doing a
+
+                        bulk update to decide whether to issue
+
+                        another request anchored at
+
+                        `last_processed_id`).
+
+                        '
+                    ignored_because_not_subscribed_channels:
+                      type: array
+                      items:
+                        type: integer
+                      description: 'Only present if the flag is `read` and the operation is `remove`.
+
+
+                        Zulip has an invariant that all unread messages must be in channels
+
+                        the user is subscribed to. This field will contain a list of the
+
+                        channels whose messages were skipped to mark as unread because the
+
+                        user is not subscribed to them.
+
+
+                        **Changes**: New in Zulip 10.0 (feature level 355).
+
+                        '
+                  example:
+                    result: success
+                    msg: ''
+                    processed_count: 11
+                    updated_count: 8
+                    first_processed_id: 35
+                    last_processed_id: 55
+                    found_oldest: false
+                    found_newest: true
+                    ignored_because_not_subscribed_channels:
+                    - 12
+                    - 13
+                    - 9
+  /messages/render:
+    post:
+      operationId: render-message
+      summary: Render a message
+      tags:
+      - messages
+      description: 'Render a message to HTML.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                content:
+                  $ref: '#/components/schemas/RequiredContent'
+              required:
+              - content
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    rendered:
+                      type: string
+                      description: 'The rendered HTML.
+
+                        '
+                  example:
+                    msg: ''
+                    rendered: <p><strong>foo</strong></p>
+                    result: success
+  /messages/{message_id}/reactions:
+    post:
+      operationId: add-reaction
+      summary: Add an emoji reaction
+      tags:
+      - messages
+      description: 'Add an [emoji reaction](/help/emoji-reactions) to a message.
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - emoji_code
+            - reaction_type
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                emoji_name:
+                  description: 'The target emoji''s human-readable name.
+
+
+                    To find an emoji''s name, hover over a message to reveal
+
+                    three icons on the right, then click the smiley face icon.
+
+                    Images of available reaction emojis appear. Hover over the
+
+                    emoji you want, and note that emoji''s text name.
+
+                    '
+                  type: string
+                  example: octopus
+                emoji_code:
+                  $ref: '#/components/schemas/EmojiCode'
+                reaction_type:
+                  $ref: '#/components/schemas/ReactionType'
+              required:
+              - emoji_name
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: Invalid emoji code
+                      code: BAD_REQUEST
+                    description: 'An example JSON error response for when the emoji code is invalid:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: Reaction already exists.
+                      code: REACTION_ALREADY_EXISTS
+                    description: 'An example JSON error response for when the reaction already exists.
+
+
+                      **Changes**: New in Zulip 8.0 (feature level 193). Previously, this
+
+                      error returned the `"BAD_REQUEST"` code.
+
+                      '
+    delete:
+      operationId: remove-reaction
+      summary: Remove an emoji reaction
+      tags:
+      - messages
+      description: 'Remove an [emoji reaction](/help/emoji-reactions) from a message.
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - emoji_code
+            - reaction_type
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                emoji_name:
+                  description: 'The target emoji''s human-readable name.
+
+
+                    To find an emoji''s name, hover over a message to reveal
+
+                    three icons on the right, then click the smiley face icon.
+
+                    Images of available reaction emojis appear. Hover over the
+
+                    emoji you want, and note that emoji''s text name.
+
+                    '
+                  type: string
+                  example: octopus
+                emoji_code:
+                  $ref: '#/components/schemas/EmojiCode'
+                reaction_type:
+                  $ref: '#/components/schemas/ReactionType'
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: Invalid emoji code
+                      code: BAD_REQUEST
+                    description: 'An example JSON error response for when the emoji code is invalid:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: Reaction doesn't exist.
+                      code: REACTION_DOES_NOT_EXIST
+                    description: 'An example JSON error response for when the reaction does not exist.
+
+
+                      **Changes**: New in Zulip 8.0 (feature level 193). Previously, this
+
+                      error returned the `"BAD_REQUEST"` code.
+
+                      '
+  /messages/{message_id}/read_receipts:
+    get:
+      operationId: get-read-receipts
+      summary: Get a message's read receipts
+      tags:
+      - messages
+      description: 'Returns a list containing the IDs for all users who have
+
+        marked the message as read (and whose privacy settings allow
+
+        sharing that information).
+
+
+        The list of users IDs will include any bots who have marked
+
+        the message as read via the API (providing a way for bots to
+
+        indicate whether they have processed a message successfully in
+
+        a way that can be easily inspected in a Zulip client). Bots
+
+        for which this behavior is not desired may disable the
+
+        `send_read_receipts` setting via the API.
+
+
+        It will never contain the message''s sender.
+
+
+        **Changes**: New in Zulip 6.0 (feature level 137).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    user_ids:
+                      type: array
+                      description: 'An array of IDs of users who have marked the target message as
+
+                        read and whose read status is available to the current user.
+
+
+                        The IDs of users who have disabled sending read receipts
+
+                        (`"send_read_receipts": false`) will never appear in the response,
+
+                        nor will the message''s sender. Additionally, the IDs of any users
+
+                        who have been muted by the current user or who have muted the
+
+                        current user will not be included in the response.
+
+
+                        The current user''s ID will appear if they have marked the target
+
+                        message as read.
+
+
+                        **Changes**: Prior to Zulip 6.0 (feature level 143), the IDs of
+
+                        users who have been muted by or have muted the current user were
+
+                        included in the response.
+
+                        '
+                      items:
+                        type: integer
+                  example:
+                    msg: ''
+                    result: success
+                    user_ids:
+                    - 3
+                    - 7
+                    - 9
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidMessageError'
+                - description: 'A typical JSON response when attempting to access read receipts for
+
+                    a message ID that either does not exist or is not accessible to the
+
+                    current user:
+
+                    '
+  /messages/matches_narrow:
+    get:
+      operationId: check-messages-match-narrow
+      summary: Check if messages match a narrow
+      tags:
+      - messages
+      description: 'Check whether a set of messages match a [narrow](/api/construct-narrow).
+
+
+        For many common narrows (e.g. a topic), clients can write an efficient
+
+        client-side check to determine whether a newly arrived message belongs
+
+        in the view.
+
+
+        This endpoint is designed to allow clients to handle more complex narrows
+
+        for which the client does not (or in the case of full-text search, cannot)
+
+        implement this check.
+
+
+        The format of the `match_subject` and `match_content` objects is designed
+
+        to match those returned by the [`GET /messages`](/api/get-messages#response)
+
+        endpoint, so that a client can splice these fields into a `message` object
+
+        received from [`GET /events`](/api/get-events#message) and end up with an
+
+        extended message object identical to how a [`GET /messages`](/api/get-messages)
+
+        request for the current narrow would have returned the message.
+
+        '
+      parameters:
+      - name: msg_ids
+        in: query
+        description: List of IDs for the messages to check.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+            example:
+            - 31
+            - 32
+        required: true
+      - name: narrow
+        in: query
+        description: 'A structure defining the narrow to check against. See how to
+
+          [construct a narrow](/api/construct-narrow).
+
+
+          **Changes**: See [changes section](/api/construct-narrow#changes)
+
+          of search/narrow filter documentation.
+
+          '
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+            example:
+            - operator: has
+              operand: link
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    messages:
+                      type: object
+                      description: 'A dictionary with a key for each queried message that matches the narrow,
+
+                        with message IDs as keys and search rendering data as values.
+
+                        '
+                      additionalProperties:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          match_content:
+                            type: string
+                            description: 'HTML content of a queried message that matches the narrow. If the
+
+                              narrow is a search narrow, `<span class="highlight">` elements
+
+                              will be included, wrapping the matches for the search keywords.
+
+                              '
+                          match_subject:
+                            type: string
+                            description: 'HTML-escaped topic of a queried message that matches the narrow. If the
+
+                              narrow is a search narrow, `<span class="highlight">` elements
+
+                              will be included wrapping the matches for the search keywords.
+
+                              '
+                        description: '`message_id`: The ID of the message that matches the narrow. No record will be returned
+
+                          for queried messages that do not match the narrow.
+
+                          '
+                  example:
+                    result: success
+                    msg: ''
+                    messages:
+                      '31':
+                        match_content: <p><a href="http://foo.com" target="_blank" title="http://foo.com">http://foo.com</a></p>
+                        match_subject: test_topic
+  /messages/{message_id}:
+    get:
+      operationId: get-message
+      summary: Fetch a single message
+      tags:
+      - messages
+      description: 'Given a message ID, return the message object.
+
+
+        Additionally, a `raw_content` field is included. This field is
+
+        useful for clients that primarily work with HTML-rendered
+
+        messages but might need to occasionally fetch the message''s
+
+        raw [Zulip-flavored Markdown](/help/format-your-message-using-markdown) (e.g. for [view
+
+        source](/help/view-the-markdown-source-of-a-message) or
+
+        prefilling a message edit textarea).
+
+
+        **Changes**: Before Zulip 5.0 (feature level 120), this
+
+        endpoint only returned the `raw_content` field.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      - name: apply_markdown
+        in: query
+        description: 'If `true`, message content is returned in the rendered HTML
+
+          format. If `false`, message content is returned in the raw
+
+          [Zulip-flavored Markdown format](/help/format-your-message-using-markdown) text that user entered.
+
+
+          **Changes**: New in Zulip 5.0 (feature level 120).
+
+          '
+        schema:
+          type: boolean
+          default: true
+        example: false
+      - name: allow_empty_topic_name
+        in: query
+        description: 'Whether the client supports processing the empty string as a topic in the
+
+          topic name fields in the returned data, including in returned edit_history data.
+
+
+          If `false`, the server will use the value of `realm_empty_topic_display_name`
+
+          found in the [`POST /register`](/api/register-queue) response instead of empty string
+
+          to represent the empty string topic in its response.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 334). Previously, the empty string
+
+          was not a valid topic.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    raw_content:
+                      type: string
+                      deprecated: true
+                      description: 'The raw Markdown content of the message.
+
+
+                        See the help center article on [message formatting](/help/format-your-message-using-markdown) for details on Zulip-flavored Markdown.
+
+
+                        **Deprecated** and to be removed once no longer required for
+
+                        legacy clients. Modern clients should prefer passing
+
+                        `"apply_markdown": false` to request raw message content.
+
+                        '
+                    message:
+                      description: 'An object containing details of the message.
+
+
+                        **Changes**: New in Zulip 5.0 (feature level 120).
+
+                        '
+                      allOf:
+                      - $ref: '#/components/schemas/MessagesBase'
+                      - additionalProperties: false
+                        properties:
+                          avatar_url:
+                            nullable: true
+                          client: {}
+                          content: {}
+                          content_type: {}
+                          display_recipient: {}
+                          edit_history: {}
+                          id: {}
+                          is_me_message: {}
+                          last_edit_timestamp: {}
+                          last_moved_timestamp: {}
+                          reactions: {}
+                          recipient_id: {}
+                          sender_email: {}
+                          sender_full_name: {}
+                          sender_id: {}
+                          sender_realm_str: {}
+                          stream_id: {}
+                          subject: {}
+                          submessages: {}
+                          timestamp: {}
+                          topic_links: {}
+                          type: {}
+                          flags:
+                            type: array
+                            description: 'The user''s [message flags][message-flags] for the message.
+
+
+                              **Changes**: In Zulip 8.0 (feature level 224), the `wildcard_mentioned`
+
+                              flag was deprecated in favor of the `stream_wildcard_mentioned` and
+
+                              `topic_wildcard_mentioned` flags. The `wildcard_mentioned` flag exists
+
+                              for backwards compatibility with older clients and equals
+
+                              `stream_wildcard_mentioned || topic_wildcard_mentioned`. Clients
+
+                              supporting older server versions should treat this field as a previous
+
+                              name for the `stream_wildcard_mentioned` flag as topic wildcard mentions
+
+                              were not available prior to this feature level.
+
+
+                              [message-flags]: /api/update-message-flags#available-flags
+
+                              '
+                            items:
+                              type: string
+                  example:
+                    raw_content: '**Don''t** forget your towel!'
+                    result: success
+                    msg: ''
+                    message:
+                      subject: ''
+                      sender_realm_str: zulip
+                      type: private
+                      content: <p>Security experts agree that relational algorithms are an interesting new topic in the field of networking, and scholars concur.</p>
+                      flags:
+                      - read
+                      id: 16
+                      display_recipient:
+                      - id: 4
+                        is_mirror_dummy: false
+                        email: hamlet@zulip.com
+                        full_name: King Hamlet
+                      - id: 5
+                        is_mirror_dummy: false
+                        email: iago@zulip.com
+                        full_name: Iago
+                      - id: 8
+                        is_mirror_dummy: false
+                        email: prospero@zulip.com
+                        full_name: Prospero from The Tempest
+                      content_type: text/html
+                      is_me_message: false
+                      timestamp: 1527921326
+                      sender_id: 4
+                      sender_full_name: King Hamlet
+                      recipient_id: 27
+                      topic_links: []
+                      client: ZulipDataImport
+                      avatar_url: https://secure.gravatar.com/avatar/6d8cad0fd00256e7b40691d27ddfd466?d=identicon&version=1
+                      submessages: []
+                      sender_email: hamlet@zulip.com
+                      reactions: []
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidMessageError'
+                - description: 'An example JSON response for when the specified message does not exist or it
+
+                    is not visible to the user making the query (e.g. it was a direct message
+
+                    between two other users):
+
+                    '
+    patch:
+      operationId: update-message
+      summary: Edit a message
+      tags:
+      - messages
+      description: 'Update the content, topic, or channel of the message with the specified
+
+        ID.
+
+
+        You can [resolve topics](/help/resolve-a-topic) by editing the topic to
+
+        `✔ {original_topic}` with the `propagate_mode` parameter set to
+
+        `"change_all"`.
+
+
+        See [configuring message editing][config-message-editing] for detailed
+
+        documentation on when users are allowed to edit message content, and
+
+        [restricting moving messages][restrict-move-messages] for detailed
+
+        documentation on when users are allowed to change a message''s topic
+
+        and/or channel.
+
+
+        The relevant realm settings in the API that are related to the above
+
+        linked documentation on when users are allowed to update messages are:
+
+
+        - `allow_message_editing`
+
+        - `can_resolve_topics_group`
+
+        - `can_move_messages_between_channels_group`
+
+        - `can_move_messages_between_topics_group`
+
+        - `message_content_edit_limit_seconds`
+
+        - `move_messages_within_stream_limit_seconds`
+
+        - `move_messages_between_streams_limit_seconds`
+
+
+        More details about these realm settings can be found in the
+
+        [`POST /register`](/api/register-queue) response or in the documentation
+
+        of the [`realm op: update_dict`](/api/get-events#realm-update_dict)
+
+        event in [`GET /events`](/api/get-events).
+
+
+        **Changes**: Prior to Zulip 10.0 (feature level 367), the permission for
+
+        resolving a topic was managed by `can_move_messages_between_topics_group`.
+
+        As of this feature level, users belonging to the `can_resolve_topics_group`
+
+        will have the permission to [resolve topics](/help/resolve-a-topic) in the organization.
+
+
+        In Zulip 10.0 (feature level 316), `edit_topic_policy`
+
+        was removed and replaced by `can_move_messages_between_topics_group`
+
+        realm setting.
+
+
+        **Changes**: In Zulip 10.0 (feature level 310), `move_messages_between_streams_policy`
+
+        was removed and replaced by `can_move_messages_between_channels_group`
+
+        realm setting.
+
+
+        Prior to Zulip 7.0 (feature level 172), anyone could add a
+
+        topic to channel messages without a topic, regardless of the organization''s
+
+        [topic editing permissions](/help/restrict-moving-messages). As of this
+
+        feature level, messages without topics have the same restrictions for
+
+        topic edits as messages with topics.
+
+
+        Before Zulip 7.0 (feature level 172), by using the `change_all` value for
+
+        the `propagate_mode` parameter, users could move messages after the
+
+        organization''s configured time limits for changing a message''s topic or
+
+        channel had passed. As of this feature level, the server will [return an
+
+        error](/api/update-message#response) with `"code":
+
+        "MOVE_MESSAGES_TIME_LIMIT_EXCEEDED"` if users, other than organization
+
+        administrators or moderators, try to move messages after these time
+
+        limits have passed.
+
+
+        Before Zulip 7.0 (feature level 162), users who were not administrators or
+
+        moderators could only edit topics if the target message was sent within the
+
+        last 3 days. As of this feature level, that time limit is now controlled by
+
+        the realm setting `move_messages_within_stream_limit_seconds`. Also at this
+
+        feature level, a similar time limit for moving messages between channels was
+
+        added, controlled by the realm setting
+
+        `move_messages_between_streams_limit_seconds`. Previously, all users who
+
+        had permission to move messages between channels did not have any time limit
+
+        restrictions when doing so.
+
+
+        Before Zulip 7.0 (feature level 159), editing channels and topics of messages
+
+        was forbidden if the realm setting for `allow_message_editing` was `false`,
+
+        regardless of an organization''s configuration for the realm settings
+
+        `edit_topic_policy` or `move_messages_between_streams_policy`.
+
+
+        Before Zulip 7.0 (feature level 159), message senders were allowed to edit
+
+        the topic of their messages indefinitely.
+
+
+        In Zulip 5.0 (feature level 75), the `edit_topic_policy` realm setting
+
+        was added, replacing the `allow_community_topic_editing` boolean.
+
+
+        In Zulip 4.0 (feature level 56), the `move_messages_between_streams_policy`
+
+        realm setting was added.
+
+
+        [config-message-editing]: /help/restrict-message-editing-and-deletion
+
+        [restrict-move-messages]: /help/restrict-moving-messages
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - stream_id
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                topic:
+                  description: 'The topic to move the message(s) to, to request changing the topic.
+
+
+                    Clients should use the `max_topic_length` returned by the
+
+                    [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum topic length
+
+
+                    Should only be sent when changing the topic, and will throw an error
+
+                    if the target message is not a channel message.
+
+
+                    Note: When the value of `realm_empty_topic_display_name` found in
+
+                    the [POST /register](/api/register-queue) response is used for this
+
+                    parameter, it is interpreted as an empty string.
+
+
+                    When [topics are required](/help/require-topics), this parameter can''t
+
+                    be `"(no topic)"`, an empty string, or the value of `realm_empty_topic_display_name`.
+
+
+                    You can [resolve topics](/help/resolve-a-topic) by editing the topic to
+
+                    `✔ {original_topic}` with the `propagate_mode` parameter set to
+
+                    `"change_all"`. The empty string topic cannot be marked as resolved.
+
+
+                    **Changes**: Before Zulip 10.0 (feature level 334), empty string
+
+                    was not a valid topic name for channel messages.
+
+
+                    New in Zulip 2.0.0. Previous Zulip releases encoded this as `subject`,
+
+                    which is currently a deprecated alias.
+
+                    '
+                  type: string
+                  example: Castle
+                propagate_mode:
+                  description: 'Which message(s) should be edited:
+
+
+                    - `"change_later"`: The target message and all following messages.
+
+                    - `"change_one"`: Only the target message.
+
+                    - `"change_all"`: All messages in this topic.
+
+
+                    Only the default value of `"change_one"` is valid when editing
+
+                    only the content of a message.
+
+
+                    This parameter determines both which messages get moved and also whether
+
+                    clients that are currently narrowed to the topic containing the message
+
+                    should navigate or adjust their compose box recipient to point to the
+
+                    post-edit channel/topic.
+
+                    '
+                  type: string
+                  enum:
+                  - change_one
+                  - change_later
+                  - change_all
+                  default: change_one
+                  example: change_all
+                send_notification_to_old_thread:
+                  description: 'Whether to send an automated message to the old topic to
+
+                    notify users where the messages were moved to.
+
+
+                    **Changes**: Before Zulip 6.0 (feature level 152), this parameter
+
+                    had a default of `true` and was ignored unless the channel was changed.
+
+
+                    New in Zulip 3.0 (feature level 9).
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                send_notification_to_new_thread:
+                  description: 'Whether to send an automated message to the new topic to
+
+                    notify users where the messages came from.
+
+
+                    If the move is just [resolving/unresolving a topic](/help/resolve-a-topic),
+
+                    this parameter will not trigger an additional notification.
+
+
+                    **Changes**: Before Zulip 6.0 (feature level 152), this parameter
+
+                    was ignored unless the channel was changed.
+
+
+                    New in Zulip 3.0 (feature level 9).
+
+                    '
+                  type: boolean
+                  default: true
+                  example: true
+                content:
+                  $ref: '#/components/schemas/OptionalContent'
+                prev_content_sha256:
+                  description: 'An optional SHA-256 hash of the previous raw content of the message
+
+                    that the client has at the time of the request.
+
+
+                    If provided, the server will return an error if it does not match the
+
+                    SHA-256 hash of the message''s content stored in the database.
+
+
+                    Clients can use this feature to prevent races where multiple clients
+
+                    save conflicting edits to a message.
+
+
+                    **Changes**: New in Zulip 11.0 (feature level 379).
+
+                    '
+                  type: string
+                  example: 6ae8a75555209fd6c44157c0aed8016e763ff435a19cf186f76863140143ff72
+                stream_id:
+                  description: 'The channel ID to move the message(s) to, to request moving
+
+                    messages to another channel.
+
+
+                    Should only be sent when changing the channel, and will throw an error
+
+                    if the target message is not a channel message.
+
+
+                    Note that a message''s content and channel cannot be changed at the
+
+                    same time, so sending both `content` and `stream_id` parameters will
+
+                    throw an error.
+
+
+                    **Changes**: New in Zulip 3.0 (feature level 1).
+
+                    '
+                  type: integer
+                  example: 43
+            encoding:
+              send_notification_to_old_thread:
+                contentType: application/json
+              send_notification_to_new_thread:
+                contentType: application/json
+              stream_id:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    detached_uploads:
+                      type: array
+                      description: 'Details on all files uploaded by the acting user whose only references
+
+                        were removed when editing this message. Clients should ask the acting user
+
+                        if they wish to delete the uploaded files returned in this response,
+
+                        which might otherwise remain visible only in message edit history.
+
+
+                        Note that [access to message edit history][edit-history-access]
+
+                        is configurable; this detail may be important in presenting the
+
+                        question clearly to users.
+
+
+                        New in Zulip 10.0 (feature level 285).
+
+
+                        [edit-history-access]: /help/restrict-message-edit-history-access
+
+                        '
+                      items:
+                        $ref: '#/components/schemas/Attachment'
+                  example:
+                    result: success
+                    msg: ''
+                    detached_uploads:
+                    - id: 3
+                      name: 1253601-1.jpg
+                      path_id: 2/5d/BD5NRptFxPDKY3RUKwhhup8r/1253601-1.jpg
+                      size: 1339060
+                      create_time: 1687984706
+                      message_ids: []
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - properties:
+                      msg:
+                        enum:
+                        - Your organization has turned off message editing
+                        - You don't have permission to edit this message
+                        - The time limit for editing this message has past
+                        - Nothing to change
+                        - Topic can't be empty
+                    example:
+                      code: BAD_REQUEST
+                      msg: You don't have permission to edit this message
+                      result: error
+                    description: 'A typical JSON response for when one doesn''t have the permission to
+
+                      edit a particular message:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: MOVE_MESSAGES_TIME_LIMIT_EXCEEDED
+                      first_message_id_allowed_to_move: 123
+                      msg: You only have permission to move the 2/5 most recent messages in this topic.
+                      result: error
+                      total_messages_allowed_to_move: 2
+                      total_messages_in_topic: 5
+                    description: 'A special failed JSON response (`"code": "MOVE_MESSAGES_TIME_LIMIT_EXCEEDED"`)
+
+                      for when the user has permission to move
+
+                      the target message, but asked to move all messages in a topic
+
+                      (`"propagate_mode": "change_all"`) and the user does not have permission
+
+                      to move the entire topic.
+
+
+                      This happens when the topic contains some messages that are older than an
+
+                      applicable time limit for the requested topic move (see
+
+                      `move_messages_within_stream_limit_seconds` and/or
+
+                      `move_messages_between_streams_limit_seconds` in the
+
+                      [`POST /register`](/api/register-queue) response).
+
+
+                      The error response contains data on which portion of this topic the user has
+
+                      permission to move. `first_message_id_allowed_to_move` is the oldest message
+
+                      ID in this topic that the user has permission to move.
+
+                      There are `total_messages_in_topic` in the topic, but the user only has
+
+                      permission to move the (most recent) `total_messages_allowed_to_move`
+
+                      messages.
+
+
+                      Clients should support this error code with
+
+                      `"first_message_id_allowed_to_move": null` for forward compatibility
+
+                      with future server versions that may use this error code with other
+
+                      propagation modes where the user does not have permission to move any
+
+                      messages, or where the server did not calculate the total message counts
+
+                      noted above.
+
+
+                      Clients can either only present the error to the user or, if
+
+                      `first_message_id_allowed_to_move` is not `null`, prompt the user to adjust
+
+                      their query with the above information.
+
+
+                      If clients choose to present a prompt for this error code, they should
+
+                      recommend the option of cancelling and (manually) asking a moderator to
+
+                      move the entire topic, since that''s often a better experience than
+
+                      partially moving a topic. This API supports a client that wishes to allow
+
+                      the user to repeat the request with a `change_later` propagation mode and
+
+                      a target message ID of `first_message_id_allowed_to_move`, if the user
+
+                      desires to move only the portion of the topic that they can.
+
+
+                      Note that in a [private channel with protected history][private-channels],
+
+                      the Zulip security model requires that the above calculations only include
+
+                      messages the acting user has access to. So in the rare case of a user
+
+                      attempting to move a topic that started before the user joined a private
+
+                      channel with protected history, this API endpoint might move only the portion
+
+                      of a topic that they have access to, without this error or any confirmation
+
+                      dialog.
+
+
+                      **Changes**: New in Zulip 7.0 (feature level 172).
+
+
+                      [private-channels]: /help/channel-permissions#private-channels
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: You do not have permission to use channel wildcard mentions in this channel.
+                      code: STREAM_WILDCARD_MENTION_NOT_ALLOWED
+                    description: 'An example JSON error response for when the message was rejected because
+
+                      the message contains a stream wildcard mention, but the user doesn''t have
+
+                      permission to use such a mention in this channel as the user is not present
+
+                      in `can_mention_many_users_group` and the channel contains a large number
+
+                      of subscribers.
+
+
+                      **Changes**: New in Zulip 8.0 (feature level 229). Previously, this
+
+                      error returned the `"BAD_REQUEST"` code.
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      result: error
+                      msg: You do not have permission to use topic wildcard mentions in this topic.
+                      code: TOPIC_WILDCARD_MENTION_NOT_ALLOWED
+                    description: 'An example JSON error response for when the message was rejected because
+
+                      the message contains a topic wildcard mention, but the user doesn''t have
+
+                      permission to use such a mention in this topic as the user is not present
+
+                      in `can_mention_many_users_group` and the topic contains a large number
+
+                      of participants.
+
+
+                      **Changes**: New in Zulip 8.0 (feature level 229). Previously,
+
+                      `wildcard_mention_policy` was not enforced for topic mentions.
+
+                      '
+    delete:
+      operationId: delete-message
+      summary: Delete a message
+      tags:
+      - messages
+      description: 'Permanently delete a message.
+
+
+        This API corresponds to the [delete a message completely][delete-completely]
+
+        feature documented in the Zulip help center.
+
+
+        A user must be able to access the content of a message in order to delete it.
+
+        See [channel permissions](/help/channel-permissions) for more information
+
+        about content access for channel messages. For direct messages, the user
+
+        must have received or sent the direct message to have content access.
+
+
+        See [restricting message deletion](/help/restrict-message-editing-and-deletion)
+
+        for documentation on when users are allowed to delete messages.
+
+
+        The relevant realm settings in the API that are related to the above linked
+
+        documentation on when users are allowed to delete messages are:
+
+
+        - `realm_can_delete_any_message_group`
+
+        - `realm_can_delete_own_message_group`
+
+        - `realm_can_set_delete_message_policy_group`
+
+        - `realm_message_content_delete_limit_seconds`
+
+
+        The relevant per-channel permission settings in the API that are related to the
+
+        above linked documentation on when users are allowed to delete messages in a
+
+        specific channel are:
+
+
+        - `can_delete_any_message_group`
+
+        - `can_delete_own_message_group`
+
+
+        More details about these realm and channel settings can be found in the
+
+        [`POST /register`](/api/register-queue) response.
+
+
+        **Changes**: Prior to Zulip 10.0 (feature level 281), only organization
+
+        administrators had permission to permanently delete a message.
+
+
+        [delete-completely]: /help/delete-a-message#delete-a-message-completely
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/InvalidMessageError'
+                  - description: 'An example JSON response for when the specified message does not exist:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - description: 'An example JSON response for when the user making the query does not
+
+                      have permission to delete the message:
+
+                      '
+                    example:
+                      code: BAD_REQUEST
+                      msg: You don't have permission to delete this message
+                      result: error
+  /messages/{message_id}/report:
+    post:
+      operationId: report-message
+      summary: Report a message
+      tags:
+      - messages
+      description: 'Sends a notification to the organization''s [moderation request
+
+        channel](/help/enable-moderation-requests), if it is configured, that
+
+        reports the targeted message for [review and moderation](/help/report-a-message).
+
+
+        Clients should check the `moderation_request_channel` realm setting to
+
+        decide whether to show the option to report messages in the UI.
+
+
+        If the `report_type` parameter value is `"other"`, the `description`
+
+        parameter is required. Clients should also enforce and communicate this
+
+        behavior in the UI.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 382). This API builds on
+
+        the `moderation_request_channel` realm setting, which was added in
+
+        feature level 331.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/MessageId'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                report_type:
+                  description: 'The reason that best describes why the current user is reporting the
+
+                    target message for moderation.
+
+
+                    Must be one of the `key` values in the `server_report_message_types`
+
+                    field in the [`POST /register`](/api/register-queue) response.
+
+
+                    **Changes**: Prior to Zulip 12.0 (feature level 435), the allowed
+
+                    values for this parameter were limited to: `"harassment"`,
+
+                    `"inappropriate"`, `"norms"`, `"other"`, `"spam"`.
+
+                    '
+                  type: string
+                  example: harassment
+                description:
+                  description: 'A short description with additional context about why the current user
+
+                    is reporting the target message for moderation.
+
+
+                    Clients should limit this string to 1000 Unicode code points.
+
+
+                    If the `report_type` parameter is `"other"`, this parameter is required,
+
+                    and its value cannot be an empty string.
+
+                    '
+                  type: string
+                  example: This message insults and mocks Frodo, which is against the code of conduct.
+              required:
+              - report_type
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    result: error
+                    msg: Moderation request channel must be specified to enable message reporting.
+                    code: BAD_REQUEST
+                  description: 'An example JSON error response for when the organization''s moderation
+
+                    request channel is not configured:
+
+                    '
+  /user_uploads:
+    post:
+      operationId: upload-file
+      summary: Upload a file
+      tags:
+      - messages
+      description: '[Upload](/help/share-and-upload-files) a single file and get the corresponding URL.
+
+
+        Initially, only you will be able to access the link. To share the
+
+        uploaded file, you''ll need to [send a message][send-message]
+
+        containing the resulting link. Users who can already access the link
+
+        can reshare it with other users by sending additional Zulip messages
+
+        containing the link.
+
+
+        The maximum allowed file size is available in the `max_file_upload_size_mib`
+
+        field in the [`POST /register`](/api/register-queue) response. Note that
+
+        large files (25MB+) may fail to upload using this API endpoint due to
+
+        network-layer timeouts, depending on the quality of your connection to the
+
+        Zulip server.
+
+
+        For uploading larger files, `/api/v1/tus` is an endpoint implementing the
+
+        [`tus` resumable upload protocol](https://tus.io/protocols/resumable-upload),
+
+        which supports uploading arbitrarily large files limited only by the server''s
+
+        `max_file_upload_size_mib` (Configured via `MAX_FILE_UPLOAD_SIZE` in
+
+        `/etc/zulip/settings.py`). Clients which send authenticated credentials
+
+        (either via browser-based cookies, or API key via `Authorization` header) may
+
+        use this endpoint to upload files.
+
+
+        **Changes**: The `api/v1/tus` endpoint supporting resumable uploads was
+
+        introduced in Zulip 10.0 (feature level 296). Previously,
+
+        `max_file_upload_size_mib` was typically 25MB.
+
+
+        [uploaded-files]: /help/manage-your-uploaded-files
+
+        [send-message]: /api/send-message
+
+        '
+      x-parameter-description: 'As described above, the file to upload must be provided in the
+
+        request''s body.
+
+
+        [1]: https://zulip.readthedocs.io/en/latest/subsystems/settings.html#server-settings
+
+        '
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  format: binary
+                  example: /path/to/file
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    uri:
+                      type: string
+                      deprecated: true
+                      description: 'The URL of the uploaded file. Alias of `url`.
+
+
+                        **Changes**: Deprecated in Zulip 9.0 (feature level 272). The term
+
+                        "URI" is deprecated in [web standards](https://url.spec.whatwg.org/#goals).
+
+                        '
+                    url:
+                      type: string
+                      description: 'The URL of the uploaded file.
+
+
+                        **Changes**: New in Zulip 9.0 (feature level 272). Previously,
+
+                        this property was only available under the legacy `uri` name.
+
+                        '
+                    filename:
+                      type: string
+                      description: 'The filename that Zulip stored the upload as. This usually
+
+                        differs from the basename of the URL when HTML escaping is
+
+                        required to generate a valid URL.
+
+
+                        Clients generating a Markdown link to a newly uploaded file
+
+                        should do so by combining the `url` and `filename` fields in the
+
+                        response as follows: `[{filename}]({url})`, with care taken to
+
+                        clean `filename` of `[` and `]` characters that might break
+
+                        Markdown rendering.
+
+
+                        **Changes**: New in Zulip 10.0 (feature level 285).
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    uri: /user_uploads/1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt
+                    url: /user_uploads/1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt
+                    filename: zulip.txt
+  /thumbnail/status/{realm_id_str}/{filename}:
+    get:
+      operationId: check-thumbnail-status
+      summary: Check thumbnail status
+      tags:
+      - messages
+      description: 'Check whether a thumbnail exists for a specific file uploaded by a user.
+
+        This endpoint is intended to be polled by clients to determine when
+
+        thumbnail generation is complete.
+
+
+        **Changes**: New in Zulip 12.0 (feature level 479).
+
+        '
+      parameters:
+      - name: realm_id_str
+        in: path
+        description: 'The realm ID component of the file''s `path_id`. If the `path_id` is
+
+          `1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.
+
+          '
+        schema:
+          type: integer
+        example: 1
+        required: true
+      - name: filename
+        in: path
+        description: 'The file path component of the file''s `path_id` (everything
+
+          after the first `/`). If the `path_id` is
+
+          `1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`
+
+          would be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.
+
+          '
+        schema:
+          type: string
+        example: 4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    has_thumbnail:
+                      type: boolean
+                      description: 'A boolean indicating whether the thumbnail exists.
+
+                        '
+                  required:
+                  - has_thumbnail
+                  example:
+                    msg: ''
+                    result: success
+                    has_thumbnail: true
+  /user_uploads/{realm_id_str}/{filename}:
+    get:
+      operationId: get-file-temporary-url
+      summary: Get public temporary URL for an uploaded file
+      tags:
+      - messages
+      description: 'Get a temporary URL for access to an [uploaded file](/api/upload-file)
+
+        that doesn''t require authentication.
+
+
+        The `SIGNED_ACCESS_TOKEN_VALIDITY_IN_SECONDS` server setting controls
+
+        the valid length of time for temporary access, which generally is set
+
+        to a default of 60 seconds. Consumers of this API are expected to
+
+        immediately request the URL that it returns, and should not store it
+
+        in any way.
+
+
+        **Changes**: New in Zulip 3.0 (feature level 1).
+
+        '
+      parameters:
+      - name: realm_id_str
+        in: path
+        description: 'The realm ID component of the file''s `path_id`. If the `path_id` is
+
+          `1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.
+
+          '
+        schema:
+          type: integer
+        example: 1
+        required: true
+      - name: filename
+        in: path
+        description: 'The file path component of the file''s `path_id` (everything
+
+          after the first `/`). If the `path_id` is
+
+          `1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`
+
+          would be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.
+
+          '
+        schema:
+          type: string
+        example: 4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    url:
+                      type: string
+                      description: 'A temporary URL that can be used to access the uploaded file
+
+                        without Zulip''s normal API authentication.
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    url: /user_uploads/temporary/322F32632F39765378464E4C63306D3961396F4970705A4D74424565432F7A756C69702E7478743A316A5053616A3A3938625F44393446466D37357254315F4F414C425A4553464F6A55
+components:
+  schemas:
+    EmojiCode:
+      description: 'A unique identifier, defining the specific emoji codepoint requested,
+
+        within the namespace of the `reaction_type`.
+
+
+        For most API clients, you won''t need this, but it''s important
+
+        for Zulip apps to handle rare corner cases when
+
+        adding/removing votes on an emoji reaction added previously by
+
+        another user.
+
+
+        If the existing reaction was added when the Zulip server was
+
+        using a previous version of the emoji data mapping between
+
+        Unicode codepoints and human-readable names, sending the
+
+        `emoji_code` in the data for the original reaction allows the
+
+        Zulip server to correctly interpret your upvote as an upvote
+
+        rather than a reaction with a "different" emoji.
+
+        '
+      type: string
+      example: 1f419
+    InvalidMessageError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+        example:
+          msg: Invalid message(s)
+          code: BAD_REQUEST
+          result: error
+    MessagesBase:
+      type: object
+      description: 'Object containing details of the message.
+
+        '
+      properties:
+        avatar_url:
+          type: string
+          nullable: true
+          description: 'The URL of the message sender''s avatar. Can be `null` only if
+
+            the current user has access to the sender''s real email address
+
+            and `client_gravatar` was `true`.
+
+
+            If `null`, then the sender has not uploaded an avatar in Zulip,
+
+            and the client can compute the gravatar URL by hashing the
+
+            sender''s email address, which corresponds in this case to their
+
+            real email address.
+
+
+            **Changes**: Before Zulip 7.0 (feature level 163), access to a
+
+            user''s real email address was a realm-level setting. As of this
+
+            feature level, `email_address_visibility` is a user setting.
+
+            '
+        client:
+          type: string
+          description: 'A Zulip "client" string, describing what Zulip client
+
+            sent the message.
+
+            '
+        content:
+          type: string
+          description: 'The content/body of the message.
+
+            When `apply_markdown` is set, it will be in HTML format.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+            '
+        content_type:
+          type: string
+          description: 'The HTTP `content_type` for the message content. This
+
+            will be `text/html` or `text/x-markdown`, depending on
+
+            whether `apply_markdown` was set.
+
+
+            See the help center article on [message formatting](/help/format-your-message-using-markdown) for details on Zulip-flavored Markdown.
+
+            '
+        display_recipient:
+          description: 'Data on the recipient of the message. Will be one of the following:
+
+            '
+          oneOf:
+          - type: string
+            description: 'The name of the channel the message was received in.
+
+              '
+          - type: array
+            description: 'An array of dictionaries containing basic data on the users who
+
+              received the message.
+
+              '
+            items:
+              type: object
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                  description: 'ID of the user.
+
+                    '
+                email:
+                  type: string
+                  description: 'Zulip API email of the user.
+
+                    '
+                full_name:
+                  type: string
+                  description: 'Full name of the user.
+
+                    '
+                is_mirror_dummy:
+                  type: boolean
+                  description: 'Whether the user is a mirror dummy.
+
+                    '
+        edit_history:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              prev_content:
+                type: string
+                description: 'Only present if message''s content was edited.
+
+
+                  The content of the message immediately prior to this
+
+                  edit event.
+
+                  '
+              prev_rendered_content:
+                type: string
+                description: 'Only present if message''s content was edited.
+
+
+                  The rendered HTML representation of `prev_content`.
+
+
+                  See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+                  '
+              prev_stream:
+                type: integer
+                description: 'Only present if message''s channel was edited.
+
+
+                  The channel ID of the message immediately prior to this
+
+                  edit event.
+
+
+                  **Changes**: New in Zulip 3.0 (feature level 1).
+
+                  '
+              prev_topic:
+                type: string
+                description: 'Only present if message''s topic was edited.
+
+
+                  The topic of the message immediately prior to this
+
+                  edit event.
+
+
+                  **Changes**: New in Zulip 5.0 (feature level 118).
+
+                  Previously, this field was called `prev_subject`;
+
+                  clients are recommended to rename `prev_subject` to
+
+                  `prev_topic` if present for compatibility with
+
+                  older Zulip servers.
+
+                  '
+              stream:
+                type: integer
+                description: 'Only present if message''s channel was edited.
+
+
+                  The ID of the channel containing the message
+
+                  immediately after this edit event.
+
+
+                  **Changes**: New in Zulip 5.0 (feature level 118).
+
+                  '
+              timestamp:
+                type: integer
+                description: 'The UNIX timestamp for the edit.
+
+                  '
+              topic:
+                type: string
+                description: 'Only present if message''s topic was edited.
+
+
+                  The topic of the message immediately after this edit event.
+
+
+                  **Changes**: New in Zulip 5.0 (feature level 118).
+
+                  '
+              user_id:
+                type: integer
+                nullable: true
+                description: 'The ID of the user that made the edit.
+
+
+                  Will be `null` only for edit history
+
+                  events predating March 2017.
+
+
+                  Clients can display edit history events where this
+
+                  is `null` as modified by either the sender (for content
+
+                  edits) or an unknown user (for topic edits).
+
+                  '
+            required:
+            - user_id
+            - timestamp
+          description: 'An array of objects, with each object documenting the
+
+            changes in a previous edit made to the message,
+
+            ordered chronologically from most recent to least recent
+
+            edit.
+
+
+            Not present if the message has never been edited or moved,
+
+            or if [viewing message edit history][edit-history-access]
+
+            is not allowed in the organization.
+
+
+            Every object will contain `user_id` and `timestamp`.
+
+
+            The other fields are optional, and will be present or not
+
+            depending on whether the channel, topic, and/or message
+
+            content were modified in the edit event. For example, if
+
+            only the topic was edited, only `prev_topic` and `topic`
+
+            will be present in addition to `user_id` and `timestamp`.
+
+
+            [edit-history-access]: /help/restrict-message-edit-history-access
+
+
+            **Changes**: In Zulip 10.0 (feature level 284), removed the
+
+            `prev_rendered_content_version` field as it is an internal
+
+            server implementation detail not used by any client.
+
+            '
+        id:
+          type: integer
+          description: 'The unique message ID. Messages should always be
+
+            displayed sorted by ID.
+
+            '
+        is_me_message:
+          type: boolean
+          description: 'Whether the message is a [/me status message][status-messages]
+
+
+            [status-messages]: /help/format-your-message-using-markdown#status-messages
+
+            '
+        last_edit_timestamp:
+          type: integer
+          description: 'The UNIX timestamp for when the message''s content was last edited, in
+
+            UTC seconds.
+
+
+            Not present if the message''s content has never been edited.
+
+
+            Clients should use this field, rather than parsing the `edit_history`
+
+            array, to display an indicator that the message has been edited.
+
+
+            **Changes**: Prior to Zulip 10.0 (feature level 365), this was the
+
+            time when the message was last edited or moved.
+
+            '
+        last_moved_timestamp:
+          type: integer
+          description: 'The UNIX timestamp for when the message was last moved to a different
+
+            channel or topic, in UTC seconds.
+
+
+            Not present if the message has never been moved, or if the only topic
+
+            moves for the message are [resolving or unresolving](/help/resolve-a-topic)
+
+            the message''s topic.
+
+
+            Clients should use this field, rather than parsing the `edit_history`
+
+            array, to display an indicator that the message has been moved.
+
+
+            **Changes**: New in Zulip 10.0 (feature level 365). Previously,
+
+            parsing the `edit_history` array was required in order to correctly
+
+            display moved message indicators.
+
+            '
+        reactions:
+          type: array
+          description: 'Data on any [reactions](/help/emoji-reactions) to the message,
+
+            ordered chronologically from oldest to newest reaction.
+
+
+            **Changes**: In Zulip 10.0 (feature level 328), the deprecated `user`
+
+            object was removed from the data for each reaction. It contained the
+
+            following information about the user who added the reaction: `id`,
+
+            `email`, `full_name` and `is_mirror_dummy`.
+
+            '
+          items:
+            $ref: '#/components/schemas/EmojiReaction'
+        recipient_id:
+          type: integer
+          description: 'A unique ID for the set of users receiving the
+
+            message (either a channel or group of users). Useful primarily
+
+            for hashing.
+
+
+            **Changes**: In Zulip 12.0 (feature level 482),
+
+            `recipient_id` in 1:1 direct messages changed to a new
+
+            value; it still has the semantics of "the 1:1 conversation
+
+            with a specific user," but the raw value changed due to
+
+            internal changes.
+
+
+            Before Zulip 10.0 (feature level 327), `recipient_id`
+
+            was the same across all incoming 1:1 direct messages. Now, each
+
+            incoming message uniquely shares a `recipient_id` with outgoing
+
+            messages in the same conversation.
+
+            '
+        sender_email:
+          type: string
+          description: 'The Zulip API email address of the message''s sender.
+
+            '
+        sender_full_name:
+          type: string
+          description: 'The full name of the message''s sender.
+
+            '
+        sender_id:
+          type: integer
+          description: 'The user ID of the message''s sender.
+
+            '
+        sender_realm_str:
+          type: string
+          description: 'A string identifier for the realm the sender is in. Unique only within
+
+            the context of a given Zulip server.
+
+
+            E.g. on `example.zulip.com`, this will be `example`.
+
+            '
+        stream_id:
+          type: integer
+          description: 'Only present for channel messages; the ID of the channel.
+
+            '
+        subject:
+          type: string
+          description: 'The `topic` of the message. Currently always `""` for direct messages,
+
+            though this could change if Zulip adds support for topics in direct
+
+            message conversations.
+
+
+            The field name is a legacy holdover from when topics were
+
+            called "subjects" and will eventually change.
+
+
+            For clients that don''t support the `empty_topic_name` [client capability][client-capabilities],
+
+            the empty string value is replaced with the value of `realm_empty_topic_display_name`
+
+            found in the [POST /register](/api/register-queue) response, for channel messages.
+
+
+            **Changes**: Before Zulip 10.0 (feature level 334), `empty_topic_name`
+
+            client capability didn''t exist and empty string as the topic name for
+
+            channel messages wasn''t allowed.
+
+
+            [client-capabilities]: /api/register-queue#parameter-client_capabilities
+
+            '
+        submessages:
+          type: array
+          description: 'Data used for certain experimental Zulip integrations.
+
+            '
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              msg_type:
+                type: string
+                description: 'The type of the message.
+
+                  '
+              content:
+                type: string
+                description: 'The new content of the submessage.
+
+                  '
+              message_id:
+                type: integer
+                description: 'The ID of the message to which the submessage has been added.
+
+                  '
+              sender_id:
+                type: integer
+                description: 'The ID of the user who sent the message.
+
+                  '
+              id:
+                type: integer
+                description: 'The ID of the submessage.
+
+                  '
+        timestamp:
+          type: integer
+          description: 'The UNIX timestamp for when the message was sent,
+
+            in UTC seconds.
+
+            '
+        topic_links:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              text:
+                type: string
+                description: 'The original link text present in the topic.
+
+                  '
+              url:
+                type: string
+                description: 'The expanded target url which the link points to.
+
+                  '
+          description: 'Data on any links to be included in the `topic`
+
+            line (these are generated by [custom linkification
+
+            filters](/help/add-a-custom-linkifier) that match content in the
+
+            message''s topic.)
+
+
+            **Changes**: This field contained a list of urls before
+
+            Zulip 4.0 (feature level 46).
+
+
+            New in Zulip 3.0 (feature level 1). Previously, this field was called
+
+            `subject_links`; clients are recommended to rename `subject_links` to `topic_links`
+
+            if present for compatibility with older Zulip servers.
+
+            '
+        type:
+          type: string
+          description: 'The type of the message: `"stream"` or `"private"`.
+
+            '
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    OptionalContent:
+      description: 'The updated content of the target message.
+
+
+        Clients should use the `max_message_length` returned by the
+
+        [`POST /register`](/api/register-queue) endpoint to determine
+
+        the maximum message size.
+
+
+        Note that a message''s content and channel cannot be changed at the
+
+        same time, so sending both `content` and `stream_id` parameters will
+
+        throw an error.
+
+        '
+      type: string
+      example: Hello
+    ReactionType:
+      description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nIf an API client is adding/removing a vote on an existing reaction,\nit should pass this parameter using the value the server provided\nfor the existing reaction for specificity. Supported values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: In Zulip 3.0 (feature level 2), this parameter became\noptional for [custom emoji](/help/custom-emoji);\npreviously, this endpoint assumed `unicode_emoji` if this\nparameter was not specified.\n"
+      type: string
+      example: unicode_emoji
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    Attachment:
+      type: object
+      description: 'Dictionary containing details of a file uploaded by a user.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID for the attachment.
+
+            '
+        name:
+          type: string
+          description: 'Name of the uploaded file.
+
+            '
+        path_id:
+          type: string
+          description: 'A representation of the path of the file within the
+
+            repository of user-uploaded files. If the `path_id` of a
+
+            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
+
+            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
+
+            '
+        size:
+          type: integer
+          description: 'Size of the file in bytes.
+
+            '
+        create_time:
+          type: integer
+          description: 'Time when the attachment was uploaded as a UNIX timestamp.
+
+
+            **Changes**: Before Zulip 12.0 (feature level 443), this value
+
+            was milliseconds since the epoch, not seconds.
+
+
+            Changed in Zulip 3.0 (feature level 22). This field was
+
+            previously a floating point number.
+
+            '
+        message_ids:
+          type: array
+          description: 'Array containing the IDs of messages that reference this
+
+            [uploaded file](/api/upload-file). This includes messages
+
+            sent by any user in the Zulip organization who sent a
+
+            message containing a link to the uploaded file.
+
+
+            **Changes**: In Zulip 12.0 (feature level 472), this
+
+            replaced the previous `messages` field, which was an array
+
+            of objects containing both `id` and `date_sent` properties.
+
+            '
+          items:
+            type: integer
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    RequiredContent:
+      description: 'The content of the message.
+
+
+        Clients should use the `max_message_length` returned by the
+
+        [`POST /register`](/api/register-queue) endpoint to determine
+
+        the maximum message size.
+
+        '
+      type: string
+      example: Hello
+    EmojiBase:
+      type: object
+      properties:
+        emoji_name:
+          type: string
+          description: 'Name of the emoji.
+
+            '
+        emoji_code:
+          type: string
+          description: 'A unique identifier, defining the specific emoji codepoint requested,
+
+            within the namespace of the `reaction_type`.
+
+            '
+        reaction_type:
+          type: string
+          enum:
+          - unicode_emoji
+          - realm_emoji
+          - zulip_extra_emoji
+          description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    Anchor:
+      type: string
+    NonExistingChannelNameError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          stream:
+            type: string
+            description: 'The name of the channel that could not be found.
+
+              '
+        example:
+          code: STREAM_DOES_NOT_EXIST
+          msg: Channel 'nonexistent' does not exist
+          result: error
+          stream: nonexistent
+    EmojiReaction:
+      allOf:
+      - $ref: '#/components/schemas/EmojiBase'
+      - additionalProperties: false
+        properties:
+          emoji_code: {}
+          emoji_name: {}
+          reaction_type: {}
+          user_id:
+            type: integer
+            description: 'The ID of the user who added the reaction.
+
+
+              **Changes**: New in Zulip 3.0 (feature level 2), which
+
+              deprecated the `user` object.
+
+              '
+  responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
+  parameters:
+    ClientGravatar:
+      name: client_gravatar
+      in: query
+      description: 'Whether the client supports computing gravatars URLs. If
+
+        enabled, `avatar_url` will be included in the response only
+
+        if there is a Zulip avatar, and will be `null` for users who
+
+        are using gravatar as their avatar. This option
+
+        significantly reduces the compressed size of user data,
+
+        since gravatar URLs are long, random strings and thus do not
+
+        compress well. The `client_gravatar` field is set to `true` if
+
+        clients can compute their own gravatars.
+
+
+        **Changes**: The default value of this parameter was `false`
+
+        prior to Zulip 5.0 (feature level 92).
+
+        '
+      schema:
+        type: boolean
+        default: true
+      example: false
+    MessageId:
+      name: message_id
+      in: path
+      description: 'The target message''s ID.
+
+        '
+      schema:
+        type: integer
+      example: 43
+      required: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: 'Basic authentication, with the user''s email as the username, and the API
+
+        key as the password. The API key can be fetched using the
+
+        `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+
+        '

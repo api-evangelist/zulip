@@ -1,0 +1,707 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Zulip REST authentication drafts API
+  description: 'Powerful open source group chat
+
+    '
+  contact:
+    url: https://zulip.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{subdomain}.zulipchat.com/api/v1
+  variables:
+    subdomain:
+      default: example
+- url: '{server}/api/v1'
+  variables:
+    server:
+      default: https://
+- url: https://chat.zulip.org/api/v1
+- url: http://localhost:9991/api/v1
+- url: http://{subdomain}.testserver/json
+security:
+- basicAuth: []
+tags:
+- name: drafts
+paths:
+  /drafts:
+    get:
+      operationId: get-drafts
+      tags:
+      - drafts
+      summary: Get drafts
+      description: 'Fetch all drafts for the current user.
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    count:
+                      type: integer
+                      description: 'The number of drafts the user currently has. Also the
+
+                        number of drafts returned under "drafts".
+
+                        '
+                      example: 3
+                    drafts:
+                      type: array
+                      description: 'Returns all of the current user''s drafts, in order of last edit time
+
+                        (with the most recently edited draft appearing first).
+
+                        '
+                      items:
+                        $ref: '#/components/schemas/Draft'
+                  example:
+                    result: success
+                    msg: ''
+                    count: 3
+                    drafts:
+                    - id: 1
+                      type: stream
+                      to:
+                      - 3
+                      topic: sync drafts
+                      content: Let's add backend support for syncing drafts.
+                      timestamp: 1595479019
+                    - id: 2
+                      type: private
+                      to:
+                      - 4
+                      topic: ''
+                      content: What if we made it possible to sync drafts in Zulip?
+                      timestamp: 1595479019
+                    - id: 3
+                      type: private
+                      to:
+                      - 4
+                      - 10
+                      topic: ''
+                      content: What if we made it possible to sync drafts in Zulip?
+                      timestamp: 1595479019
+    post:
+      operationId: create-drafts
+      tags:
+      - drafts
+      summary: Create drafts
+      description: 'Create one or more drafts on the server. These drafts will be automatically
+
+        synchronized to other clients via `drafts` events.
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                drafts:
+                  description: 'A JSON-encoded list of containing new draft objects.
+
+                    '
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Draft'
+                  example:
+                  - type: stream
+                    to:
+                    - 1
+                    topic: questions
+                    content: What are the contribution guidelines for this project?
+                    timestamp: 1595479019
+            encoding:
+              drafts:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    ids:
+                      type: array
+                      description: 'An array of the IDs for the drafts that were just created in the same
+
+                        order as they were submitted.
+
+                        '
+                      items:
+                        type: integer
+                  example:
+                    result: success
+                    msg: ''
+                    ids:
+                    - 1
+                    - 2
+                    - 3
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - description: 'JSON response for when a draft targeted towards a channel does not specify
+
+                    exactly one channel ID:
+
+                    '
+                  example:
+                    code: BAD_REQUEST
+                    msg: Must specify exactly 1 channel ID for channel messages
+                    result: error
+  /drafts/{draft_id}:
+    patch:
+      operationId: edit-draft
+      tags:
+      - drafts
+      summary: Edit a draft
+      description: 'Edit a draft on the server. The edit will be automatically
+
+        synchronized to other clients via `drafts` events.
+
+        '
+      parameters:
+      - name: draft_id
+        in: path
+        schema:
+          type: integer
+        description: 'The ID of the draft to be edited.
+
+          '
+        required: true
+        example: 2
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                draft:
+                  allOf:
+                  - $ref: '#/components/schemas/Draft'
+                  - description: 'A JSON-encoded object containing a replacement draft object for this ID.
+
+                      '
+                    example:
+                      type: stream
+                      to:
+                      - 1
+                      topic: questions
+                      content: how tough is a Lamy Safari?
+                      timestamp: 1595479019
+              required:
+              - draft
+            encoding:
+              draft:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - description: 'A typical failed JSON response for when no draft exists with
+
+                    the provided ID:
+
+                    '
+                  example:
+                    code: BAD_REQUEST
+                    result: error
+                    msg: Draft does not exist
+    delete:
+      operationId: delete-draft
+      tags:
+      - drafts
+      summary: Delete a draft
+      description: 'Delete a single draft from the server. The deletion will be automatically
+
+        synchronized to other clients via a `drafts` event.
+
+        '
+      parameters:
+      - name: draft_id
+        in: path
+        schema:
+          type: integer
+        description: 'The ID of the draft you want to delete.
+
+          '
+        required: true
+        example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - description: 'A typical failed JSON response for when no draft exists with
+
+                    the provided ID:
+
+                    '
+                  example:
+                    code: BAD_REQUEST
+                    result: error
+                    msg: Draft does not exist
+  /saved_snippets:
+    get:
+      operationId: get-saved-snippets
+      tags:
+      - drafts
+      summary: Get all saved snippets
+      description: 'Fetch all the saved snippets for the current user.
+
+
+        **Changes**: New in Zulip 10.0 (feature level 297).
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    saved_snippets:
+                      type: array
+                      description: 'An array of dictionaries containing data on all of the current user''s
+
+                        saved snippets.
+
+                        '
+                      items:
+                        $ref: '#/components/schemas/SavedSnippet'
+                  example:
+                    result: success
+                    msg: ''
+                    saved_snippets:
+                    - id: 1
+                      title: Example
+                      content: Welcome to the organization.
+                      date_created: 1681662420
+    post:
+      operationId: create-saved-snippet
+      tags:
+      - drafts
+      summary: Create a saved snippet
+      description: 'Create a new saved snippet for the current user.
+
+
+        **Changes**: New in Zulip 10.0 (feature level 297).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'The title of the saved snippet.
+
+                    '
+                  example: Example title
+                content:
+                  type: string
+                  description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+                    Clients should insert this content into a message when using
+
+                    a saved snippet.
+
+                    '
+                  example: Welcome to the organization.
+              required:
+              - title
+              - content
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    saved_snippet_id:
+                      type: integer
+                      description: 'The unique ID of the saved snippet created.
+
+                        '
+                  example:
+                    result: success
+                    msg: ''
+                    saved_snippet_id: 1
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    code: BAD_REQUEST
+                    msg: Title cannot be empty.
+                    result: error
+                  description: 'A typical failed JSON response for when either title or content is
+
+                    empty:
+
+                    '
+  /saved_snippets/{saved_snippet_id}:
+    patch:
+      operationId: edit-saved-snippet
+      tags:
+      - drafts
+      summary: Edit a saved snippet
+      description: 'Edit a saved snippet for the current user.
+
+
+        **Changes**: New in Zulip 10.0 (feature level 368).
+
+        '
+      parameters:
+      - name: saved_snippet_id
+        in: path
+        schema:
+          type: integer
+        description: 'The ID of the saved snippet to edit.
+
+          '
+        required: true
+        example: 3
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 'The title of the saved snippet.
+
+                    '
+                  example: Welcome message
+                content:
+                  type: string
+                  description: 'The content of the saved snippet in the original [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+                    Clients should insert this content into a message when using
+
+                    a saved snippet.
+
+                    '
+                  example: Welcome to the organization.
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - description: 'A typical failed JSON response for when no saved snippet exists
+
+                    with the provided ID:
+
+                    '
+                  example:
+                    code: BAD_REQUEST
+                    result: error
+                    msg: Saved snippet does not exist.
+    delete:
+      operationId: delete-saved-snippet
+      tags:
+      - drafts
+      summary: Delete a saved snippet
+      description: 'Delete a saved snippet.
+
+
+        **Changes**: New in Zulip 10.0 (feature level 297).
+
+        '
+      parameters:
+      - name: saved_snippet_id
+        in: path
+        schema:
+          type: integer
+        description: 'The ID of the saved snippet to delete.
+
+          '
+        required: true
+        example: 2
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - description: 'A typical failed JSON response for when no saved snippet exists
+
+                    with the provided ID:
+
+                    '
+                  example:
+                    code: BAD_REQUEST
+                    result: error
+                    msg: Saved snippet does not exist.
+components:
+  schemas:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    SavedSnippet:
+      type: object
+      description: 'Object containing the details of the saved snippet.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the saved snippet.
+
+            '
+        title:
+          type: string
+          description: 'The title of the saved snippet.
+
+            '
+        content:
+          type: string
+          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+            Clients should insert this content into a message when using
+
+            a saved snippet.
+
+            '
+        date_created:
+          type: integer
+          description: 'The UNIX timestamp for when the saved snippet was created, in
+
+            UTC seconds.
+
+            '
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    Draft:
+      type: object
+      description: 'A dictionary for representing a message draft.
+
+        '
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: 'The unique ID of the draft.
+
+            '
+        type:
+          type: string
+          description: 'The type of the draft. Either unaddressed (empty string), `"stream"`,
+
+            or `"private"` (for one-on-one and group direct messages).
+
+            '
+          enum:
+          - ''
+          - stream
+          - private
+        to:
+          type: array
+          description: 'An array of the tentative target audience IDs. For channel
+
+            messages, this should contain exactly 1 ID, the ID of the
+
+            target channel. For direct messages, this should be an array
+
+            of target user IDs. For unaddressed drafts, this is ignored,
+
+            and clients should send an empty array.
+
+            '
+          items:
+            type: integer
+        topic:
+          type: string
+          description: 'For channel message drafts, the tentative topic name. For direct
+
+            or unaddressed messages, this will be ignored and should ideally
+
+            be the empty string. Should not contain null bytes.
+
+            '
+        content:
+          type: string
+          description: 'The body of the draft. Should not contain null bytes.
+
+            '
+        timestamp:
+          type: integer
+          description: 'A Unix timestamp (seconds only) representing when the draft was
+
+            last edited. When creating a draft, this key need not be present
+
+            and it will be filled in automatically by the server.
+
+            '
+          example: 1595479019
+      additionalProperties: false
+      required:
+      - type
+      - to
+      - topic
+      - content
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+  responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: 'Basic authentication, with the user''s email as the username, and the API
+
+        key as the password. The API key can be fetched using the
+
+        `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+
+        '

@@ -1,0 +1,352 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Zulip REST authentication bots API
+  description: 'Powerful open source group chat
+
+    '
+  contact:
+    url: https://zulip.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{subdomain}.zulipchat.com/api/v1
+  variables:
+    subdomain:
+      default: example
+- url: '{server}/api/v1'
+  variables:
+    server:
+      default: https://
+- url: https://chat.zulip.org/api/v1
+- url: http://localhost:9991/api/v1
+- url: http://{subdomain}.testserver/json
+security:
+- basicAuth: []
+tags:
+- name: bots
+paths:
+  /bot_storage:
+    get:
+      operationId: get-bot-storage
+      summary: Get a bot's stored data
+      tags:
+      - bots
+      description: "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nRetrieve [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - keys
+      parameters:
+      - name: keys
+        in: query
+        description: 'A JSON-encoded list of keys for data in the bot''s storage.
+
+
+          If not provided, then all data that''s stored for the bot is
+
+          returned.
+
+          '
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              example:
+              - foo
+        required: false
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    storage:
+                      type: object
+                      description: 'A dictionary with string key-value pairs of
+
+                        data stored for the bot user.
+
+
+                        If the `keys` parameter was passed, then only
+
+                        the key-value pairs matching the list of keys
+
+                        will be returned.
+
+                        '
+                      additionalProperties:
+                        description: '`{key}`: The stored string value for this key.
+
+                          '
+                        type: string
+                  example:
+                    result: success
+                    msg: ''
+                    storage:
+                      foo: bar
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: Key does not exist.
+                      result: error
+                    description: 'A typical failed JSON response when a requested key does not exist
+
+                      in the bot''s storage:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: PERMISSION_DENIED
+                      msg: Must be a bot user
+                      result: error
+                    description: 'A typical failed JSON response when the user is not a bot:
+
+                      '
+    put:
+      operationId: update-bot-storage
+      summary: Update a bot's stored data
+      tags:
+      - bots
+      description: "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nAdd or update [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\nEach bot has a limited storage set by the server, which normally is a\ndefault of 10,000,000 characters.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                storage:
+                  description: 'A JSON-encoded dictionary mapping string keys to string values
+
+                    that will be added to the bot''s storage.
+
+
+                    If the bot''s storage already has a specific key, then the value
+
+                    stored for that key will be updated for the new value.
+
+                    '
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    foo: bar
+              required:
+              - storage
+            encoding:
+              storage:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: Request exceeds storage limit by 42 characters. The limit is 10000000 characters.
+                      result: error
+                    description: 'A typical failed JSON response when the request would exceed the
+
+                      server''s storage size limit:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: PERMISSION_DENIED
+                      msg: Must be a bot user
+                      result: error
+                    description: 'A typical failed JSON response when the user is not a bot:
+
+                      '
+    delete:
+      operationId: remove-bot-storage
+      summary: Remove a bot's stored data
+      tags:
+      - bots
+      description: "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nDelete [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                keys:
+                  description: 'A JSON-encoded list of keys to delete from the bot''s storage.
+
+
+                    If not provided, then all data that''s stored for the bot is
+
+                    deleted.
+
+                    '
+                  type: array
+                  items:
+                    type: string
+                  example:
+                  - foo
+            encoding:
+              keys:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: Key does not exist.
+                      result: error
+                    description: 'A typical failed JSON response when a key to be deleted does not exist
+
+                      in the bot''s storage:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: PERMISSION_DENIED
+                      msg: Must be a bot user
+                      result: error
+                    description: 'A typical failed JSON response when the user is not a bot:
+
+                      '
+components:
+  schemas:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+  responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: 'Basic authentication, with the user''s email as the username, and the API
+
+        key as the password. The API key can be fetched using the
+
+        `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+
+        '

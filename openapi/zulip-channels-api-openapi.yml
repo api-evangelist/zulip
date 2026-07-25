@@ -1,0 +1,5429 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Zulip REST authentication channels API
+  description: 'Powerful open source group chat
+
+    '
+  contact:
+    url: https://zulip.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{subdomain}.zulipchat.com/api/v1
+  variables:
+    subdomain:
+      default: example
+- url: '{server}/api/v1'
+  variables:
+    server:
+      default: https://
+- url: https://chat.zulip.org/api/v1
+- url: http://localhost:9991/api/v1
+- url: http://{subdomain}.testserver/json
+security:
+- basicAuth: []
+tags:
+- name: channels
+paths:
+  /get_stream_id:
+    get:
+      operationId: get-stream-id
+      summary: Get channel ID
+      tags:
+      - channels
+      description: 'Get the unique ID of a given channel.
+
+        '
+      parameters:
+      - name: stream
+        in: query
+        description: 'The name of the channel to access.
+
+          '
+        schema:
+          type: string
+        example: Denmark
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    stream_id:
+                      type: integer
+                      description: 'The ID of the given channel.
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    stream_id: 15
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    code: BAD_REQUEST
+                    msg: Invalid channel name 'nonexistent'
+                    result: error
+                  description: 'An example JSON response for when the supplied channel does not exist:
+
+                    '
+  /default_streams:
+    post:
+      operationId: add-default-stream
+      tags:
+      - channels
+      summary: Add a default channel
+      x-requires-administrator: true
+      description: 'Add a channel to the set of [default channels][default-channels]
+
+        for new users joining the organization.
+
+
+        [default-channels]: /help/set-default-channels-for-new-users
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                stream_id:
+                  description: 'The ID of the target channel.
+
+                    '
+                  type: integer
+                  example: 10
+              required:
+              - stream_id
+            encoding:
+              stream_id:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/InvalidChannelError'
+                  - description: 'A typical failed JSON response for when an invalid channel ID is passed:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: Private channels cannot be made default.
+                      result: error
+                    description: 'A typical failed JSON response for when a user tries to add a private channel
+
+                      to the default channels set:
+
+                      '
+    delete:
+      operationId: remove-default-stream
+      summary: Remove a default channel
+      tags:
+      - channels
+      description: 'Remove a channel from the set of [default channels][default-channels]
+
+        for new users joining the organization.
+
+
+        [default-channels]: /help/set-default-channels-for-new-users
+
+        '
+      x-requires-administrator: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                stream_id:
+                  description: 'The ID of the target channel.
+
+                    '
+                  type: integer
+                  example: 10
+              required:
+              - stream_id
+            encoding:
+              stream_id:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidChannelError'
+                - description: 'A typical failed JSON response for when an invalid channel ID is passed:
+
+                    '
+  /users/me/{stream_id}/topics:
+    get:
+      operationId: get-stream-topics
+      summary: Get topics in a channel
+      tags:
+      - channels
+      description: 'Get all topics the user has access to in a specific channel.
+
+
+        Note that for [private channels with
+
+        protected history](/help/channel-permissions#private-channels),
+
+        the user will only have access to topics of messages sent after they
+
+        [subscribed to](/api/subscribe) the channel. Similarly, a user''s
+
+        [bot](/help/bots-overview#bot-type) will only have access to messages
+
+        sent after the bot was subscribed to the channel, instead of when the
+
+        user subscribed.
+
+
+        **Changes**: Before Zulip 12.0 (feature level 480), this
+
+        endpoint was not supported for archived channels.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      - name: allow_empty_topic_name
+        in: query
+        description: 'Whether the client supports processing the empty string as
+
+          a topic name in the returned data.
+
+
+          If `false`, the value of `realm_empty_topic_display_name`
+
+          found in the [`POST /register`](/api/register-queue) response is
+
+          returned replacing the empty string as the topic name.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 334). Previously,
+
+          the empty string was not a valid topic.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    topics:
+                      type: array
+                      description: 'An array of objects with information about user-accessible
+
+                        topics in the specified channel, sorted by recency (i.e.,
+
+                        the topic with the most recent message is ordered first).
+
+                        '
+                      items:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          max_id:
+                            description: 'The message ID of the last message sent to this topic.
+
+                              '
+                            type: integer
+                          name:
+                            description: 'The name of the topic.
+
+                              '
+                            type: string
+                  example:
+                    msg: ''
+                    result: success
+                    topics:
+                    - max_id: 26
+                      name: Denmark3
+                    - max_id: 23
+                      name: Denmark1
+                    - max_id: 6
+                      name: Denmark2
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidChannelError'
+                - description: 'An example JSON response for when the user is attempting to fetch the topics
+
+                    of a non-existing channel (or also a private channel they don''t have access to):
+
+                    '
+  /users/me/subscriptions:
+    get:
+      operationId: get-subscriptions
+      summary: Get subscribed channels
+      tags:
+      - channels
+      description: 'Get all channels that the user is subscribed to.
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: include
+          parameters:
+            enum:
+            - ''
+        - type: exclude
+          description: 'You may pass the `include_subscribers` query parameter as follows:
+
+            '
+          parameters:
+            enum:
+            - ''
+      parameters:
+      - $ref: '#/components/parameters/IncludeSubscribers'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - required:
+                  - subscriptions
+                  additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    subscriptions:
+                      type: array
+                      description: 'A list of dictionaries where each dictionary contains
+
+                        information about one of the subscribed channels.
+
+
+                        **Changes**: Removed `email_address` field from the dictionary
+
+                        in Zulip 8.0 (feature level 226).
+
+
+                        Removed `role` field from the dictionary
+
+                        in Zulip 6.0 (feature level 133).
+
+                        '
+                      items:
+                        $ref: '#/components/schemas/Subscription'
+                  example:
+                    msg: ''
+                    result: success
+                    subscriptions:
+                    - audible_notifications: true
+                      color: '#e79ab5'
+                      creator_id: null
+                      description: A Scandinavian country
+                      desktop_notifications: true
+                      is_archived: false
+                      is_muted: false
+                      invite_only: false
+                      name: Denmark
+                      pin_to_top: false
+                      push_notifications: false
+                      stream_id: 1
+                      subscribers:
+                      - 7
+                      - 10
+                      - 11
+                      - 12
+                      - 14
+                    - audible_notifications: true
+                      color: '#e79ab5'
+                      creator_id: 8
+                      description: Located in the United Kingdom
+                      desktop_notifications: true
+                      is_archived: false
+                      is_muted: false
+                      invite_only: false
+                      name: Scotland
+                      pin_to_top: false
+                      push_notifications: false
+                      stream_id: 3
+                      subscribers:
+                      - 7
+                      - 11
+                      - 12
+                      - 14
+    post:
+      operationId: subscribe
+      summary: Subscribe to a channel
+      tags:
+      - channels
+      description: 'Subscribe one or more users to one or more channels.
+
+
+        If any of the specified channels do not exist, they are automatically
+
+        created. The initial [channel settings](/api/update-stream) will be determined
+
+        by the optional parameters, like `invite_only`, detailed below.
+
+
+        Note that the ability to subscribe oneself and/or other users
+
+        to a specified channel depends on the [channel''s permissions
+
+        settings](/help/channel-permissions).
+
+
+        **Changes**: Before Zulip 10.0 (feature level 362),
+
+        subscriptions in archived channels could not be modified.
+
+
+        Before Zulip 10.0 (feature level 357), the
+
+        `can_subscribe_group` permission, which allows members of the
+
+        group to subscribe themselves to the channel, did not exist.
+
+
+        Before Zulip 10.0 (feature level 349), a user cannot subscribe
+
+        other users to a private channel without being subscribed
+
+        to that channel themselves. Now, If a user is part of
+
+        `can_add_subscribers_group`, they can subscribe themselves or other
+
+        users to a private channel without being subscribed to that channel.
+
+
+        Removed `stream_post_policy` and `is_announcement_only`
+
+        parameters in Zulip 10.0 (feature level 333), as permission to post
+
+        in the channel is now controlled by `can_send_message_group`.
+
+
+        Before Zulip 8.0 (feature level 208), if a user specified by the
+
+        [`principals`][principals-param] parameter was a deactivated user,
+
+        or did not exist, then an HTTP status code of 403 was returned with
+
+        `code: "UNAUTHORIZED_PRINCIPAL"` in the error response. As of this
+
+        feature level, an HTTP status code of 400 is returned with
+
+        `code: "BAD_REQUEST"` in the error response for these cases.
+
+
+        [principals-param]: /api/subscribe#parameter-principals
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: include
+          parameters:
+            enum:
+            - subscriptions
+        - type: include
+          description: 'To subscribe another user to a channel, you may pass in
+
+            the `principals` parameter, like so:
+
+            '
+          parameters:
+            enum:
+            - subscriptions
+            - principals
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                subscriptions:
+                  description: 'A list of dictionaries containing the key `name` and value
+
+                    specifying the name of the channel to subscribe. If the channel does not
+
+                    exist a new channel is created. The description of the channel created can
+
+                    be specified by setting the dictionary key `description` with an
+
+                    appropriate value.
+
+                    '
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      name:
+                        type: string
+                        description: 'The name of the channel.
+
+
+                          Clients should use the `max_stream_name_length` returned by the
+
+                          [`POST /register`](/api/register-queue) endpoint to determine
+
+                          the maximum channel name length.
+
+                          '
+                      description:
+                        type: string
+                        description: 'The [description](/help/change-the-channel-description)
+
+                          to use for a new channel being created, in text/markdown format.
+
+
+                          See the help center article on [message formatting](/help/format-your-message-using-markdown) for details on Zulip-flavored Markdown.
+
+
+                          Clients should use the `max_stream_description_length` returned
+
+                          by the [`POST /register`](/api/register-queue) endpoint to
+
+                          determine the maximum channel description length.
+
+                          '
+                    required:
+                    - name
+                    example:
+                      no-description:
+                        value:
+                          name: Verona
+                      with-description:
+                        value:
+                          name: Verona
+                          description: Italian city
+                  example:
+                  - name: Verona
+                    description: Italian city
+                principals:
+                  $ref: '#/components/schemas/Principals'
+                authorization_errors_fatal:
+                  description: 'A boolean specifying whether authorization errors (such as when the
+
+                    requesting user is not authorized to access a private channel) should be
+
+                    considered fatal or not. When `true`, an authorization error is reported
+
+                    as such. When set to `false`, the response will be a 200 and any channels
+
+                    where the request encountered an authorization error will be listed
+
+                    in the `unauthorized` key.
+
+                    '
+                  type: boolean
+                  default: true
+                  example: false
+                announce:
+                  description: 'If one of the channels specified did not exist previously and is thus created
+
+                    by this call, this determines whether [notification bot](/help/configure-automated-notices)
+
+                    will send an announcement about the new channel''s creation.
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                invite_only:
+                  description: 'As described above, this endpoint will create a new channel if passed
+
+                    a channel name that doesn''t already exist. This parameters and the ones
+
+                    that follow are used to request an initial configuration of a created
+
+                    channel; they are ignored for channels that already exist.
+
+
+                    This parameter determines whether any newly created channels will be
+
+                    private channels.
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                is_web_public:
+                  description: 'This parameter determines whether any newly created channels will be
+
+                    web-public channels.
+
+
+                    Note that creating web-public channels requires the
+
+                    `WEB_PUBLIC_STREAMS_ENABLED` [server setting][server-settings]
+
+                    to be enabled on the Zulip server in question, the organization
+
+                    to have enabled the `enable_spectator_access` realm setting, and
+
+                    the current use to have permission under the organization''s
+
+                    `can_create_web_public_channel_group` realm setting.
+
+
+                    [server-settings]: https://zulip.readthedocs.io/en/stable/production/settings.html
+
+
+                    **Changes**: New in Zulip 5.0 (feature level 98).
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                is_default_stream:
+                  description: 'This parameter determines whether any newly created channels will be
+
+                    added as [default channels][default-channels] for new users joining
+
+                    the organization.
+
+
+                    [default-channels]: /help/set-default-channels-for-new-users
+
+
+                    **Changes**: New in Zulip 8.0 (feature level 200). Previously, default channel status
+
+                    could only be changed using the [dedicated API endpoint](/api/add-default-stream).
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                history_public_to_subscribers:
+                  $ref: '#/components/schemas/HistoryPublicToSubscribers'
+                message_retention_days:
+                  $ref: '#/components/schemas/MessageRetentionDays'
+                topics_policy:
+                  $ref: '#/components/schemas/TopicsPolicy'
+                can_add_subscribers_group:
+                  $ref: '#/components/schemas/ChannelCanAddSubscribersGroup'
+                can_remove_subscribers_group:
+                  $ref: '#/components/schemas/CanRemoveSubscribersGroup'
+                can_administer_channel_group:
+                  $ref: '#/components/schemas/CanAdministerChannelGroup'
+                can_delete_any_message_group:
+                  $ref: '#/components/schemas/CanDeleteAnyMessageGroup'
+                can_delete_own_message_group:
+                  $ref: '#/components/schemas/CanDeleteOwnMessageGroup'
+                can_move_messages_out_of_channel_group:
+                  $ref: '#/components/schemas/CanMoveMessagesOutOfChannelGroup'
+                can_move_messages_within_channel_group:
+                  $ref: '#/components/schemas/CanMoveMessagesWithinChannelGroup'
+                can_send_message_group:
+                  $ref: '#/components/schemas/CanSendMessageGroup'
+                can_subscribe_group:
+                  $ref: '#/components/schemas/CanSubscribeGroup'
+                can_resolve_topics_group:
+                  $ref: '#/components/schemas/CanResolveTopicsGroup'
+                can_create_topic_group:
+                  $ref: '#/components/schemas/CanCreateTopicGroup'
+                folder_id:
+                  description: 'This parameter adds the newly created channel to the specified
+
+                    [channel folder](/help/channel-folders).
+
+
+                    **Changes**: New in Zulip 11.0 (feature level 389).
+
+                    '
+                  type: integer
+                  example: 1
+                send_new_subscription_messages:
+                  $ref: '#/components/schemas/SendNewSubscriptionMessages'
+              required:
+              - subscriptions
+            encoding:
+              subscriptions:
+                contentType: application/json
+              principals:
+                contentType: application/json
+              authorization_errors_fatal:
+                contentType: application/json
+              announce:
+                contentType: application/json
+              invite_only:
+                contentType: application/json
+              is_web_public:
+                contentType: application/json
+              is_default_stream:
+                contentType: application/json
+              history_public_to_subscribers:
+                contentType: application/json
+              topics_policy:
+                contentType: application/json
+              can_add_subscribers_group:
+                contentType: application/json
+              can_remove_subscribers_group:
+                contentType: application/json
+              can_administer_channel_group:
+                contentType: application/json
+              can_delete_any_message_group:
+                contentType: application/json
+              can_delete_own_message_group:
+                contentType: application/json
+              can_move_messages_out_of_channel_group:
+                contentType: application/json
+              can_move_messages_within_channel_group:
+                contentType: application/json
+              can_send_message_group:
+                contentType: application/json
+              can_subscribe_group:
+                contentType: application/json
+              can_resolve_topics_group:
+                contentType: application/json
+              can_create_topic_group:
+                contentType: application/json
+              folder_id:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    subscribed:
+                      type: object
+                      description: 'A dictionary where the key is the ID of the user and the value
+
+                        is a list of the names of the channels that user was subscribed
+
+                        to as a result of the request.
+
+
+                        **Changes**: Before Zulip 10.0 (feature level 289), the user
+
+                        keys were Zulip API email addresses, not user ID.
+
+                        '
+                      additionalProperties:
+                        description: '`{id}`: List of the names of the channels that were subscribed
+
+                          to as a result of the query.
+
+                          '
+                        type: array
+                        items:
+                          type: string
+                    already_subscribed:
+                      type: object
+                      description: 'A dictionary where the key is the ID of the user and the value
+
+                        is a list of the names of the channels that where the user was
+
+                        not added as a subscriber in this request, because they were
+
+                        already a subscriber.
+
+
+                        **Changes**: Before Zulip 10.0 (feature level 289), the user
+
+                        keys were Zulip API email addresses, not user IDs.
+
+                        '
+                      additionalProperties:
+                        description: '`{id}`: List of the names of the channels that the user is
+
+                          already subscribed to.
+
+                          '
+                        type: array
+                        items:
+                          type: string
+                    unauthorized:
+                      type: array
+                      items:
+                        type: string
+                      description: 'A list of names of channels that the requesting user/bot was not
+
+                        authorized to subscribe to. Only present if `"authorization_errors_fatal": false`.
+
+                        '
+                    new_subscription_messages_sent:
+                      type: boolean
+                      description: 'Only present if the parameter `send_new_subscription_messages`
+
+                        in the request was `true`.
+
+
+                        Whether Notification Bot DMs in fact sent to the added
+
+                        subscribers as requested by the `send_new_subscription_messages`
+
+                        parameter. Clients may find this value useful to communicate
+
+                        with users about the effect of this request.
+
+
+                        **Changes**: New in Zulip 11.0 (feature level 397).
+
+                        '
+                  example:
+                    already_subscribed:
+                      '1':
+                      - testing-help
+                    msg: ''
+                    result: success
+                    subscribed:
+                      '2':
+                      - testing-help
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    msg: Unable to access channel (private).
+                    result: error
+                    code: BAD_REQUEST
+                  description: 'An example JSON response for when the requesting user does not have
+
+                    access to a private channel and `"authorization_errors_fatal": true`:
+
+                    '
+    patch:
+      operationId: update-subscriptions
+      summary: Update subscriptions
+      tags:
+      - channels
+      description: 'Update which channels you are subscribed to.
+
+
+        **Changes**: Before Zulip 10.0 (feature level 362),
+
+        subscriptions in archived channels could not be modified.
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                delete:
+                  description: 'A list of channel names to unsubscribe from.
+
+                    '
+                  type: array
+                  items:
+                    type: string
+                  example:
+                  - Verona
+                  - Denmark
+                add:
+                  description: 'A list of objects describing which channels to subscribe to, optionally
+
+                    including per-user subscription parameters (e.g. color) and if the
+
+                    channel is to be created, its description.
+
+                    '
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      name:
+                        type: string
+                      color:
+                        type: string
+                      description:
+                        type: string
+                  example:
+                  - name: Verona
+                  - name: Denmark
+                    color: '#e79ab5'
+                    description: A Scandinavian country
+            encoding:
+              delete:
+                contentType: application/json
+              add:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - required:
+                  - subscribed
+                  - already_subscribed
+                  - removed
+                  additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    subscribed:
+                      type: object
+                      description: 'A dictionary where the key is the Zulip API email
+
+                        address of the user/bot and the value is a
+
+                        list of the names of the channels that were
+
+                        subscribed to as a result of the query.
+
+                        '
+                      additionalProperties:
+                        description: '`{email_id}`: A list of the names of channels that
+
+                          the user was subscribed to as a result of the query.
+
+                          '
+                        type: array
+                        items:
+                          type: string
+                    already_subscribed:
+                      type: object
+                      description: 'A dictionary where the key is the Zulip API email
+
+                        address of the user/bot and the value is a
+
+                        list of the names of the channels that the
+
+                        user/bot is already subscribed to.
+
+                        '
+                      additionalProperties:
+                        description: '`{email_id}`: A list of the names of channels that
+
+                          the user was already subscribed to.
+
+                          '
+                        type: array
+                        items:
+                          type: string
+                    not_removed:
+                      type: array
+                      items:
+                        type: string
+                      description: 'A list of the names of channels that the user
+
+                        is already unsubscribed from, and hence
+
+                        doesn''t need to be unsubscribed.
+
+                        '
+                    removed:
+                      type: array
+                      items:
+                        type: string
+                      description: 'A list of the names of channels which were unsubscribed
+
+                        from as a result of the query.
+
+                        '
+                    new_subscription_messages_sent:
+                      type: boolean
+                      description: 'Only present if the parameter `send_new_subscription_messages`
+
+                        in the request was `true`.
+
+
+                        Whether Notification Bot DMs in fact sent to the added
+
+                        subscribers as requested by the `send_new_subscription_messages`
+
+                        parameter. Clients may find this value useful to communicate
+
+                        with users about the effect of this request.
+
+
+                        **Changes**: New in Zulip 11.0 (feature level 397).
+
+                        '
+                  example:
+                    msg: ''
+                    subscribed: {}
+                    already_subscribed:
+                      iago@zulip.com:
+                      - Verona
+                    not_removed: []
+                    removed:
+                    - testing-help
+                    result: success
+    delete:
+      operationId: unsubscribe
+      summary: Unsubscribe from a channel
+      tags:
+      - channels
+      description: "Unsubscribe yourself or other users from one or more channels.\n\nIn addition to managing the current user's subscriptions, this\nendpoint can be used to remove other users from channels. This\nis possible in 3 situations:\n\n- Organization administrators can remove any user from any\n  channel.\n- Users can remove a bot that they own from any channel that\n  the user [can access](/help/channel-permissions).\n- Users can unsubscribe any user from a channel if they [have\n  access](/help/channel-permissions) to the channel and are a\n  member of the [user group](/api/get-user-groups) specified\n  by the [`can_remove_subscribers_group`][can-remove-parameter]\n  for the channel.\n\n**Changes**: Before Zulip 10.0 (feature level 362),\nsubscriptions in archived channels could not be modified.\n\nBefore Zulip 8.0 (feature level 208), if a user specified by\nthe [`principals`][principals-param] parameter was a\ndeactivated user, or did not exist, then an HTTP status code\nof 403 was returned with `code: \"UNAUTHORIZED_PRINCIPAL\"` in\nthe error response. As of this feature level, an HTTP status\ncode of 400 is returned with `code: \"BAD_REQUEST\"` in the\nerror response for these cases.\n\nBefore Zulip 8.0 (feature level 197),\nthe `can_remove_subscribers_group` setting\nwas named `can_remove_subscribers_group_id`.\n\nBefore Zulip 7.0 (feature level 161), the\n`can_remove_subscribers_group_id` for all channels was always\nthe system group for organization administrators.\n\nBefore Zulip 6.0 (feature level 145), users had no special\nprivileges for managing bots that they own.\n\n[principals-param]: /api/unsubscribe#parameter-principals\n[can-remove-parameter]: /api/subscribe#parameter-can_remove_subscribers_group\n"
+      x-curl-examples-parameters:
+        oneOf:
+        - type: include
+          description: '**Note**: Unsubscribing another user from a channel requires
+
+            administrative privileges.
+
+            '
+          parameters:
+            enum:
+            - subscriptions
+        - type: exclude
+          parameters:
+            enum:
+            - ''
+          description: 'You may specify the `principals` parameter like so:
+
+            '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                subscriptions:
+                  description: 'A list of channel names to unsubscribe from. This parameter is called
+
+                    `streams` in our Python API.
+
+                    '
+                  type: array
+                  items:
+                    type: string
+                  example:
+                  - Verona
+                  - Denmark
+                principals:
+                  $ref: '#/components/schemas/Principals'
+              required:
+              - subscriptions
+            encoding:
+              subscriptions:
+                contentType: application/json
+              principals:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    not_removed:
+                      type: array
+                      items:
+                        type: string
+                      description: 'A list of the names of channels that the user is already unsubscribed
+
+                        from, and hence doesn''t need to be unsubscribed.
+
+                        '
+                    removed:
+                      type: array
+                      items:
+                        type: string
+                      description: 'A list of the names of channels which were unsubscribed from as a result
+
+                        of the query.
+
+                        '
+                  example:
+                    msg: ''
+                    not_removed: []
+                    removed:
+                    - testing-help
+                    result: success
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/NonExistingChannelNameError'
+                - description: 'A typical failed JSON response for when the target channel does not exist:
+
+                    '
+  /users/me/subscriptions/muted_topics:
+    patch:
+      deprecated: true
+      operationId: mute-topic
+      summary: Topic muting
+      tags:
+      - channels
+      description: '[Mute or unmute a topic](/help/mute-a-topic) within a channel that
+
+        the current user is subscribed to.
+
+
+        **Changes**: Deprecated in Zulip 7.0 (feature level 170). Clients connecting
+
+        to newer servers should use the [POST /user_topics](/api/update-user-topic)
+
+        endpoint, as this endpoint may be removed in a future release.
+
+
+        Before Zulip 7.0 (feature level 169), this endpoint
+
+        returned an error if asked to mute a topic that was already muted
+
+        or asked to unmute a topic that had not previously been muted.
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: exclude
+          parameters:
+            enum:
+            - stream_id
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                stream_id:
+                  description: 'The ID of the channel to access.
+
+
+                    Clients must provide either `stream` or `stream_id` as a parameter
+
+                    to this endpoint, but not both.
+
+
+                    **Changes**: New in Zulip 2.0.0.
+
+                    '
+                  type: integer
+                  example: 43
+                stream:
+                  description: 'The name of the channel to access.
+
+
+                    Clients must provide either `stream` or `stream_id` as a parameter
+
+                    to this endpoint, but not both. Clients should use `stream_id`
+
+                    instead of the `stream` parameter when possible.
+
+                    '
+                  type: string
+                  example: Denmark
+                topic:
+                  description: 'The topic to (un)mute. Note that the request will succeed regardless of
+
+                    whether any messages have been sent to the specified topic.
+
+
+                    Clients should use the `max_topic_length` returned by the
+
+                    [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum topic length.
+
+                    '
+                  type: string
+                  example: dinner
+                op:
+                  description: 'Whether to mute (`add`) or unmute (`remove`) the provided topic.
+
+                    '
+                  type: string
+                  enum:
+                  - add
+                  - remove
+                  example: add
+              required:
+              - topic
+              - op
+            encoding:
+              stream_id:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+  /user_topics:
+    post:
+      operationId: update-user-topic
+      summary: Update personal preferences for a topic
+      tags:
+      - channels
+      description: 'This endpoint is used to update the personal preferences for a topic,
+
+        such as the topic''s visibility policy, which is used to implement
+
+        [mute a topic](/help/mute-a-topic) and related features.
+
+
+        This endpoint can be used to update the visibility policy for the single
+
+        channel and topic pair indicated by the parameters for a user.
+
+
+        **Changes**: New in Zulip 7.0 (feature level 170). Previously,
+
+        toggling whether a topic was muted or unmuted was managed by the
+
+        [PATCH /users/me/subscriptions/muted_topics](/api/mute-topic) endpoint.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                stream_id:
+                  description: 'The ID of the channel to access.
+
+                    '
+                  type: integer
+                  example: 1
+                topic:
+                  description: 'The topic for which the personal preferences needs to be updated.
+
+                    Note that the request will succeed regardless of whether
+
+                    any messages have been sent to the specified topic.
+
+
+                    Clients should use the `max_topic_length` returned by the
+
+                    [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum topic length.
+
+
+                    Note: When the value of `realm_empty_topic_display_name` found in
+
+                    the [POST /register](/api/register-queue) response is used for this
+
+                    parameter, it is interpreted as an empty string.
+
+
+                    **Changes**: Before Zulip 10.0 (feature level 334), empty string
+
+                    was not a valid topic name for channel messages.
+
+                    '
+                  type: string
+                  example: dinner
+                visibility_policy:
+                  description: 'Controls which visibility policy to set.
+
+
+                    - 0 = None. Removes the visibility policy previously set for the topic.
+
+                    - 1 = Muted. [Mutes the topic](/help/mute-a-topic) in a channel.
+
+                    - 2 = Unmuted. [Unmutes the topic](/help/mute-a-topic) in a muted channel.
+
+                    - 3 = Followed. [Follows the topic](/help/follow-a-topic).
+
+
+                    In an unmuted channel, a topic visibility policy of unmuted will have the
+
+                    same effect as the "None" visibility policy.
+
+
+                    **Changes**: In Zulip 7.0 (feature level 219), added followed as
+
+                    a visibility policy option.
+
+                    '
+                  type: integer
+                  enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  example: 1
+              required:
+              - stream_id
+              - topic
+              - visibility_policy
+            encoding:
+              stream_id:
+                contentType: application/json
+              visibility_policy:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+  /users/{user_id}/subscriptions/{stream_id}:
+    get:
+      operationId: get-subscription-status
+      summary: Get subscription status
+      tags:
+      - channels
+      description: 'Check whether a user is subscribed to a channel.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 458), this endpoint
+
+        did not support querying subscriptions of bot users.
+
+
+        New in Zulip 3.0 (feature level 12).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/UserId'
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    is_subscribed:
+                      type: boolean
+                      description: 'Whether the user is subscribed to the channel.
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    is_subscribed: false
+  /users/{user_id}/channels:
+    get:
+      operationId: get-user-channels
+      summary: Get a user's subscribed channels
+      tags:
+      - channels
+      description: 'Gets the list of channels that the target user is subscribed to.
+
+
+        The [channel security model](/help/channel-permissions) means only those
+
+        subscribed channels to which the acting user has metadata access are
+
+        returned.
+
+
+        For organization administrators, this is guaranteed to be all channels
+
+        the target user is subscribed to, since organization administrators
+
+        implicitly have metadata access to all channels.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 458), target users that
+
+        were bots resulted in a permissions error.
+
+
+        New in Zulip 12.0 (feature level 440).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    subscribed_channel_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: 'IDs of the channels that the target user is subscribed to
+
+                        (limited by the acting user''s permissions to view subscribers).
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    subscribed_channel_ids:
+                    - 3
+                    - 5
+                    - 10
+  /users/me/subscriptions/properties:
+    post:
+      operationId: update-subscription-settings
+      summary: Bulk update subscription settings
+      tags:
+      - channels
+      description: 'Update the current user''s personal settings for channels they are
+
+        subscribed to. These settings include [color](/help/change-the-color-of-a-channel),
+
+        [muting](/help/mute-a-channel), [pinning](/help/pin-a-channel)
+
+        and [per-channel notification settings](/help/channel-notifications).
+
+
+        There is a single channel alternative to this bulk endpoint:
+
+        [`POST /users/me/subscriptions/{stream_id}`](/api/update-subscription-property).
+
+
+        **Changes**: Prior to Zulip 5.0 (feature level 111), the response object
+
+        included the `subscription_data` in the request. The endpoint now returns
+
+        the more ergonomic [`ignored_parameters_unsupported`][ignored-parameters]
+
+        array instead.
+
+
+        [ignored-parameters]: /api/rest-error-handling#ignored-parameters
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                subscription_data:
+                  description: 'A list of objects that describe the changes that should be applied in
+
+                    each subscription. Each object represents a subscription, and must have
+
+                    a `stream_id` key that identifies the channel, as well as the `property`
+
+                    being modified and its new `value`.
+
+                    '
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      stream_id:
+                        type: integer
+                        description: 'The unique ID of a channel.
+
+                          '
+                      property:
+                        $ref: '#/components/schemas/SubscriptionProperty'
+                      value:
+                        $ref: '#/components/schemas/SubscriptionPropertyValue'
+                    required:
+                    - stream_id
+                    - property
+                    - value
+                    example:
+                      stream_id: 2
+                      property: is_muted
+                      value: true
+                  example:
+                  - stream_id: 1
+                    property: pin_to_top
+                    value: true
+                  - stream_id: 3
+                    property: color
+                    value: '#f00f00'
+              required:
+              - subscription_data
+            encoding:
+              subscription_data:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessIgnoredParameters'
+  /users/me/subscriptions/{stream_id}:
+    patch:
+      operationId: update-subscription-property
+      summary: Update a subscription setting
+      tags:
+      - channels
+      description: 'Update the current user''s personal settings for a specific channel they
+
+        are subscribed to. These settings include [color](/help/change-the-color-of-a-channel),
+
+        [muting](/help/mute-a-channel), [pinning](/help/pin-a-channel)
+
+        and [per-channel notification settings](/help/channel-notifications).
+
+
+        This is a single channel alternative to the bulk endpoint:
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                property:
+                  $ref: '#/components/schemas/SubscriptionProperty'
+                value:
+                  $ref: '#/components/schemas/SubscriptionPropertyValue'
+              required:
+              - property
+              - value
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+  /streams/{stream_id}/members:
+    get:
+      operationId: get-subscribers
+      summary: Get channel subscribers
+      tags:
+      - channels
+      description: 'Get all users subscribed to a channel.
+
+
+        **Changes**: Before Zulip 12.0 (feature level 480), this
+
+        endpoint was not supported for archived channels.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    subscribers:
+                      type: array
+                      items:
+                        type: integer
+                      description: 'A list containing the IDs of all active users who are subscribed
+
+                        to the channel.
+
+                        '
+                  example:
+                    result: success
+                    msg: ''
+                    subscribers:
+                    - 11
+                    - 26
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidChannelError'
+                - description: 'An example JSON response for when the requested channel does not exist,
+
+                    or where the user does not have permission to access the target channel:
+
+                    '
+  /streams:
+    get:
+      operationId: get-streams
+      summary: Get all channels
+      tags:
+      - channels
+      description: 'Get all channels that the user [has access to](/help/channel-permissions).
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: include
+          parameters:
+            enum:
+            - ''
+        - type: include
+          parameters:
+            enum:
+            - include_public
+          description: 'You may pass in one or more of the parameters mentioned below
+
+            as URL query parameters, like so:
+
+            '
+      parameters:
+      - name: include_public
+        in: query
+        description: 'Include all public channels.
+
+          '
+        schema:
+          type: boolean
+          default: true
+        example: false
+      - name: include_web_public
+        in: query
+        description: 'Include all web-public channels.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: include_subscribed
+        in: query
+        description: 'Include all channels that the user is subscribed to.
+
+          '
+        schema:
+          type: boolean
+          default: true
+        example: false
+      - name: exclude_archived
+        in: query
+        description: 'Whether to exclude archived streams from the results.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 315).
+
+          '
+        schema:
+          type: boolean
+          default: true
+        example: true
+      - name: include_all_active
+        in: query
+        description: 'Deprecated parameter to include all channels. The user must
+
+          have administrative privileges to use this parameter.
+
+
+          **Changes**: Deprecated in Zulip 10.0 (feature level
+
+          356). Clients interacting with newer servers should use
+
+          the equivalent `include_all` parameter, which does not
+
+          incorrectly hint that this parameter, and not
+
+          `exclude_archived`, controls whether archived channels
+
+          appear in the response.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        deprecated: true
+        example: true
+      - name: include_all
+        in: query
+        description: 'Include all channels that the user has metadata access to.
+
+
+          For organization administrators, this will be all channels
+
+          in the organization, since organization administrators
+
+          implicitly have metadata access to all channels.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 356). On older
+
+          versions, use `include_all_active`, which this replaces.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: include_default
+        in: query
+        description: 'Include all default channels for the user''s realm.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: include_owner_subscribed
+        in: query
+        description: 'If the user is a bot, include all channels that the bot''s owner is
+
+          subscribed to.
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: include_can_access_content
+        in: query
+        description: 'Include all the channels that the user has content access to.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 356).
+
+          '
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    streams:
+                      description: 'A list of channel objects with details on the requested channels.
+
+                        '
+                      type: array
+                      items:
+                        allOf:
+                        - $ref: '#/components/schemas/BasicChannelBase'
+                        - additionalProperties: false
+                          properties:
+                            stream_id: {}
+                            name: {}
+                            is_archived: {}
+                            description: {}
+                            date_created: {}
+                            creator_id:
+                              nullable: true
+                            invite_only: {}
+                            rendered_description: {}
+                            is_web_public: {}
+                            stream_post_policy: {}
+                            message_retention_days:
+                              nullable: true
+                            history_public_to_subscribers: {}
+                            topics_policy: {}
+                            first_message_id:
+                              nullable: true
+                            folder_id:
+                              nullable: true
+                            is_recently_active: {}
+                            is_announcement_only: {}
+                            can_add_subscribers_group: {}
+                            can_remove_subscribers_group: {}
+                            can_administer_channel_group: {}
+                            can_delete_any_message_group: {}
+                            can_delete_own_message_group: {}
+                            can_move_messages_out_of_channel_group: {}
+                            can_move_messages_within_channel_group: {}
+                            can_send_message_group: {}
+                            can_resolve_topics_group: {}
+                            can_subscribe_group: {}
+                            can_create_topic_group: {}
+                            subscriber_count: {}
+                            stream_weekly_traffic:
+                              type: integer
+                              nullable: true
+                              description: 'The average number of messages sent to the channel per week, as
+
+                                estimated based on recent weeks, rounded to the nearest integer.
+
+
+                                If `null`, no information is provided on the average traffic.
+
+                                This can be because the channel was recently created and there
+
+                                is insufficient data to make an estimate, or because the server
+
+                                wishes to omit this information for this client, this realm, or
+
+                                this endpoint or type of event.
+
+
+                                **Changes**: New in Zulip 8.0 (feature level 199). Previously,
+
+                                this statistic was available only in subscription objects.
+
+                                '
+                            is_default:
+                              type: boolean
+                              description: 'Only present when [`include_default`][include_default]
+
+                                parameter is `true`.
+
+
+                                Whether the given channel is a
+
+                                [default channel](/help/set-default-channels-for-new-users).
+
+
+                                [include_default]: /api/get-streams#parameter-include_default
+
+                                '
+                          required:
+                          - stream_id
+                          - name
+                          - is_archived
+                          - description
+                          - date_created
+                          - creator_id
+                          - invite_only
+                          - rendered_description
+                          - is_web_public
+                          - stream_post_policy
+                          - message_retention_days
+                          - history_public_to_subscribers
+                          - first_message_id
+                          - folder_id
+                          - is_announcement_only
+                          - can_remove_subscribers_group
+                          - can_subscribe_group
+                          - stream_weekly_traffic
+                          - is_recently_active
+                          - subscriber_count
+                  example:
+                    msg: ''
+                    result: success
+                    streams:
+                    - can_add_subscribers_group: 10
+                      can_remove_subscribers_group: 10
+                      can_subscribe_group: 10
+                      creator_id: null
+                      date_created: 1691057093
+                      description: A private channel
+                      first_message_id: 18
+                      folder_id: 1
+                      is_recently_active: true
+                      history_public_to_subscribers: false
+                      invite_only: true
+                      is_announcement_only: false
+                      is_archived: false
+                      is_default: false
+                      is_web_public: false
+                      message_retention_days: null
+                      name: management
+                      rendered_description: <p>A private channel</p>
+                      stream_id: 2
+                      stream_post_policy: 1
+                      stream_weekly_traffic: null
+                      subscriber_count: 20
+                    - can_add_subscribers_group: 9
+                      can_remove_subscribers_group: 9
+                      can_subscribe_group: 10
+                      creator_id: 12
+                      date_created: 1691057093
+                      description: A default public channel
+                      first_message_id: 21
+                      folder_id: null
+                      is_recently_active: true
+                      history_public_to_subscribers: true
+                      invite_only: false
+                      is_announcement_only: false
+                      is_archived: false
+                      is_default: true
+                      is_web_public: false
+                      message_retention_days: null
+                      name: welcome
+                      rendered_description: <p>A default public channel</p>
+                      stream_id: 1
+                      stream_post_policy: 1
+                      stream_weekly_traffic: null
+                      subscriber_count: 10
+  /streams/{stream_id}:
+    get:
+      operationId: get-stream-by-id
+      summary: Get a channel by ID
+      tags:
+      - channels
+      description: 'Fetch details for the channel with the ID `stream_id`.
+
+
+        **Changes**: Before Zulip 12.0 (feature level 480), this
+
+        endpoint was not supported for archived channels.
+
+
+        New in Zulip 6.0 (feature level 132).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    stream:
+                      $ref: '#/components/schemas/BasicChannel'
+                  example:
+                    msg: ''
+                    result: success
+                    stream:
+                      description: A Scandinavian country
+                      first_message_id: 1
+                      folder_id: 1
+                      is_recently_active: true
+                      history_public_to_subscribers: true
+                      date_created: 1691057093
+                      creator_id: null
+                      invite_only: false
+                      is_announcement_only: false
+                      is_archived: false
+                      is_web_public: false
+                      message_retention_days: null
+                      name: Denmark
+                      rendered_description: <p>A Scandinavian country</p>
+                      stream_id: 7
+                      stream_post_policy: 1
+                      can_add_subscribers_group: 2
+                      can_remove_subscribers_group: 2
+                      can_subscribe_group: 2
+                      stream_weekly_traffic: null
+                      subscriber_count: 12
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidChannelError'
+                - description: 'An example JSON response for when the channel ID is not valid:
+
+                    '
+    delete:
+      operationId: archive-stream
+      summary: Archive a channel
+      tags:
+      - channels
+      description: '[Archive the channel](/help/archive-a-channel) with the ID `stream_id`.
+
+        '
+      x-requires-administrator: true
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidChannelError'
+                - description: 'An example JSON response for when the supplied channel does not exist:
+
+                    '
+    patch:
+      operationId: update-stream
+      summary: Update a channel
+      tags:
+      - channels
+      description: "Configure the channel with the ID `stream_id`. This endpoint supports\nan organization administrator editing any property of a channel,\nincluding:\n\n- Channel [name](/help/rename-a-channel) and [description](/help/change-the-channel-description)\n- Channel [permissions](/help/channel-permissions), including\n  [privacy](/help/change-the-privacy-of-a-channel) and [who can\n  send](/help/channel-posting-policy).\n\nNote that an organization administrator's ability to change a\n[private channel's permissions](/help/channel-permissions#private-channels)\ndepends on them being subscribed to the channel.\n\n**Changes**: Before Zulip 10.0 (feature level 362), channel privacy could not be\nedited for archived channels.\n\nRemoved `stream_post_policy` and `is_announcement_only`\nparameters in Zulip 10.0 (feature level 333), as permission to post\nin the channel is now controlled by `can_send_message_group`.\n"
+      x-curl-examples-parameters:
+        oneOf:
+        - type: include
+          parameters:
+            enum:
+            - new_name
+            - description
+            - is_private
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                description:
+                  description: 'The new [description](/help/change-the-channel-description) for
+
+                    the channel, in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+                    Clients should use the `max_stream_description_length` returned
+
+                    by the [`POST /register`](/api/register-queue) endpoint to
+
+                    determine the maximum channel description length.
+
+
+                    **Changes**: Removed unnecessary JSON-encoding of this parameter in
+
+                    Zulip 4.0 (feature level 64).
+
+                    '
+                  type: string
+                  example: Discuss Italian history and travel destinations.
+                new_name:
+                  description: 'The new name for the channel.
+
+
+                    Clients should use the `max_stream_name_length` returned by the
+
+                    [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum channel name length.
+
+
+                    **Changes**: Removed unnecessary JSON-encoding of this parameter in
+
+                    Zulip 4.0 (feature level 64).
+
+                    '
+                  type: string
+                  example: Italy
+                is_private:
+                  description: 'Change whether the channel is a private channel.
+
+                    '
+                  type: boolean
+                  example: true
+                is_web_public:
+                  description: 'Change whether the channel is a web-public channel.
+
+
+                    Note that creating web-public channels requires the
+
+                    `WEB_PUBLIC_STREAMS_ENABLED` [server setting][server-settings]
+
+                    to be enabled on the Zulip server in question, the organization
+
+                    to have enabled the `enable_spectator_access` realm setting, and
+
+                    the current use to have permission under the organization''s
+
+                    `can_create_web_public_channel_group` realm setting.
+
+
+                    [server-settings]: https://zulip.readthedocs.io/en/stable/production/settings.html
+
+
+                    **Changes**: New in Zulip 5.0 (feature level 98).
+
+                    '
+                  type: boolean
+                  example: true
+                history_public_to_subscribers:
+                  description: 'Whether the channel''s message history should be available to
+
+                    newly subscribed members, or users can only access messages
+
+                    they actually received while subscribed to the channel.
+
+
+                    Corresponds to the shared history option for
+
+                    [private channels](/help/channel-permissions#private-channels).
+
+
+                    It''s an error for this parameter to be false for a public or
+
+                    web-public channel and when is_private is false.
+
+
+                    This can only be `false` if `can_create_topic_group` for the channel
+
+                    is the `role:everyone` [system group][system-groups].
+
+
+                    **Changes**: Before Zulip 6.0 (feature level 136), `history_public_to_subscribers`
+
+                    was silently ignored unless the request also contained either `is_private` or
+
+                    `is_web_public`.
+
+
+                    [system-groups]: /api/group-setting-values#system-groups
+
+                    '
+                  type: boolean
+                  example: false
+                is_default_stream:
+                  description: 'Add or remove the channel as a [default channel][default-channel]
+
+                    for new users joining the organization.
+
+
+                    [default-channel]: /help/set-default-channels-for-new-users
+
+
+                    **Changes**: New in Zulip 8.0 (feature level 200). Previously, default channel status
+
+                    could only be changed using the [dedicated API endpoint](/api/add-default-stream).
+
+                    '
+                  type: boolean
+                  example: false
+                message_retention_days:
+                  $ref: '#/components/schemas/MessageRetentionDays'
+                is_archived:
+                  description: 'A boolean indicating whether the channel is
+
+                    [archived](/help/archive-a-channel) or
+
+                    unarchived. Currently only allows unarchiving
+
+                    previously archived channels.
+
+
+                    **Changes**: New in Zulip 11.0 (feature level 388).
+
+                    '
+                  type: boolean
+                  example: true
+                folder_id:
+                  description: 'ID of the new [channel folder](/help/channel-folders) to which the
+
+                    channel should belong.
+
+
+                    A `null` value indicates the user wants to remove the channel from its
+
+                    current channel folder.
+
+
+                    **Changes**: New in Zulip 11.0 (feature level 389).
+
+                    '
+                  type: integer
+                  nullable: true
+                  example: 1
+                topics_policy:
+                  $ref: '#/components/schemas/TopicsPolicy'
+                can_add_subscribers_group:
+                  allOf:
+                  - description: 'The set of users who have permission to add subscribers to this
+
+                      channel expressed as an [update to a group-setting
+
+                      value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Users who can administer the channel or have similar realm-level
+
+                      permissions can add subscribers to a public channel regardless
+
+                      of the value of this setting.
+
+
+                      Users in this group need not be subscribed to a private channel to
+
+                      add subscribers to it.
+
+
+                      Note that a user must [have content access](/help/channel-permissions)
+
+                      to a channel and permission to administer the channel in order to
+
+                      modify this setting.
+
+
+                      **Changes**: New in Zulip 10.0 (feature level 342). Previously, there was no
+
+                      channel-level setting for this permission.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_remove_subscribers_group:
+                  allOf:
+                  - description: 'The set of users who have permission to unsubscribe others from this
+
+                      channel expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Organization administrators can unsubscribe others from a channel as though
+
+                      they were in this group without being explicitly listed here.
+
+
+                      Note that a user must have metadata access to a channel and permission
+
+                      to administer the channel in order to modify this setting.
+
+
+                      **Changes**: Prior to Zulip 10.0 (feature level 349), channel administrators
+
+                      could not unsubscribe other users if they were not an organization
+
+                      administrator or part of `can_remove_subscribers_group`. Realm administrators
+
+                      were not allowed to unsubscribe other users from a private channel if they
+
+                      were not subscribed to that channel.
+
+
+                      Prior to Zulip 10.0 (feature level 320), this value was always the integer
+
+                      ID of a system group.
+
+
+                      Before Zulip 8.0 (feature level 197), the `can_remove_subscribers_group`
+
+                      setting was named `can_remove_subscribers_group_id`.
+
+
+                      New in Zulip 7.0 (feature level 161).
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_administer_channel_group:
+                  allOf:
+                  - description: 'The set of users who have permission to administer this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Organization administrators can administer every channel as though they were
+
+                      in this group without being explicitly listed here.
+
+
+                      Note that a user must [have content access](/help/channel-permissions) to a
+
+                      channel in order to add other subscribers to the channel.
+
+
+                      **Changes**: Prior to Zulip 10.0 (feature level 349) a user needed to
+
+                      [have content access](/help/channel-permissions) to a channel in order
+
+                      to modify it. The exception to this rule was that organization
+
+                      administrators can edit channel names and descriptions without having
+
+                      full access to the channel.
+
+
+                      New in Zulip 10.0 (feature level 325). Prior to this
+
+                      change, the permission to administer channels was limited to realm
+
+                      administrators.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_delete_any_message_group:
+                  allOf:
+                  - description: 'The set of users who have permission to delete any message in the channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Note that a user must [have content access](/help/channel-permissions) to a
+
+                      channel in order to delete any message in the channel.
+
+
+                      Users present in the organization-level `can_delete_any_message_group` setting
+
+                      can always delete any message in the channel if they
+
+                      [have content access](/help/channel-permissions) to that channel.
+
+
+                      **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+                      change, only the users in `can_delete_any_message_group` were able
+
+                      delete any message in the organization.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_delete_own_message_group:
+                  allOf:
+                  - description: 'The set of users who have permission to delete the messages that they have
+
+                      sent in the channel expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Note that a user must [have content access](/help/channel-permissions) to a
+
+                      channel in order to delete their own message in the channel.
+
+
+                      Users with permission to delete any message in the channel
+
+                      and users present in the organization-level `can_delete_own_message_group` setting
+
+                      can always delete their own messages in the channel if they
+
+                      [have content access](/help/channel-permissions) to that channel.
+
+
+                      **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+                      change, only the users in the organization-level `can_delete_any_message_group`
+
+                      and `can_delete_own_message_group` settings were able delete their own messages in
+
+                      the organization.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_move_messages_out_of_channel_group:
+                  allOf:
+                  - description: 'The set of users who have permission to move messages out of this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Note that a user must [have content access](/help/channel-permissions) to a
+
+                      channel in order to move messages out of the channel.
+
+
+                      Channel administrators and users present in the organization-level
+
+                      `can_move_messages_between_channels_group` setting can always move messages
+
+                      out of the channel if they [have content access](/help/channel-permissions) to
+
+                      the channel.
+
+
+                      **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+                      change, only the users in `can_move_messages_between_channels_group` were able
+
+                      move messages between channels.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_move_messages_within_channel_group:
+                  allOf:
+                  - description: 'The set of users who have permission to move messages within this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Note that a user must [have content access](/help/channel-permissions) to a
+
+                      channel in order to move messages within the channel.
+
+
+                      Channel administrators and users present in the organization-level
+
+                      `can_move_messages_between_topics_group` setting can always move messages
+
+                      within the channel if they [have content access](/help/channel-permissions) to
+
+                      the channel.
+
+
+                      **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+                      change, only the users in `can_move_messages_between_topics_group` were able
+
+                      move messages between topics of a channel.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_send_message_group:
+                  allOf:
+                  - description: 'The set of users who have permission to post in this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Note that a user must have metadata access to a channel and permission
+
+                      to administer the channel in order to modify this setting.
+
+
+                      Note that using this permission to send a message to a new topic requires
+
+                      also having permission to create new topics in the channel.
+
+
+                      **Changes**: New in Zulip 10.0 (feature level 333). Previously
+
+                      `stream_post_policy` field used to control the permission to
+
+                      post in the channel.
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_subscribe_group:
+                  allOf:
+                  - description: 'The set of users who have permission to subscribe themselves to this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Everyone, excluding guests, can subscribe to any public channel
+
+                      irrespective of this setting.
+
+
+                      Users in this group can subscribe to a private channel as well.
+
+
+                      Note that a user must [have content access](/help/channel-permissions)
+
+                      to a channel and permission to administer the channel in order to
+
+                      modify this setting.
+
+
+                      **Changes**: New in Zulip 10.0 (feature level 357).
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_resolve_topics_group:
+                  allOf:
+                  - description: 'The set of users who have permission to to resolve topics in this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+                      Users who have similar realm-level permissions can resolve topics
+
+                      in a channel regardless of the value of this setting.
+
+
+                      **Changes**: New in Zulip 11.0 (feature level 402).
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+                can_create_topic_group:
+                  allOf:
+                  - description: 'The set of users who have permission to create new topics in this channel
+
+                      expressed as an [update to a group-setting value][update-group-setting].
+
+
+                      Note that using this permission requires also having permission to send
+
+                      messages in the channel.
+
+
+                      For [private channels with protected history](/help/channel-permissions#private-channels),
+
+                      this setting can only be set to `role:everyone` [system group][system-groups].
+
+
+                      **Changes**: New in Zulip 12.0 (feature level 441). Previously, if you
+
+                      could send messages in a channel, you could create topics in the channel.
+
+
+                      [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+                      [system-groups]: /api/group-setting-values#system-groups
+
+                      '
+                    example:
+                      new:
+                        direct_members:
+                        - 10
+                        direct_subgroups:
+                        - 11
+                      old: 15
+                  - $ref: '#/components/schemas/GroupSettingValueUpdate'
+            encoding:
+              is_private:
+                contentType: application/json
+              is_web_public:
+                contentType: application/json
+              history_public_to_subscribers:
+                contentType: application/json
+              is_default_stream:
+                contentType: application/json
+              folder_id:
+                contentType: application/json
+              can_add_subscribers_group:
+                contentType: application/json
+              can_remove_subscribers_group:
+                contentType: application/json
+              can_administer_channel_group:
+                contentType: application/json
+              can_delete_any_message_group:
+                contentType: application/json
+              can_delete_own_message_group:
+                contentType: application/json
+              can_move_messages_out_of_channel_group:
+                contentType: application/json
+              can_move_messages_within_channel_group:
+                contentType: application/json
+              can_send_message_group:
+                contentType: application/json
+              can_subscribe_group:
+                contentType: application/json
+              can_resolve_topics_group:
+                contentType: application/json
+              can_create_topic_group:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - allOf:
+                  - $ref: '#/components/schemas/InvalidChannelError'
+                  - description: 'An example JSON response for when the supplied channel does not exist:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: Invalid parameters
+                      result: error
+                    description: 'An example JSON response for when invalid combination of channel permission
+
+                      parameters are passed:
+
+                      '
+                - allOf:
+                  - $ref: '#/components/schemas/CodedError'
+                  - example:
+                      code: BAD_REQUEST
+                      msg: A moderation request channel cannot be public.
+                      result: error
+                    description: 'An example JSON response for when trying to set moderation request channel to
+
+                      be public:
+
+                      '
+  /streams/{stream_id}/email_address:
+    get:
+      operationId: get-stream-email-address
+      summary: Get channel's email address
+      tags:
+      - channels
+      description: 'Get email address of a channel.
+
+
+        Note that only users with permission to post messages in the channel
+
+        can access the channel''s email address.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 448), users without
+
+        permission to post messages in the channel could access the channel''s email
+
+        if they had metadata access.
+
+
+        New in Zulip 8.0 (feature level 226).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      - name: sender_id
+        in: query
+        description: 'The ID of a user or bot which should appear as the sender when messages
+
+          are sent to the channel using the returned channel email address.
+
+
+          `sender_id` can be:
+
+
+          - ID of the current user.
+
+          - ID of the Email gateway bot. (Default value)
+
+          - ID of a bot owned by the current user.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 335).
+
+
+          Previously, the sender was always Email gateway bot.
+
+          '
+        schema:
+          type: integer
+        example: 1
+        required: false
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    email:
+                      type: string
+                      description: 'Email address of the channel.
+
+                        '
+                  example:
+                    result: success
+                    msg: ''
+                    email: test.af64447e9e39374841063747ade8e6b0.show-sender@testserver
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/InvalidChannelError'
+                - description: 'An example JSON response for when the requested channel does not exist,
+
+                    or where the user does not have permission to access the target channel:
+
+                    '
+  /streams/{stream_id}/delete_topic:
+    post:
+      operationId: delete-topic
+      summary: Delete a topic
+      tags:
+      - channels
+      description: 'Delete all messages in a topic.
+
+
+        Topics are a field on messages (not an independent data structure), so
+
+        deleting all the messages in the topic deletes the topic from Zulip.
+
+
+        Because this endpoint deletes messages in batches, it is possible for
+
+        the request to time out after only deleting some messages in the topic.
+
+        When this happens, the `complete` boolean field in the success response
+
+        will be `false`. Clients should repeat the request when handling such a
+
+        response. If all messages in the topic were deleted, then the success
+
+        response will return `"complete": true`.
+
+
+        **Changes**: Before Zulip 9.0 (feature level 256), the server never sent
+
+        [`stream` op: `update`](/api/get-events#stream-update) events with an
+
+        updated `first_message_id` for a channel when the oldest message that
+
+        had been sent to it changed.
+
+
+        Before Zulip 8.0 (feature level 211), if the server''s
+
+        processing was interrupted by a timeout, but some messages in the topic
+
+        were deleted, then it would return `"result": "partially_completed"`,
+
+        along with a `code` field for an error string, in the success response
+
+        to indicate that there was a timeout and that the client should repeat
+
+        the request.
+
+
+        As of Zulip 6.0 (feature level 154), instead of returning an error
+
+        response when a request times out after successfully deleting some of
+
+        the messages in the topic, a success response is returned with
+
+        `"result": "partially_completed"` to indicate that some messages were
+
+        deleted.
+
+
+        Before Zulip 6.0 (feature level 147), this request did a single atomic
+
+        operation, which could time out for very large topics. As of this
+
+        feature level, messages are deleted in batches, starting with the newest
+
+        messages, so that progress is made even if the request times out and
+
+        returns an error.
+
+        '
+      x-requires-administrator: true
+      parameters:
+      - $ref: '#/components/parameters/ChannelIdInPath'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                topic_name:
+                  description: 'The name of the topic to delete.
+
+
+                    Note: When the value of `realm_empty_topic_display_name` found in
+
+                    the [POST /register](/api/register-queue) response is used for this
+
+                    parameter, it is interpreted as an empty string.
+
+
+                    **Changes**: Before Zulip 10.0 (feature level 334), empty string
+
+                    was not a valid topic name for channel messages.
+
+                    '
+                  type: string
+                  example: new coffee machine
+              required:
+              - topic_name
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  required:
+                  - complete
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    complete:
+                      type: boolean
+                      description: 'Whether all unread messages were marked as read.
+
+
+                        Will be `false` if the request successfully marked
+
+                        some, but not all, messages as read.
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    complete: true
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    result: error
+                    msg: Must be an organization administrator
+                    code: UNAUTHORIZED_PRINCIPAL
+                  description: 'Error when the user does not have permission
+
+                    to delete topics in this organization:
+
+                    '
+  /channels/create:
+    post:
+      tags:
+      - channels
+      operationId: create-channel
+      summary: Create a channel
+      description: 'Create a new [channel](/help/create-channels), and optionally subscribe
+
+        users to the newly created channel.
+
+
+        The initial [channel settings](/api/update-stream) will be determined
+
+        by the optional parameters, like `invite_only`, detailed below.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 417). Previously, this was
+
+        only possible via the [`POST /api/subscribe`](/api/subscribe) endpoint,
+
+        which handles both channel subscription and creation.
+
+        '
+      x-curl-examples-parameters:
+        oneOf:
+        - type: include
+          parameters:
+            enum:
+            - name
+            - subscribers
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'The name of the new channel.
+
+
+                    Clients should use the `max_stream_name_length` returned by the
+
+                    [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum channel name length.
+
+                    '
+                  example: music
+                description:
+                  type: string
+                  description: 'The [description](/help/change-the-channel-description)
+
+                    to use for the new channel being created, in text/markdown format.
+
+
+                    Clients should use the `max_stream_description_length` returned
+
+                    by the [`POST /register`](/api/register-queue) endpoint to
+
+                    determine the maximum channel description length.
+
+                    '
+                  example: Channel for discussing all things music!
+                subscribers:
+                  description: 'A list of user IDs of the users to be subscribed to the new channel.
+
+                    '
+                  type: array
+                  items:
+                    type: integer
+                  example:
+                  - 17
+                  - 12
+                announce:
+                  description: 'This determines whether [notification bot](/help/configure-automated-notices)
+
+                    will send an announcement about the new channel''s creation.
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                invite_only:
+                  description: 'This parameter and the ones that follow are used to request an initial
+
+                    configuration of the new channel.
+
+
+                    This parameter determines whether the newly created channel will be
+
+                    a [private channel](/help/channel-permissions#private-channels).
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                is_web_public:
+                  description: 'This parameter determines whether the newly created channel will be
+
+                    a web-public channel.
+
+
+                    Note that creating web-public channels requires the
+
+                    `WEB_PUBLIC_STREAMS_ENABLED` [server setting][server-settings]
+
+                    to be enabled on the Zulip server in question, the organization
+
+                    to have enabled the `enable_spectator_access` realm setting, and
+
+                    the current user to have permission under the organization''s
+
+                    `can_create_web_public_channel_group` realm setting.
+
+
+                    [server-settings]: https://zulip.readthedocs.io/en/stable/production/settings.html
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                is_default_stream:
+                  description: 'This parameter determines whether the newly created channel will be
+
+                    added as a [default channel][default-channels] for new users joining
+
+                    the organization.
+
+
+                    [default-channels]: /help/set-default-channels-for-new-users
+
+                    '
+                  type: boolean
+                  default: false
+                  example: true
+                folder_id:
+                  description: 'This parameter adds the newly created channel to the specified
+
+                    [channel folder](/help/channel-folders).
+
+
+                    **Changes**: New in Zulip 11.0 (feature level 389).
+
+                    '
+                  type: integer
+                  example: 1
+                topics_policy:
+                  $ref: '#/components/schemas/TopicsPolicy'
+                history_public_to_subscribers:
+                  $ref: '#/components/schemas/HistoryPublicToSubscribers'
+                message_retention_days:
+                  $ref: '#/components/schemas/MessageRetentionDays'
+                can_add_subscribers_group:
+                  $ref: '#/components/schemas/ChannelCanAddSubscribersGroup'
+                can_create_topic_group:
+                  $ref: '#/components/schemas/CanCreateTopicGroup'
+                can_delete_any_message_group:
+                  $ref: '#/components/schemas/CanDeleteAnyMessageGroup'
+                can_delete_own_message_group:
+                  $ref: '#/components/schemas/CanDeleteOwnMessageGroup'
+                can_remove_subscribers_group:
+                  $ref: '#/components/schemas/CanRemoveSubscribersGroup'
+                can_administer_channel_group:
+                  $ref: '#/components/schemas/CanAdministerChannelGroup'
+                can_move_messages_out_of_channel_group:
+                  $ref: '#/components/schemas/CanMoveMessagesOutOfChannelGroup'
+                can_move_messages_within_channel_group:
+                  $ref: '#/components/schemas/CanMoveMessagesWithinChannelGroup'
+                can_send_message_group:
+                  $ref: '#/components/schemas/CanSendMessageGroup'
+                can_subscribe_group:
+                  $ref: '#/components/schemas/CanSubscribeGroup'
+                can_resolve_topics_group:
+                  $ref: '#/components/schemas/CanResolveTopicsGroup'
+              required:
+              - name
+              - subscribers
+            encoding:
+              announce:
+                contentType: application/json
+              can_add_subscribers_group:
+                contentType: application/json
+              can_create_topic_group:
+                contentType: application/json
+              can_administer_channel_group:
+                contentType: application/json
+              can_move_messages_out_of_channel_group:
+                contentType: application/json
+              can_move_messages_within_channel_group:
+                contentType: application/json
+              can_remove_subscribers_group:
+                contentType: application/json
+              can_resolve_topics_group:
+                contentType: application/json
+              can_send_message_group:
+                contentType: application/json
+              can_subscribe_group:
+                contentType: application/json
+              subscribers:
+                contentType: application/json
+              invite_only:
+                contentType: application/json
+              is_web_public:
+                contentType: application/json
+              is_default_stream:
+                contentType: application/json
+              history_public_to_subscribers:
+                contentType: application/json
+              folder_id:
+                contentType: application/json
+              topics_policy:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - type: object
+                  additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    id:
+                      type: integer
+                      description: The ID of the newly created channel.
+                example:
+                  result: success
+                  msg: ''
+                  id: 50
+        '409':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    result: error
+                    msg: Channel 'discussions' already exists
+                    code: CHANNEL_ALREADY_EXISTS
+                  description: 'An example JSON error response for when a channel with the submitted
+
+                    name already exists.
+
+                    '
+  /channel_folders/create:
+    post:
+      operationId: create-channel-folder
+      summary: Create a channel folder
+      tags:
+      - channels
+      x-requires-administrator: true
+      description: 'Create a new [channel folder](/help/channel-folders).
+
+
+        **Changes**: New in Zulip 11.0 (feature level 389).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: 'The name of the channel folder.
+
+
+                    Clients should use the `max_channel_folder_name_length` returned
+
+                    by the [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum channel folder name length.
+
+
+                    Value cannot be an empty string.
+
+                    '
+                  type: string
+                  example: marketing
+                description:
+                  description: 'The description of the channel folder.
+
+
+                    Clients should use the `max_channel_folder_description_length`
+
+                    returned by the [`POST /register`](/api/register-queue) endpoint
+
+                    to determine the maximum channel folder description length.
+
+
+                    Note that this parameter must be passed as part of the request,
+
+                    but can be an empty string if no description for the new channel
+
+                    folder is desired.
+
+                    '
+                  type: string
+                  example: Channels for marketing.
+              required:
+              - name
+      responses:
+        '200':
+          description: 'A success response containing the unique ID of the channel folder.
+
+            This field provides a straightforward way to reference the
+
+            newly created channel folder.
+
+            '
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - required:
+                  - channel_folder_id
+                  additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    channel_folder_id:
+                      type: integer
+                      description: 'The unique ID of the created channel folder.
+
+                        '
+                  example:
+                    msg: ''
+                    result: success
+                    channel_folder_id: 12
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    result: error
+                    msg: Must be an organization administrator
+                    code: UNAUTHORIZED_PRINCIPAL
+                  description: 'Error when the user does not have permission
+
+                    to create a channel folder:
+
+                    '
+  /channel_folders:
+    get:
+      operationId: get-channel-folders
+      summary: Get channel folders
+      tags:
+      - channels
+      description: 'Fetches all of the [channel folders](/help/channel-folders) in the
+
+        organization, sorted by the `order` field.
+
+
+        **Changes**: Before Zulip 11.0 (feature level 414), the list of channel
+
+        folders was sorted by ID as the `order` field didn''t exist.
+
+
+        New in Zulip 11.0 (feature level 389).
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                include_archived:
+                  description: 'Whether to include archived channel folders in the response.
+
+                    '
+                  type: boolean
+                  example: true
+                  default: false
+            encoding:
+              include_archived:
+                contentType: application/json
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    channel_folders:
+                      type: array
+                      description: 'A list of channel folder objects.
+
+                        '
+                      items:
+                        $ref: '#/components/schemas/ChannelFolder'
+                  example:
+                    msg: ''
+                    result: success
+                    channel_folders:
+                    - description: Channels for frontend discussions
+                      rendered_description: <p>Channels for frontend discussions</p>
+                      id: 1
+                      creator_id: 1
+                      date_created: 1691057093
+                      name: Frontend
+                      is_archived: false
+                    - description: Channels for **backend** discussions
+                      rendered_description: <p>Channels for <strong>backend</strong> discussions</p>
+                      id: 2
+                      creator_id: 1
+                      date_created: 1791057093
+                      name: Backend
+                      is_archived: false
+    patch:
+      operationId: patch-channel-folders
+      summary: Reorder channel folders
+      tags:
+      - channels
+      x-requires-administrator: true
+      description: 'Reorder the [channel folders](/help/channel-folders) in the user''s
+
+        organization.
+
+
+        Channel folders are displayed in Zulip UI in order; this endpoint allows
+
+        administrative settings UI to change the ordering of channel folders.
+
+
+        This endpoint is used to implement the dragging feature described in the
+
+        [manage channel folders documentation](/help/manage-channel-folders).
+
+
+        **Changes**: New in Zulip 11.0 (feature level 414).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: array
+                  description: 'A list of channel folder IDs representing the new order.
+
+
+                    This list must include the IDs of [all the organization''s channel
+
+                    folders](/api/get-channel-folders), including archived folders.
+
+                    '
+                  items:
+                    type: integer
+                  example:
+                  - 2
+                  - 1
+              required:
+              - order
+            encoding:
+              order:
+                contentType: application/json
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    code: BAD_REQUEST
+                    msg: Invalid order mapping
+                    result: error
+                  description: 'An example JSON response when the order mapping is invalid:
+
+                    '
+  /channel_folders/{channel_folder_id}:
+    patch:
+      operationId: update-channel-folder
+      summary: Update a channel folder
+      tags:
+      - channels
+      x-requires-administrator: true
+      description: 'Update the name or description of a [channel folder](/help/channel-folders)
+
+        with the specified ID.
+
+
+        This endpoint is also used to archive or unarchive the specified channel
+
+        folder.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 389).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ChannelFolderId'
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: 'The new name of the channel folder.
+
+
+                    Clients should use the `max_channel_folder_name_length` returned
+
+                    by the [`POST /register`](/api/register-queue) endpoint to determine
+
+                    the maximum channel folder name length.
+
+
+                    Value cannot be an empty string.
+
+                    '
+                  type: string
+                  example: backend
+                description:
+                  description: 'The new description of the channel folder.
+
+
+                    Clients should use the `max_channel_folder_description_length`
+
+                    returned by the [`POST /register`](/api/register-queue) endpoint
+
+                    to determine the maximum channel folder description length.
+
+                    '
+                  type: string
+                  example: Backend channels.
+                is_archived:
+                  description: 'Whether to archive or unarchive the channel folder.
+
+                    '
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - example:
+                    code: BAD_REQUEST
+                    msg: Invalid channel folder ID
+                    result: error
+                  description: 'An example JSON response when the channel folder ID is invalid:
+
+                    '
+  /calls/bigbluebutton/create:
+    get:
+      tags:
+      - channels
+      operationId: create-big-blue-button-video-call
+      summary: Create BigBlueButton video call
+      description: 'Create a video call URL for a BigBlueButton video call.
+
+        Requires [BigBlueButton 2.4+](/integrations/big-blue-button)
+
+        to be configured on the Zulip server.
+
+
+        The acting user will be given the moderator role on the call.
+
+
+        **Changes**: Prior to Zulip 10.0 (feature level 337), every
+
+        user was given the moderator role on BigBlueButton calls, via
+
+        encoding a moderator password in the generated URLs.
+
+        '
+      parameters:
+      - in: query
+        name: meeting_name
+        schema:
+          type: string
+        required: true
+        description: 'Meeting name for the BigBlueButton video call.
+
+          '
+        example: test_channel meeting
+      - in: query
+        name: voice_only
+        schema:
+          type: boolean
+        required: false
+        description: 'Configures whether the call is voice-only; if true,
+
+          disables cameras for all users. Only the call
+
+          creator/moderator can edit this configuration.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 337).
+
+          '
+        example: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    url:
+                      description: 'The URL for the BigBlueButton video call.
+
+                        '
+                      type: string
+                      example: /calls/bigbluebutton/join?meeting_id=%22zulip-something%22&password=%22something%22&name=%22your_meeting_name%22&checksum=%22somechecksum%22
+                  example:
+                    msg: ''
+                    result: success
+                    url: /calls/bigbluebutton/join?meeting_id=%22zulip-something%22&password=%22something%22&checksum=%22somechecksum%22
+  /calls/nextcloud_talk/create:
+    post:
+      tags:
+      - channels
+      operationId: create-nextcloud-talk-video-call
+      summary: Create Nextcloud Talk video call
+      description: 'Create a video call URL for a Nextcloud Talk video call. Requires
+
+        [Nextcloud Talk](/integrations/nextcloud-talk) to be configured on the
+
+        Zulip server.
+
+
+        **Changes**: New in Zulip 12.0 (feature level 465).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - room_name
+              properties:
+                room_name:
+                  type: string
+                  description: 'Room name for the Nextcloud Talk conversation.
+
+                    '
+                  example: '#Test > team check-in'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    url:
+                      description: 'The URL for the Nextcloud Talk conversation.
+
+                        '
+                      type: string
+                      example: https://nextcloud.example.com/index.php/call/abc123xyz
+                  example:
+                    msg: ''
+                    result: success
+                    url: https://nextcloud.example.com/index.php/call/abc123xyz
+  /calls/webex/create:
+    post:
+      tags:
+      - channels
+      operationId: create-webex-video-call
+      summary: Create Webex video call
+      description: 'Create a video call URL for a Webex video call.
+
+
+        Requires [Webex integration](/integrations/webex) to be configured
+
+        on the Zulip server.
+
+
+        Clients should confirm that the user has completed the OAuth process
+
+        with Webex and has a Webex token before attempting to create a video
+
+        call URL. See the `has_webex_token` field in the [`POST /register`
+
+        response](/api/register-queue), as well as the [`has_webex_token`
+
+        event type](/api/get-events#has_webex_token).
+
+
+        **Changes**: New in Zulip 12.0 (feature level 493).
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    url:
+                      description: 'The URL for the Webex meeting.
+
+                        '
+                      type: string
+                      example: https://xxkk-7xpz.webex.com/xxkk-7xpz/j.php?MTID=mebb3ba1f366f683bcaec9d32773ce034
+                  example:
+                    msg: ''
+                    result: success
+                    url: https://xxkk-7xpz.webex.com/xxkk-7xpz/j.php?MTID=mebb3ba1f366f683bcaec9d32773ce034
+  /calls/constructorgroups/create:
+    post:
+      tags:
+      - channels
+      operationId: create-constructor-groups-video-call
+      summary: Create Constructor Groups video call
+      description: 'Create a video call URL for a Constructor Groups video call.
+
+        Requires [Constructor Groups](/integrations/constructor-groups)
+
+        to be configured on the Zulip server.
+
+
+        **Changes**: New in Zulip 12.0 (feature level 460).
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    url:
+                      description: 'The URL for the Constructor Groups video call.
+
+                        '
+                      type: string
+                      example: https://example.constructor.app/groups/room/room-123
+                  example:
+                    msg: ''
+                    result: success
+                    url: https://example.constructor.app/groups/room/room-123
+components:
+  parameters:
+    ChannelFolderId:
+      name: channel_folder_id
+      in: path
+      description: 'The ID of the target channel folder.
+
+        '
+      schema:
+        type: integer
+      example: 1
+      required: true
+    ChannelIdInPath:
+      name: stream_id
+      in: path
+      description: 'The ID of the channel to access.
+
+        '
+      schema:
+        type: integer
+      example: 1
+      required: true
+    UserId:
+      name: user_id
+      in: path
+      description: 'The target user''s ID.
+
+        '
+      schema:
+        type: integer
+      example: 12
+      required: true
+    IncludeSubscribers:
+      name: include_subscribers
+      in: query
+      description: 'Whether each returned channel object should include a `subscribers`
+
+        field containing a list of the user IDs of its subscribers.
+
+
+        Client apps supporting organizations with many thousands of users
+
+        should not pass `true`, because the full subscriber matrix may be
+
+        several megabytes of data. The `partial` value, combined with the
+
+        `subscriber_count` and fetching subscribers for individual channels as
+
+        needed, is recommended to support client app features where
+
+        channel subscriber data is useful.
+
+
+        If a client passes `partial` for this parameter, the server may,
+
+        for some channels, return a subset of the channel''s subscribers
+
+        in the `partial_subscribers` field instead of the `subscribers` field,
+
+        which always contains the complete set of subscribers.
+
+
+        The server guarantees that it will always return a `subscribers`
+
+        field for channels with fewer than 250 total subscribers. When
+
+        returning a `partial_subscribers` field, the server guarantees
+
+        that all bot users and users active within the last 14 days will
+
+        be included. For other cases, the server may use its discretion
+
+        to determine which channels and users to include, balancing between
+
+        payload size and usefulness of the data provided to the client.
+
+
+        **Changes**: The `partial` value is new in Zulip 11.0 (feature level 412).
+
+
+        New in Zulip 2.1.0.
+
+        '
+      schema:
+        type: string
+        enum:
+        - 'true'
+        - 'false'
+        - partial
+        default: 'false'
+      example: 'true'
+  schemas:
+    BasicChannel:
+      allOf:
+      - $ref: '#/components/schemas/BasicChannelBase'
+      - additionalProperties: false
+        properties:
+          stream_id: {}
+          name: {}
+          is_archived: {}
+          description: {}
+          date_created: {}
+          creator_id:
+            nullable: true
+          invite_only: {}
+          rendered_description: {}
+          is_web_public: {}
+          stream_post_policy: {}
+          message_retention_days:
+            nullable: true
+          history_public_to_subscribers: {}
+          topics_policy: {}
+          first_message_id:
+            nullable: true
+          folder_id:
+            nullable: true
+          is_recently_active: {}
+          is_announcement_only: {}
+          can_add_subscribers_group: {}
+          can_remove_subscribers_group: {}
+          can_administer_channel_group: {}
+          can_delete_any_message_group: {}
+          can_delete_own_message_group: {}
+          can_move_messages_out_of_channel_group: {}
+          can_move_messages_within_channel_group: {}
+          can_send_message_group: {}
+          can_subscribe_group: {}
+          can_resolve_topics_group: {}
+          can_create_topic_group: {}
+          subscriber_count: {}
+          stream_weekly_traffic:
+            type: integer
+            nullable: true
+            description: 'The average number of messages sent to the channel per week, as
+
+              estimated based on recent weeks, rounded to the nearest integer.
+
+
+              If `null`, no information is provided on the average traffic.
+
+              This can be because the channel was recently created and there
+
+              is insufficient data to make an estimate, or because the server
+
+              wishes to omit this information for this client, this realm, or
+
+              this endpoint or type of event.
+
+
+              **Changes**: New in Zulip 8.0 (feature level 199). Previously, this
+
+              statistic was available only in subscription objects.
+
+              '
+        required:
+        - stream_id
+        - name
+        - is_archived
+        - description
+        - date_created
+        - creator_id
+        - invite_only
+        - rendered_description
+        - is_web_public
+        - stream_post_policy
+        - subscriber_count
+        - message_retention_days
+        - history_public_to_subscribers
+        - first_message_id
+        - folder_id
+        - is_recently_active
+        - is_announcement_only
+        - can_remove_subscribers_group
+        - stream_weekly_traffic
+        - can_subscribe_group
+    IgnoredParametersSuccess:
+      allOf:
+      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
+
+        array was added as a possible return value for all REST API endpoint
+
+        JSON success responses in Zulip 7.0 (feature level 167).
+
+
+        Previously, it was added to
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
+
+        in Zulip 5.0 (feature level 111) and to
+
+        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
+
+        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
+
+        (feature level 78) as a return value for the
+
+        [`PATCH /settings`](/api/update-settings) endpoint.
+
+
+        A typical successful JSON response with ignored parameters may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      example:
+        ignored_parameters_unsupported:
+        - invalid_param_1
+        - invalid_param_2
+        msg: ''
+        result: success
+    Principals:
+      description: 'A list of user IDs (preferred) or Zulip API email
+
+        addresses of the users to be subscribed to or unsubscribed
+
+        from the channels specified in the `subscriptions` parameter. If
+
+        not provided, then the requesting user/bot is subscribed.
+
+
+        **Changes**: The integer format is new in Zulip 3.0 (feature level 9).
+
+        '
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: array
+        items:
+          type: integer
+      example:
+      - ZOE@zulip.com
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    ChannelCanAddSubscribersGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to add subscribers to this channel.
+
+
+          Users who can administer the channel or have similar realm-level
+
+          permissions can add subscribers to a public channel regardless
+
+          of the value of this setting.
+
+
+          Users in this group need not be subscribed to a private channel to
+
+          add subscribers to it.
+
+
+          Note that a user must [have content access](/help/channel-permissions)
+
+          to a channel and permission to administer the channel in order to
+
+          modify this setting.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 342). Previously, there was no
+
+          channel-level setting for this permission.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    SubscriptionProperty:
+      type: string
+      enum:
+      - color
+      - is_muted
+      - in_home_view
+      - pin_to_top
+      - desktop_notifications
+      - audible_notifications
+      - push_notifications
+      - email_notifications
+      - wildcard_mentions_notify
+      description: "One of the channel properties described below:\n\n- `\"color\"`: The hex value of the user's display color for the channel.\n\n- `\"is_muted\"`: Whether the channel is [muted](/help/mute-a-channel).<br>\n  **Changes**: As of Zulip 6.0 (feature level 139), updating either\n  `\"is_muted\"` or `\"in_home_view\"` generates two [subscription update\n  events](/api/get-events#subscription-update), one for each property,\n  that are sent to clients. Prior to this feature level, updating either\n  property only generated a subscription update event for\n  `\"in_home_view\"`. <br>\n  Prior to Zulip 2.1.0, this feature was represented\n  by the more confusingly named `\"in_home_view\"` (with the\n  opposite value: `in_home_view=!is_muted`); for\n  backwards-compatibility, modern Zulip still accepts that property.\n\n- `\"pin_to_top\"`: Whether to pin the channel at the top of the channel list.\n\n- `\"desktop_notifications\"`: Whether to show desktop notifications\n  for all messages sent to the channel.\n\n- `\"audible_notifications\"`: Whether to play a sound\n  notification for all messages sent to the channel.\n\n- `\"push_notifications\"`: Whether to trigger a mobile push\n  notification for all messages sent to the channel.\n\n- `\"email_notifications\"`: Whether to trigger an email\n  notification for all messages sent to the channel.\n\n- `\"wildcard_mentions_notify\"`: Whether wildcard mentions trigger\n  notifications as though they were personal mentions in this channel.\n"
+      example: pin_to_top
+    FolderId:
+      type: integer
+      nullable: true
+      description: 'The ID of the folder to which the channel belongs.
+
+
+        Is `null` if channel does not belong to any folder.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 389).
+
+        '
+    CanCreateTopicGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to create a new topic in this channel.
+
+
+          Note that using this permission requires also having permission to
+
+          send messages in the channel.
+
+
+          Note that this must be the `role:everyone` [system group][system-groups]
+
+          for [private channels with protected history][private-channels].
+
+
+          **Changes**: New in Zulip 12.0 (feature level 441). Previously,
+
+          if you could send messages in a channel, you could create topics in
+
+          the channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          [private-channels]: /help/channel-permissions/#private-channels
+
+          [system-groups]: /api/group-setting-values#system-groups
+
+          '
+    SubscriptionPropertyValue:
+      oneOf:
+      - type: boolean
+        description: 'The new boolean value for the specified property.
+
+          '
+      - type: string
+        description: 'The hex value of the user''s display color for the channel.
+
+          '
+      description: 'The new value of the property being modified.
+
+
+        If the property is `"color"`, then `value` is a string
+
+        representing the hex value of the user''s display
+
+        color for the channel. For all other above properties,
+
+        `value` is a boolean.
+
+        '
+      example: 'true'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    HistoryPublicToSubscribers:
+      description: 'Whether the channel''s message history should be available to
+
+        newly subscribed members, or users can only access messages
+
+        they actually received while subscribed to the channel.
+
+
+        Corresponds to the shared history option for
+
+        [private channels](/help/channel-permissions#private-channels).
+
+        '
+      type: boolean
+      example: false
+    CanMoveMessagesWithinChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to move messages within this channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to move messages within the channel.
+
+
+          Channel administrators and users present in the organization-level
+
+          `can_move_messages_between_topics_group` setting can always move messages
+
+          within the channel if they [have content access](/help/channel-permissions) to
+
+          the channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+          change, only the users in `can_move_messages_between_topics_group` were able
+
+          move messages between topics of a channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    SendNewSubscriptionMessages:
+      description: 'Whether any other users newly subscribed via this request should be
+
+        sent a direct message, from Notification Bot, notifying them about their
+
+        new subscription.
+
+
+        No direct messages are sent for any channels that are created as part of
+
+        this request, regardless of the value of this parameter.
+
+
+        The server will never send direct messages when the total number of users
+
+        who were subscribed to channels in this request was more than the value
+
+        of `max_bulk_new_subscription_messages`, which is available in the [`POST
+
+        /register`](/api/register-queue) response.
+
+
+        **Changes**: Before Zulip 11.0 (feature level 397), new subscribers
+
+        were always sent a Notification Bot direct message, which was unduly
+
+        expensive when bulk-subscribing thousands of users to a channel.
+
+        '
+      type: boolean
+      default: true
+      example: true
+    TopicsPolicy:
+      type: string
+      enum:
+      - inherit
+      - allow_empty_topic
+      - disable_empty_topic
+      - empty_topic_only
+      example: inherit
+      description: "Whether [named topics](/help/introduction-to-topics) and the empty\ntopic (i.e., [\"general chat\" topic](/help/general-chat-topic))\nare enabled in this channel.\n\n- `\"inherit\"`: Messages can be sent to named topics in this channel,\n  and the [organization-level `realm_topics_policy`][realm-topics-policy]\n  is used for whether messages can be sent to the empty topic in this\n  channel.\n- `\"allow_empty_topic\"`: Messages can be sent to both named topics and\n  the empty topic in this channel.\n- `\"disable_empty_topic\"`: Messages can be sent to named topics in this\n  channel, but the empty topic is disabled.\n- `\"empty_topic_only\"`: Messages can be sent to the empty topic in this\n  channel, but named topics are disabled. See [\"general chat\"\n  channels](/help/general-chat-channels).\n\nThe `\"empty_topic_only\"` policy can only be set if all existing messages\nin the channel are already in the empty topic.\n\nWhen creating a new channel, if the `topics_policy` is not specified, the\n`\"inherit\"` option will be set.\n\n**Changes**: In Zulip 11.0 (feature level 404), the `\"empty_topic_only\"`\noption was added.\n\nNew in Zulip 11.0 (feature level 392).\n\n[realm-topics-policy]: /help/require-topics#set-the-default-general-chat-topic-configuration\n"
+    CanSubscribeGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to subscribe themselves to this channel.
+
+
+          Everyone, excluding guests, can subscribe to any public channel
+
+          irrespective of this setting.
+
+
+          Users in this group can subscribe to a private channel as well.
+
+
+          Note that a user must [have content access](/help/channel-permissions)
+
+          to a channel and permission to administer the channel in order to
+
+          modify this setting.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 357).
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    CanMoveMessagesOutOfChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to move messages out of this channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to move messages out of the channel.
+
+
+          Channel administrators and users present in the organization-level
+
+          `can_move_messages_between_channels_group` setting can always move messages
+
+          out of the channel if they [have content access](/help/channel-permissions) to
+
+          the channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+          change, only the users in `can_move_messages_between_channels_group` were able
+
+          move messages between channels.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    CanSendMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to post in this channel.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          Note that using this permission to send a message to a new topic requires
+
+          also having permission to create new topics in the channel.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 333). Previously
+
+          `stream_post_policy` field used to control the permission to
+
+          post in the channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    GroupSettingValueUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        new:
+          allOf:
+          - description: 'The new [group-setting value](/api/group-setting-values) for who would
+
+              have this permission.
+
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+        old:
+          allOf:
+          - description: 'The expected current [group-setting value](/api/group-setting-values)
+
+              for who has this permission.
+
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+      required:
+      - new
+    IgnoredParametersBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    CanRemoveSubscribersGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to remove subscribers from this channel.
+
+
+          Organization administrators can unsubscribe others from a channel as though
+
+          they were in this group without being explicitly listed here.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          **Changes**: Prior to Zulip 10.0 (feature level 349), channel administrators
+
+          could not unsubscribe other users if they were not an organization
+
+          administrator or part of `can_remove_subscribers_group`. Realm administrators
+
+          were not allowed to unsubscribe other users from a private channel if they
+
+          were not subscribed to that channel.
+
+
+          Prior to Zulip 10.0 (feature level 320), this value was always the integer
+
+          ID of a system group.
+
+
+          Before Zulip 8.0 (feature level 197), the `can_remove_subscribers_group`
+
+          setting was named `can_remove_subscribers_group_id`.
+
+
+          New in Zulip 6.0 (feature level 142).
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    MessageRetentionDays:
+      description: 'Number of days that messages sent to this channel will be stored
+
+        before being automatically deleted by the [message retention
+
+        policy](/help/message-retention-policy). Two special string format
+
+        values are supported:
+
+
+        - `"realm_default"`: Return to the organization-level setting.
+
+        - `"unlimited"`: Retain messages forever.
+
+
+        **Changes**: Prior to Zulip 5.0 (feature level 91), retaining
+
+        messages forever was encoded using `"forever"` instead of
+
+        `"unlimited"`.
+
+
+        New in Zulip 3.0 (feature level 17).
+
+        '
+      oneOf:
+      - type: string
+      - type: integer
+      example: '20'
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CanDeleteAnyMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to delete any message in the channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to delete any message in the channel.
+
+
+          Users present in the organization-level `can_delete_any_message_group`
+
+          setting can always delete any message in the channel if they
+
+          [have content access](/help/channel-permissions) to that channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+          change, only the users in `can_delete_any_message_group` were able
+
+          delete any message in the organization.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    ChannelFolder:
+      type: object
+      additionalProperties: false
+      description: 'Object containing the channel folder''s attributes.
+
+        '
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the channel folder.
+
+            '
+        name:
+          type: string
+          description: 'The name of the channel folder.
+
+            '
+        order:
+          type: integer
+          description: 'This value determines in which order the channel folder should be
+
+            displayed in the UI. The value is 0 indexed, and a channel folder with
+
+            a lower value should be displayed before channel folders with higher
+
+            values.
+
+
+            **Changes**: New in Zulip 11.0 (feature level 414).
+
+            '
+        date_created:
+          type: integer
+          nullable: true
+          description: 'The UNIX timestamp for when the channel folder was created,
+
+            in UTC seconds.
+
+            '
+        creator_id:
+          type: integer
+          nullable: true
+          description: 'The ID of the user who created the channel folder.
+
+            '
+        description:
+          type: string
+          description: 'The description of the channel folder. Can be an empty string.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details
+
+            on Zulip''s HTML format.
+
+            '
+        rendered_description:
+          type: string
+          description: 'The description of the channel folder rendered as HTML, intended to be
+
+            used for UI that displays the channel folder description.
+
+
+            Clients should use the standard Zulip rendered_markdown CSS when
+
+            displaying this content so that emoji, LaTeX, and other syntax work
+
+            correctly. And any client-side security logic for user-generated
+
+            message content should be applied when displaying this HTML as though
+
+            it were the body of a Zulip message.
+
+            '
+        is_archived:
+          type: boolean
+          description: 'Whether the channel folder is archived or not.
+
+            '
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    CanDeleteOwnMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to delete the messages that they have sent in the channel.
+
+
+          [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to delete their own message in the channel.
+
+
+          Users with permission to delete any message in the channel
+
+          and users present in the organization-level `can_delete_own_message_group` setting
+
+          can always delete their own messages in the channel if they
+
+          [have content access](/help/channel-permissions) to that channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+          change, only the users in the organization-level `can_delete_any_message_group`
+
+          and `can_delete_own_message_group` settings were able delete their own messages in
+
+          the organization.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    GroupSettingValue:
+      oneOf:
+      - type: integer
+        description: 'The ID of the [user group](/help/user-groups) with this permission.
+
+          '
+      - type: object
+        additionalProperties: false
+        properties:
+          direct_members:
+            description: 'The list of IDs of individual users in the collection of users with this permission.
+
+
+              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+
+              deactivated users who had the permission before being deactivated.
+
+              '
+            type: array
+            items:
+              type: integer
+          direct_subgroups:
+            description: 'The list of IDs of the groups in the collection of users with this permission.
+
+              '
+            type: array
+            items:
+              type: integer
+        description: 'An object with these fields:
+
+          '
+    CanAdministerChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to administer this channel.
+
+
+          Organization administrators can administer every channel as though they were
+
+          in this group without being explicitly listed here.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          **Changes**: Prior to Zulip 10.0 (feature level 349) a user needed to
+
+          [have content access](/help/channel-permissions) to a channel in
+
+          order to modify it. The exception to this rule was that organization
+
+          administrators can edit channel names and descriptions without
+
+          having full access to the channel.
+
+
+          New in Zulip 10.0 (feature level 325). Prior to this
+
+          change, the permission to administer channels was limited to realm
+
+          administrators.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    NonExistingChannelNameError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          stream:
+            type: string
+            description: 'The name of the channel that could not be found.
+
+              '
+        example:
+          code: STREAM_DOES_NOT_EXIST
+          msg: Channel 'nonexistent' does not exist
+          result: error
+          stream: nonexistent
+    InvalidChannelError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+        example:
+          msg: Invalid channel ID
+          code: BAD_REQUEST
+          result: error
+    CanResolveTopicsGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to resolve topics in the channel.
+
+
+          Users who have similar realm-level permissions can resolve topics
+
+          in a channel regardless of the value of this setting.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 402).
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    Subscription:
+      type: object
+      additionalProperties: false
+      properties:
+        stream_id:
+          type: integer
+          description: 'The unique ID of a channel.
+
+            '
+        name:
+          type: string
+          description: 'The name of a channel.
+
+            '
+        description:
+          type: string
+          description: 'The [description](/help/change-the-channel-description) of the channel in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format,
+
+            intended to be used to prepopulate UI for editing a channel''s
+
+            description.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+
+            See also `rendered_description`.
+
+            '
+        rendered_description:
+          type: string
+          description: 'The [description](/help/change-the-channel-description) of the channel rendered as HTML, intended to
+
+            be used when displaying the channel description in a UI.
+
+
+            One should use the standard Zulip rendered_markdown CSS when
+
+            displaying this content so that emoji, LaTeX, and other syntax
+
+            work correctly. And any client-side security logic for
+
+            user-generated message content should be applied when displaying
+
+            this HTML as though it were the body of a Zulip message.
+
+
+            See also `description`.
+
+            '
+        date_created:
+          type: integer
+          description: 'The UNIX timestamp for when the channel was created, in UTC seconds.
+
+
+            **Changes**: New in Zulip 4.0 (feature level 30).
+
+            '
+        creator_id:
+          type: integer
+          nullable: true
+          description: 'The ID of the user who created this channel.
+
+
+            A `null` value means the channel has no recorded creator, which is often
+
+            because the channel is very old, was created during realm creation or
+
+            because it was created via a data import tool or [management command][management-commands].
+
+
+            **Changes**: New in Zulip 9.0 (feature level 254).
+
+
+            [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html
+
+            '
+        invite_only:
+          type: boolean
+          description: 'Specifies whether the channel is private or not.
+
+            Only people who have been invited can access a private channel.
+
+            '
+        subscribers:
+          type: array
+          items:
+            type: integer
+          description: 'A list of user IDs of users who are also subscribed
+
+            to a given channel. Included only if `include_subscribers` is `true`.
+
+            '
+        partial_subscribers:
+          type: array
+          items:
+            type: integer
+          description: 'If [`include_subscribers="partial"`](/api/get-subscriptions#parameter-include_subscribers)
+
+            was requested, the server may, at its discretion, send a
+
+            `partial_subscribers` list rather than a `subscribers` list
+
+            for channels with a large number of subscribers.
+
+
+            The `partial_subscribers` list contains an arbitrary
+
+            subset of the channel''s subscribers that is guaranteed
+
+            to include all bot user subscribers as well as all
+
+            users who have been active in the last 14 days, but
+
+            otherwise can be chosen arbitrarily by the server.
+
+
+            **Changes**: New in Zulip 11.0 (feature level 412).
+
+            '
+        desktop_notifications:
+          type: boolean
+          nullable: true
+          description: 'A boolean specifying whether desktop notifications
+
+            are enabled for the given channel.
+
+
+            A `null` value means the value of this setting
+
+            should be inherited from the user-level default
+
+            setting, `enable_stream_desktop_notifications`, for
+
+            this channel.
+
+            '
+        email_notifications:
+          type: boolean
+          nullable: true
+          description: 'A boolean specifying whether email notifications
+
+            are enabled for the given channel.
+
+
+            A `null` value means the value of this setting
+
+            should be inherited from the user-level default
+
+            setting, `enable_stream_email_notifications`, for
+
+            this channel.
+
+            '
+        wildcard_mentions_notify:
+          type: boolean
+          nullable: true
+          description: 'A boolean specifying whether wildcard mentions
+
+            trigger notifications as though they were personal
+
+            mentions in this channel.
+
+
+            A `null` value means the value of this setting
+
+            should be inherited from the user-level default
+
+            setting, wildcard_mentions_notify, for
+
+            this channel.
+
+            '
+        push_notifications:
+          type: boolean
+          nullable: true
+          description: 'A boolean specifying whether push notifications
+
+            are enabled for the given channel.
+
+
+            A `null` value means the value of this setting
+
+            should be inherited from the user-level default
+
+            setting, `enable_stream_push_notifications`, for
+
+            this channel.
+
+            '
+        audible_notifications:
+          type: boolean
+          nullable: true
+          description: 'A boolean specifying whether audible notifications
+
+            are enabled for the given channel.
+
+
+            A `null` value means the value of this setting
+
+            should be inherited from the user-level default
+
+            setting, `enable_stream_audible_notifications`, for
+
+            this channel.
+
+            '
+        pin_to_top:
+          type: boolean
+          description: 'A boolean specifying whether the given channel has been pinned
+
+            to the top.
+
+            '
+        is_muted:
+          type: boolean
+          description: 'Whether the user has muted the channel. Muted channels do
+
+            not count towards your total unread count and do not show
+
+            up in the `Combined feed` view (previously known as `All messages`).
+
+
+            **Changes**: Prior to Zulip 2.1.0, this feature was
+
+            represented by the more confusingly named `in_home_view` (with the
+
+            opposite value, `in_home_view=!is_muted`).
+
+            '
+        in_home_view:
+          type: boolean
+          deprecated: true
+          description: 'Legacy property for if the given channel is muted, with inverted meaning.
+
+
+            **Changes**: Deprecated in Zulip 2.1.0. Clients should use `is_muted`
+
+            where available.
+
+            '
+        is_announcement_only:
+          type: boolean
+          deprecated: true
+          description: 'Whether only organization administrators can post to the channel.
+
+
+            **Changes**: Deprecated in Zulip 3.0 (feature level 1). Clients
+
+            should use `stream_post_policy` instead.
+
+            '
+        is_web_public:
+          type: boolean
+          description: 'Whether the channel has been configured to allow unauthenticated
+
+            access to its message history from the web.
+
+            '
+        color:
+          type: string
+          description: 'The user''s personal color for the channel.
+
+            '
+        stream_post_policy:
+          type: integer
+          deprecated: true
+          description: 'A deprecated representation of a superset of the users who
+
+            have permission to post messages to the channel available
+
+            for backwards-compatibility. Clients should use
+
+            `can_send_message_group` instead.
+
+
+            It is an enum with the following possible values, corresponding
+
+            to roles/system groups:
+
+
+            - 1 = Any user can post.
+
+            - 2 = Only administrators can post.
+
+            - 3 = Only [full members][calc-full-member] can post.
+
+            - 4 = Only moderators can post.
+
+
+            **Changes**: Deprecated in Zulip 10.0 (feature level 333) and
+
+            replaced by `can_send_message_group`, which supports finer
+
+            resolution of configurations, resulting in this property being
+
+            inaccurate following that transition.
+
+
+            New in Zulip 3.0 (feature level 1), replacing the previous
+
+            `is_announcement_only` boolean.
+
+
+            [calc-full-member]: /api/roles-and-permissions#determining-if-a-user-is-a-full-member
+
+            '
+        message_retention_days:
+          type: integer
+          nullable: true
+          description: "Number of days that messages sent to this channel will be stored\nbefore being automatically deleted by the [message retention\npolicy](/help/message-retention-policy). There are two special values:\n\n- `null`, the default, means the channel will inherit the organization\n  level setting.\n- `-1` encodes retaining messages in this channel forever.\n\n**Changes**: New in Zulip 3.0 (feature level 17).\n"
+        history_public_to_subscribers:
+          type: boolean
+          description: 'Whether the history of the channel is public to its subscribers.
+
+
+            Currently always true for public channels (i.e. `"invite_only": false` implies
+
+            `"history_public_to_subscribers": true`), but clients should not make that
+
+            assumption, as we may change that behavior in the future.
+
+            '
+        first_message_id:
+          type: integer
+          nullable: true
+          description: 'The ID of the first message in the channel.
+
+
+            Intended to help clients determine whether they need to display
+
+            UI like the "show all topics" widget that would suggest the channel
+
+            has older history that can be accessed.
+
+
+            Is `null` for channels with no message history.
+
+            '
+        folder_id:
+          $ref: '#/components/schemas/FolderId'
+        topics_policy:
+          $ref: '#/components/schemas/TopicsPolicy'
+        is_recently_active:
+          type: boolean
+          description: 'Whether the channel has recent message activity. Clients should use this to implement
+
+            [hiding inactive channels](/help/manage-inactive-channels).
+
+
+            **Changes**: New in Zulip 10.0 (feature level 323). Previously, clients implemented the
+
+            demote_inactive_streams from local message history, resulting in a choppy loading
+
+            experience.
+
+            '
+        stream_weekly_traffic:
+          type: integer
+          nullable: true
+          description: 'The average number of messages sent to the channel per week, as
+
+            estimated based on recent weeks, rounded to the nearest integer.
+
+
+            If `null`, the channel was recently created and there is
+
+            insufficient data to estimate the average traffic.
+
+            '
+        can_add_subscribers_group:
+          $ref: '#/components/schemas/ChannelCanAddSubscribersGroup'
+        can_remove_subscribers_group:
+          $ref: '#/components/schemas/CanRemoveSubscribersGroup'
+        can_administer_channel_group:
+          $ref: '#/components/schemas/CanAdministerChannelGroup'
+        can_delete_any_message_group:
+          $ref: '#/components/schemas/CanDeleteAnyMessageGroup'
+        can_delete_own_message_group:
+          $ref: '#/components/schemas/CanDeleteOwnMessageGroup'
+        can_move_messages_out_of_channel_group:
+          $ref: '#/components/schemas/CanMoveMessagesOutOfChannelGroup'
+        can_move_messages_within_channel_group:
+          $ref: '#/components/schemas/CanMoveMessagesWithinChannelGroup'
+        can_send_message_group:
+          $ref: '#/components/schemas/CanSendMessageGroup'
+        can_subscribe_group:
+          $ref: '#/components/schemas/CanSubscribeGroup'
+        can_resolve_topics_group:
+          $ref: '#/components/schemas/CanResolveTopicsGroup'
+        can_create_topic_group:
+          $ref: '#/components/schemas/CanCreateTopicGroup'
+        is_archived:
+          type: boolean
+          description: 'A boolean indicating whether the channel is [archived](/help/archive-a-channel).
+
+
+            **Changes**: New in Zulip 10.0 (feature level 315).
+
+            Previously, subscriptions only included active
+
+            channels. Note that some endpoints will never return archived
+
+            channels unless the client declares explicit support for
+
+            them via the `archived_channels` client capability.
+
+            '
+        subscriber_count:
+          type: number
+          description: 'The total number of non-deactivated users (including bots) who
+
+            are subscribed to the channel. Clients are responsible for updating
+
+            this value using `peer_add` and `peer_remove` events.
+
+
+            The server''s internals cannot guarantee this value is correctly
+
+            synced with `peer_add` and `peer_remove` events for the channel. As
+
+            a result, if a (rare) race occurs between a change in the channel''s
+
+            subscribers and fetching this value, it is possible for a client
+
+            that is correctly following the events protocol to end up with a
+
+            permanently off-by-one error in the channel''s subscriber count.
+
+
+            Clients are recommended to fetch full subscriber data for a channel
+
+            in contexts where it is important to avoid this risk. The official
+
+            web application, for example, uses this field primarily while
+
+            waiting to fetch a given channel''s full subscriber list from the
+
+            server.
+
+
+            **Changes**: New in Zulip 11.0 (feature level 394).
+
+            '
+    BasicChannelBase:
+      type: object
+      description: 'Object containing basic details about the channel.
+
+        '
+      properties:
+        stream_id:
+          type: integer
+          description: 'The unique ID of the channel.
+
+            '
+        name:
+          type: string
+          description: 'The name of the channel.
+
+            '
+        is_archived:
+          type: boolean
+          description: 'A boolean indicating whether the channel is [archived](/help/archive-a-channel).
+
+
+            **Changes**: New in Zulip 10.0 (feature level 315).
+
+            Previously, this endpoint never returned archived channels.
+
+            '
+        description:
+          type: string
+          description: 'The short description of the channel in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format,
+
+            intended to be used to prepopulate UI for editing a channel''s
+
+            description.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+            '
+        date_created:
+          type: integer
+          description: 'The UNIX timestamp for when the channel was created, in UTC seconds.
+
+
+            **Changes**: New in Zulip 4.0 (feature level 30).
+
+            '
+        creator_id:
+          type: integer
+          nullable: true
+          description: 'The ID of the user who created this channel.
+
+
+            A `null` value means the channel has no recorded creator, which is often
+
+            because the channel is very old, was created during realm creation or
+
+            because it was created via a data import tool or [management command][management-commands].
+
+
+            **Changes**: New in Zulip 9.0 (feature level 254).
+
+
+            [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html
+
+            '
+        invite_only:
+          type: boolean
+          description: 'Specifies whether the channel is private or not.
+
+            Only people who have been invited can access a private channel.
+
+            '
+        rendered_description:
+          type: string
+          description: 'The short description of the channel rendered as HTML, intended to
+
+            be used when displaying the channel description in a UI.
+
+
+            One should use the standard Zulip rendered_markdown CSS when
+
+            displaying this content so that emoji, LaTeX, and other syntax
+
+            work correctly. And any client-side security logic for
+
+            user-generated message content should be applied when displaying
+
+            this HTML as though it were the body of a Zulip message.
+
+            '
+        is_web_public:
+          type: boolean
+          description: 'Whether the channel has been configured to allow unauthenticated
+
+            access to its message history from the web.
+
+
+            **Changes**: New in Zulip 2.1.0.
+
+            '
+        stream_post_policy:
+          type: integer
+          deprecated: true
+          description: 'A deprecated representation of a superset of the users who
+
+            have permission to post messages to the channel available
+
+            for backwards-compatibility. Clients should use
+
+            `can_send_message_group` instead.
+
+
+            It is an enum with the following possible values, corresponding
+
+            to roles/system groups:
+
+
+            - 1 = Any user can post.
+
+            - 2 = Only administrators can post.
+
+            - 3 = Only [full members][calc-full-member] can post.
+
+            - 4 = Only moderators can post.
+
+
+            **Changes**: Deprecated in Zulip 10.0 (feature level 333) and
+
+            replaced by `can_send_message_group`, which supports finer
+
+            resolution of configurations, resulting in this property being
+
+            inaccurate following that transition.
+
+
+            New in Zulip 3.0 (feature level 1), replacing the previous
+
+            `is_announcement_only` boolean.
+
+
+            [calc-full-member]: /api/roles-and-permissions#determining-if-a-user-is-a-full-member
+
+            '
+        message_retention_days:
+          type: integer
+          nullable: true
+          description: "Number of days that messages sent to this channel will be stored\nbefore being automatically deleted by the [message retention\npolicy](/help/message-retention-policy). There are two special values:\n\n- `null`, the default, means the channel will inherit the organization\n  level setting.\n- `-1` encodes retaining messages in this channel forever.\n\n**Changes**: New in Zulip 3.0 (feature level 17).\n"
+        history_public_to_subscribers:
+          type: boolean
+          description: 'Whether the history of the channel is public to its subscribers.
+
+
+            Currently always true for public channels (i.e. `"invite_only": false` implies
+
+            `"history_public_to_subscribers": true`), but clients should not make that
+
+            assumption, as we may change that behavior in the future.
+
+            '
+        topics_policy:
+          $ref: '#/components/schemas/TopicsPolicy'
+        first_message_id:
+          type: integer
+          nullable: true
+          description: 'The ID of the first message in the channel.
+
+
+            Intended to help clients determine whether they need to display
+
+            UI like the "show all topics" widget that would suggest the channel
+
+            has older history that can be accessed.
+
+
+            Is `null` for channels with no message history.
+
+
+            **Changes**: New in Zulip 2.1.0.
+
+            '
+        folder_id:
+          $ref: '#/components/schemas/FolderId'
+        is_recently_active:
+          type: boolean
+          description: 'Whether the channel has recent message activity. Clients should use this to implement
+
+            [hide inactive channels](/help/manage-inactive-channels) if
+
+            `demote_inactive_streams` is enabled.
+
+
+            **Changes**: New in Zulip 10.0 (feature level 323). Previously, clients implemented the
+
+            demote_inactive_streams from local message history, resulting in a choppy loading
+
+            experience.
+
+            '
+        is_announcement_only:
+          type: boolean
+          deprecated: true
+          description: 'Whether the given channel is announcement only or not.
+
+
+            **Changes**: Deprecated in Zulip 3.0 (feature level 1). Clients
+
+            should use `stream_post_policy` instead.
+
+            '
+        can_add_subscribers_group:
+          $ref: '#/components/schemas/ChannelCanAddSubscribersGroup'
+        can_remove_subscribers_group:
+          $ref: '#/components/schemas/CanRemoveSubscribersGroup'
+        can_administer_channel_group:
+          $ref: '#/components/schemas/CanAdministerChannelGroup'
+        can_delete_any_message_group:
+          $ref: '#/components/schemas/CanDeleteAnyMessageGroup'
+        can_delete_own_message_group:
+          $ref: '#/components/schemas/CanDeleteOwnMessageGroup'
+        can_move_messages_out_of_channel_group:
+          $ref: '#/components/schemas/CanMoveMessagesOutOfChannelGroup'
+        can_move_messages_within_channel_group:
+          $ref: '#/components/schemas/CanMoveMessagesWithinChannelGroup'
+        can_send_message_group:
+          $ref: '#/components/schemas/CanSendMessageGroup'
+        can_subscribe_group:
+          $ref: '#/components/schemas/CanSubscribeGroup'
+        can_resolve_topics_group:
+          $ref: '#/components/schemas/CanResolveTopicsGroup'
+        can_create_topic_group:
+          $ref: '#/components/schemas/CanCreateTopicGroup'
+        subscriber_count:
+          type: number
+          description: 'The total number of non-deactivated users (including bots) who
+
+            are subscribed to the channel. Clients are responsible for updating
+
+            this value using `peer_add` and `peer_remove` events.
+
+
+            The server''s internals cannot guarantee this value is correctly
+
+            synced with `peer_add` and `peer_remove` events for the channel. As
+
+            a result, if a (rare) race occurs between a change in the channel''s
+
+            subscribers and fetching this value, it is possible for a client
+
+            that is correctly following the events protocol to end up with a
+
+            permanently off-by-one error in the channel''s subscriber count.
+
+
+            Clients are recommended to fetch full subscriber data for a channel
+
+            in contexts where it is important to avoid this risk. The official
+
+            web application, for example, uses this field primarily while
+
+            waiting to fetch a given channel''s full subscriber list from the
+
+            server.
+
+
+            **Changes**: New in Zulip 11.0 (feature level 394).
+
+            '
+  responses:
+    SuccessIgnoredParameters:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/IgnoredParametersSuccess'
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: 'Basic authentication, with the user''s email as the username, and the API
+
+        key as the password. The API key can be fetched using the
+
+        `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+
+        '

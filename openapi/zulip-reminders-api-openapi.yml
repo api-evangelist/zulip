@@ -1,0 +1,387 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Zulip REST authentication reminders API
+  description: 'Powerful open source group chat
+
+    '
+  contact:
+    url: https://zulip.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://{subdomain}.zulipchat.com/api/v1
+  variables:
+    subdomain:
+      default: example
+- url: '{server}/api/v1'
+  variables:
+    server:
+      default: https://
+- url: https://chat.zulip.org/api/v1
+- url: http://localhost:9991/api/v1
+- url: http://{subdomain}.testserver/json
+security:
+- basicAuth: []
+tags:
+- name: reminders
+paths:
+  /reminders:
+    get:
+      operationId: get-reminders
+      tags:
+      - reminders
+      summary: Get reminders
+      description: 'Fetch all [reminders](/help/schedule-a-reminder) for the
+
+        current user.
+
+
+        Reminders are messages the user has scheduled to be sent in the
+
+        future to themself.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 399).
+
+        '
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    reminders:
+                      type: array
+                      description: 'Returns all of the current user''s undelivered reminders,
+
+                        ordered by `scheduled_delivery_timestamp` (ascending).
+
+                        '
+                      items:
+                        $ref: '#/components/schemas/Reminder'
+                  example:
+                    result: success
+                    msg: ''
+                    reminders:
+                    - reminder_id: 27
+                      to:
+                      - 6
+                      type: private
+                      content: Hi
+                      rendered_content: <p>Hi</p>
+                      scheduled_delivery_timestamp: 1681662420
+                      failed: false
+                      reminder_target_message_id: 42
+    post:
+      operationId: create-message-reminder
+      tags:
+      - reminders
+      summary: Create a message reminder
+      description: 'Schedule a reminder to be sent to the current user at the specified time. The reminder will link the relevant message.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 381).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                message_id:
+                  description: 'The ID of the previously sent message to reference in the reminder message.
+
+                    '
+                  type: integer
+                  example: 1
+                scheduled_delivery_timestamp:
+                  type: integer
+                  description: 'The UNIX timestamp for when the reminder will be sent,
+
+                    in UTC seconds.
+
+                    '
+                  example: 5681662420
+                note:
+                  type: string
+                  description: 'A note associated with the reminder shown in the Notification Bot message.
+
+
+                    **Changes**: New in Zulip 11.0 (feature level 415).
+
+                    '
+                  example: This is a reminder note.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/JsonSuccessBase'
+                - additionalProperties: false
+                  properties:
+                    result: {}
+                    msg: {}
+                    ignored_parameters_unsupported: {}
+                    reminder_id:
+                      type: integer
+                      description: 'Unique ID of the scheduled message reminder.
+
+                        '
+                  example:
+                    msg: ''
+                    reminder_id: 42
+                    result: success
+  /reminders/{reminder_id}:
+    delete:
+      operationId: delete-reminder
+      tags:
+      - reminders
+      summary: Delete a reminder
+      description: 'Delete, and therefore cancel sending, a previously [scheduled
+
+        reminder](/help/schedule-a-reminder).
+
+
+        **Changes**: New in Zulip 11.0 (feature level 399).
+
+        '
+      parameters:
+      - name: reminder_id
+        in: path
+        schema:
+          type: integer
+        description: 'The ID of the reminder to delete.
+
+
+          This is different from the unique ID that the message would have
+
+          after being sent.
+
+          '
+        required: true
+        example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/SimpleSuccess'
+        '404':
+          description: Not Found.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CodedError'
+                - description: 'A typical failed JSON response for when no reminder exists
+
+                    with the provided ID:
+
+                    '
+                  example:
+                    code: BAD_REQUEST
+                    result: error
+                    msg: Reminder does not exist
+components:
+  schemas:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    Reminder:
+      type: object
+      additionalProperties: false
+      description: 'Object containing details of the scheduled message.
+
+        '
+      properties:
+        reminder_id:
+          type: integer
+          description: 'The unique ID of the reminder, which can be used to
+
+            delete the reminder.
+
+
+            This is different from the unique ID that the message would have
+
+            after being sent.
+
+            '
+        type:
+          type: string
+          description: 'The type of the reminder. Always set to `"private"`.
+
+            '
+          enum:
+          - private
+        to:
+          type: array
+          items:
+            type: integer
+          description: 'Contains the ID of the user who scheduled the reminder,
+
+            and to which the reminder will be sent.
+
+            '
+        content:
+          type: string
+          description: 'The content/body of the reminder, in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+            '
+        rendered_content:
+          type: string
+          description: 'The content/body of the reminder rendered in HTML.
+
+            '
+        scheduled_delivery_timestamp:
+          type: integer
+          description: 'The UNIX timestamp for when the message will be sent
+
+            by the server, in UTC seconds.
+
+            '
+          example: 1595479019
+        failed:
+          type: boolean
+          description: 'Whether the server has tried to send the reminder
+
+            and it failed to successfully send.
+
+
+            Clients that support unscheduling reminders
+
+            should display scheduled messages with `"failed": true` with an
+
+            indicator that the server failed to send the message at the
+
+            scheduled time, so that the user is aware of the failure and can
+
+            get the content of the scheduled message.
+
+            '
+        reminder_target_message_id:
+          type: integer
+          description: 'The ID of the message that the reminder is created for.
+
+            '
+      required:
+      - reminder_id
+      - type
+      - to
+      - content
+      - rendered_content
+      - scheduled_delivery_timestamp
+      - failed
+      - reminder_target_message_id
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+  responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: 'Basic authentication, with the user''s email as the username, and the API
+
+        key as the password. The API key can be fetched using the
+
+        `/fetch_api_key` or `/dev_fetch_api_key` endpoints.
+
+        '
