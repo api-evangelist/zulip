@@ -5,9 +5,22 @@ description: >-
   and mobile apps and provide REST endpoints, incoming webhooks, outgoing webhooks, and event-driven integrations to
   connect Zulip with external services.
 type: Index
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 position: Consumer
 access: 3rd-Party
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/zulip.png
 tags:
   - Collaboration
   - Messaging
@@ -18,60 +31,188 @@ modified: '2026-05-29'
 url: https://raw.githubusercontent.com/api-evangelist/zulip/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
-  - aid: zulip:rest-api
-    name: Zulip REST API
-    description: >-
-      The Zulip REST API powers the Zulip web and mobile apps. It provides programmatic access to messages, streams,
-      users, organizations, and all other Zulip functionality. Anything you can do in Zulip, you can do with the REST
-      API.
-    humanURL: https://zulip.com/api/rest
-    tags:
-      - Messaging
-      - REST
-      - Team Chat
-    properties:
-      - type: Documentation
-        url: https://zulip.com/api/rest
-      - type: Reference
-        url: https://zulip.com/api/
-      - type: AsyncAPI
-        url: asyncapi/zulip-events-asyncapi.yml
-  - aid: zulip:events-api
-    name: Zulip Events API
-    description: >-
-      The Zulip Events API delivers real-time updates from a Zulip server to a client via an HTTPS long-poll. Clients
-      register an event queue via POST /api/v1/register, then call GET /api/v1/events with the returned queue_id and
-      last_event_id to receive batches of typed events covering messages, reactions, subscriptions, presence, typing,
-      channel/stream changes, user and organization updates, custom emoji, alert words, message-flag changes, drafts,
-      scheduled messages, reminders, user groups, and system heartbeat/restart signals.
-    humanURL: https://zulip.com/api/get-events
-    tags:
-      - Events
-      - Long Polling
-      - Real Time
-      - Team Chat
-    properties:
-      - type: Documentation
-        url: https://zulip.com/api/get-events
-      - type: Reference
-        url: https://zulip.com/api/real-time-events
-      - type: AsyncAPI
-        url: asyncapi/zulip-events-asyncapi.yml
-  - aid: zulip:webhooks
-    name: Zulip Webhooks
-    description: >-
-      Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing webhooks
-      (allowing Zulip to send HTTP POST payloads to external services when messages are sent).
-    humanURL: https://zulip.com/api/incoming-webhooks-overview
-    tags:
-      - Events
-      - Integrations
-      - Webhooks
-    properties:
-      - type: Documentation
-        url: https://zulip.com/api/incoming-webhooks-overview
-      - type: Reference
-        url: https://zulip.com/api/outgoing-webhooks
+- aid: zulip:rest-api
+  name: Zulip REST API
+  description: >-
+    The Zulip REST API powers the Zulip web and mobile apps. It provides programmatic access to messages,
+    streams, users, organizations, and all other Zulip functionality. Anything you can do in Zulip, you
+    can do with the REST API.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - Messaging
+  - REST
+  - Team Chat
+  properties:
+  - type: Documentation
+    url: https://zulip.com/api/rest
+  - type: Reference
+    url: https://zulip.com/api/
+  - type: AsyncAPI
+    url: asyncapi/zulip-events-asyncapi.yml
+- aid: zulip:events-api
+  name: Zulip Events API
+  description: >-
+    The Zulip Events API delivers real-time updates from a Zulip server to a client via an HTTPS long-poll.
+    Clients register an event queue via POST /api/v1/register, then call GET /api/v1/events with the returned
+    queue_id and last_event_id to receive batches of typed events covering messages, reactions, subscriptions,
+    presence, typing, channel/stream changes, user and organization updates, custom emoji, alert words,
+    message-flag changes, drafts, scheduled messages, reminders, user groups, and system heartbeat/restart
+    signals.
+  humanURL: https://zulip.com/api/get-events
+  tags:
+  - Events
+  - Long Polling
+  - Real Time
+  - Team Chat
+  properties:
+  - type: Documentation
+    url: https://zulip.com/api/get-events
+  - type: Reference
+    url: https://zulip.com/api/real-time-events
+  - type: AsyncAPI
+    url: asyncapi/zulip-events-asyncapi.yml
+- aid: zulip:webhooks
+  name: Zulip Webhooks
+  description: >-
+    Zulip supports both incoming webhooks (allowing third-party services to push data to Zulip) and outgoing
+    webhooks (allowing Zulip to send HTTP POST payloads to external services when messages are sent).
+  humanURL: https://zulip.com/api/incoming-webhooks-overview
+  tags:
+  - Events
+  - Integrations
+  - Webhooks
+  properties:
+  - type: Documentation
+    url: https://zulip.com/api/incoming-webhooks-overview
+  - type: Reference
+    url: https://zulip.com/api/outgoing-webhooks
+- aid: zulip:zulip-authentication-api
+  name: Zulip authentication API
+  description: The authentication API from Zulip — 4 operation(s) for authentication.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-authentication-api-openapi.yml
+- aid: zulip:zulip-bots-api
+  name: Zulip bots API
+  description: The bots API from Zulip — 1 operation(s) for bots.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - bots
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-bots-api-openapi.yml
+- aid: zulip:zulip-channels-api
+  name: Zulip channels API
+  description: The channels API from Zulip — 23 operation(s) for channels.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - channels
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-channels-api-openapi.yml
+- aid: zulip:zulip-drafts-api
+  name: Zulip drafts API
+  description: The drafts API from Zulip — 4 operation(s) for drafts.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - drafts
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-drafts-api-openapi.yml
+- aid: zulip:zulip-invites-api
+  name: Zulip invites API
+  description: The invites API from Zulip — 5 operation(s) for invites.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - invites
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-invites-api-openapi.yml
+- aid: zulip:zulip-messages-api
+  name: Zulip messages API
+  description: The messages API from Zulip — 16 operation(s) for messages.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - messages
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-messages-api-openapi.yml
+- aid: zulip:zulip-mobile-api
+  name: Zulip mobile API
+  description: The mobile API from Zulip — 6 operation(s) for mobile.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - mobile
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-mobile-api-openapi.yml
+- aid: zulip:zulip-navigation-views-api
+  name: Zulip navigation_views API
+  description: The navigation_views API from Zulip — 2 operation(s) for navigation_views.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - navigation_views
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-navigation-views-api-openapi.yml
+- aid: zulip:zulip-real-time-events-api
+  name: Zulip real_time_events API
+  description: The real_time_events API from Zulip — 4 operation(s) for real_time_events.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - real_time_events
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-real-time-events-api-openapi.yml
+- aid: zulip:zulip-reminders-api
+  name: Zulip reminders API
+  description: The reminders API from Zulip — 2 operation(s) for reminders.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - reminders
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-reminders-api-openapi.yml
+- aid: zulip:zulip-scheduled-messages-api
+  name: Zulip scheduled_messages API
+  description: The scheduled_messages API from Zulip — 2 operation(s) for scheduled_messages.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - scheduled_messages
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-scheduled-messages-api-openapi.yml
+- aid: zulip:zulip-server-and-organizations-api
+  name: Zulip server_and_organizations API
+  description: >-
+    The server_and_organizations API from Zulip — 16 operation(s) for server_and_organizations.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - server_and_organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-server-and-organizations-api-openapi.yml
+- aid: zulip:zulip-users-api
+  name: Zulip users API
+  description: The users API from Zulip — 29 operation(s) for users.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - users
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-users-api-openapi.yml
+- aid: zulip:zulip-webhooks-api
+  name: Zulip webhooks API
+  description: The webhooks API from Zulip — 1 operation(s) for webhooks.
+  humanURL: https://zulip.com/api/rest
+  tags:
+  - webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/zulip-webhooks-api-openapi.yml
 common:
   - type: AgenticAccess
     url: agentic-access/zulip-agentic-access.yml
