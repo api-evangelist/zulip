@@ -1,0 +1,40 @@
+{
+  "provider": "zulip",
+  "sources": [
+    "zulip-authentication-api-openapi.yml",
+    "zulip-bots-api-openapi.yml",
+    "zulip-channels-api-openapi.yml",
+    "zulip-drafts-api-openapi.yml",
+    "zulip-invites-api-openapi.yml",
+    "zulip-messages-api-openapi.yml",
+    "zulip-mobile-api-openapi.yml",
+    "zulip-navigation-views-api-openapi.yml",
+    "zulip-real-time-events-api-openapi.yml",
+    "zulip-reminders-api-openapi.yml",
+    "zulip-scheduled-messages-api-openapi.yml",
+    "zulip-server-and-organizations-api-openapi.yml",
+    "zulip-users-api-openapi.yml",
+    "zulip-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "zulip-authentication-api-openapi.yml",
+    "zulip-bots-api-openapi.yml",
+    "zulip-channels-api-openapi.yml",
+    "zulip-drafts-api-openapi.yml",
+    "zulip-invites-api-openapi.yml",
+    "zulip-messages-api-openapi.yml",
+    "zulip-mobile-api-openapi.yml",
+    "zulip-navigation-views-api-openapi.yml",
+    "zulip-real-time-events-api-openapi.yml",
+    "zulip-reminders-api-openapi.yml",
+    "zulip-scheduled-messages-api-openapi.yml",
+    "zulip-server-and-organizations-api-openapi.yml",
+    "zulip-users-api-openapi.yml",
+    "zulip-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
