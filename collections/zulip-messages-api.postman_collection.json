@@ -1,0 +1,3607 @@
+{
+  "item": [
+    {
+      "id": "76a3a40e-9f6c-4a93-9bbc-e222db7f1931",
+      "name": "messages",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ae0e4f08-d815-4952-828a-2a0e45c35cc4",
+          "name": "Mark all messages as read",
+          "request": {
+            "name": "Mark all messages as read",
+            "description": {
+              "content": "Marks all of the current user's unread messages as read.\n\nBecause this endpoint marks messages as read in batches, it is possible\nfor the request to time out after only marking some messages as read.\nWhen this happens, the `complete` boolean field in the success response\nwill be `false`. Clients should repeat the request when handling such a\nresponse. If all messages were marked as read, then the success response\nwill return `\"complete\": true`.\n\n**Changes**: Deprecated; clients should use the [update personal message\nflags for narrow](/api/update-message-flags-for-narrow) endpoint instead\nas this endpoint will be removed in a future release.\n\nBefore Zulip 8.0 (feature level 211), if the server's\nprocessing was interrupted by a timeout, but some messages were marked\nas read, then it would return `\"result\": \"partially_completed\"`, along\nwith a `code` field for an error string, in the success response to\nindicate that there was a timeout and that the client should repeat the\nrequest.\n\nBefore Zulip 6.0 (feature level 153), this request did a single atomic\noperation, which could time out with 10,000s of unread messages to mark\nas read. As of this feature level, messages are marked as read in\nbatches, starting with the newest messages, so that progress is made\neven if the request times out. And, instead of returning an error when\nthe request times out and some messages have been marked as read, a\nsuccess response with `\"result\": \"partially_completed\"` is returned.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "mark_all_as_read"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4b0660dc-db66-4bf1-9d0c-4d35bbb9933d",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mark_all_as_read"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"complete\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "56ba9df2-845e-4e40-b02f-5accb087a217",
+          "name": "Mark messages in a channel as read",
+          "request": {
+            "name": "Mark messages in a channel as read",
+            "description": {
+              "content": "Mark all the unread messages in a channel as read.\n\n**Changes**: Deprecated; clients should use the [update personal message\nflags for narrow](/api/update-message-flags-for-narrow) endpoint instead\nas this endpoint will be removed in a future release.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "mark_stream_as_read"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "stream_id",
+                  "value": "<integer>",
+                  "description": "(Required) The ID of the channel to access.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8bedbac5-6df4-45ff-95f6-178511fe266a",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mark_stream_as_read"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of the channel to access.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_id",
+                      "value": "43"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8b53a4e7-e8e4-4d43-9dfb-e53f738a7e67",
+          "name": "Mark messages in a topic as read",
+          "request": {
+            "name": "Mark messages in a topic as read",
+            "description": {
+              "content": "Mark all the unread messages in a topic as read.\n\n**Changes**: Deprecated; clients should use the [update personal message\nflags for narrow](/api/update-message-flags-for-narrow) endpoint instead\nas this endpoint will be removed in a future release.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "mark_topic_as_read"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "stream_id",
+                  "value": "<integer>",
+                  "description": "(Required) The ID of the channel to access.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "topic_name",
+                  "value": "<string>",
+                  "description": "(Required) The name of the topic whose messages should be marked as read.\n\nNote: When the value of `realm_empty_topic_display_name` found in\nthe [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\n**Changes**: Before Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "dc0ba758-44ae-4010-a064-8b0da6781665",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mark_topic_as_read"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of the channel to access.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_id",
+                      "value": "43"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The name of the topic whose messages should be marked as read.\n\nNote: When the value of `realm_empty_topic_display_name` found in\nthe [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\n**Changes**: Before Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic_name",
+                      "value": "new coffee machine"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "51900772-5cf8-45c8-a007-331688d53e9b",
+          "name": "Get messages",
+          "request": {
+            "name": "Get messages",
+            "description": {
+              "content": "This endpoint is the primary way to fetch a messages. It is used by all official\nZulip clients (e.g. the web, desktop, mobile, and terminal clients) as well as\nmany bots, API clients, backup scripts, etc.\n\nMost queries will specify a [narrow filter](/api/get-messages#parameter-narrow),\nto fetch the messages matching any supported [search\nquery](/help/search-for-messages). If not specified, it will return messages\ncorresponding to the user's [combined feed](/help/combined-feed). There are two\nways to specify which messages matching the narrow filter to fetch:\n\n- A range of messages, described by an `anchor` message ID (or a string-format\n  specification of how the server should computer an anchor to use) and a maximum\n  number of messages in each direction from that anchor.\n\n- A rarely used variant (`message_ids`) where the client specifies the message IDs\n  to fetch.\n\nThe server returns the matching messages, sorted by message ID, as well as some\nmetadata that makes it easy for a client to determine whether there are more\nmessages matching the query that were not returned due to the `num_before` and\n`num_after` limits.\n\nNote that a user's message history does not contain messages sent to\nchannels before they [subscribe](/api/subscribe), and newly created\nbot users are not usually subscribed to any channels.\n\nWe recommend requesting at most 1000 messages in a batch, to avoid generating very\nlarge HTTP responses. A maximum of 5000 messages can be obtained per request;\nattempting to exceed this will result in an error.\n\n**Changes**: The `message_ids` option is new in Zulip 10.0 (feature level 300).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "anchor",
+                  "value": "<string>",
+                  "description": "Integer message ID to anchor fetching of new messages. Supports special\nstring values for when the client wants the server to compute the anchor\nto use:\n\n- `newest`: The most recent message.\n- `oldest`: The oldest message.\n- `first_unread`: The oldest unread message matching the\n  query, if any; otherwise, the most recent message.\n- `date`: The first message on or after the datetime indicated by the\n  [`anchor_date`](#parameter-anchor_date), if any; otherwise, the most\n  recent message.\n\n**Changes**: The `date` value is new in Zulip 12.0 (feature level 445).\n\nString values are new in Zulip 3.0 (feature level 1). The\n`first_unread` functionality was supported in Zulip 2.1.x\nand older by not sending `anchor` and using `use_first_unread_anchor`.\n\nIn Zulip 2.1.x and older, `oldest` can be emulated with\n`\"anchor\": 0`, and `newest` with `\"anchor\": 10000000000000000`\n(that specific large value works around a bug in Zulip\n2.1.x and older in the `found_newest` return value).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_anchor",
+                  "value": "true",
+                  "description": "Whether a message with the specified ID matching the narrow\nshould be included.\n\n**Changes**: New in Zulip 6.0 (feature level 155).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "anchor_date",
+                  "value": "<string>",
+                  "description": "The date or datetime to use for finding the anchor message when `anchor` is\n`date`. Accepted formats include ISO 8601 date-only strings\n(e.g. `2005-04-18`) as well as full datetime strings\n(e.g. `2005-04-18T12:34:56Z`). If only a date is provided, the datetime is set to\nmidnight (00:00) on that day in UTC. If no timezone is provided, UTC is\nassumed.\n\n**Changes**: New in Zulip 12.0 (feature level 445).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "num_before",
+                  "value": "<integer>",
+                  "description": "The number of messages with IDs less than the anchor to retrieve.\nRequired if `message_ids` is not provided.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "num_after",
+                  "value": "<integer>",
+                  "description": "The number of messages with IDs greater than the anchor to retrieve.\nRequired if `message_ids` is not provided.\n"
+                },
+                {
+                  "description": {
+                    "content": "The narrow where you want to fetch the messages from. See how to\n[construct a narrow](/api/construct-narrow).\n\nNote that many narrows, including all that lack a `channel`, `channels`,\n`stream`, or `streams` operator, search the user's personal message\nhistory. See [searching shared\nhistory](/help/search-for-messages#search-shared-history)\nfor details.\n\nFor example, if you would like to fetch messages from all public channels instead\nof only the user's message history, then a specific narrow for\nmessages sent to all public channels can be used:\n`{\"operator\": \"channels\", \"operand\": \"public\"}`.\n\nNewly created bot users are not usually subscribed to any\nchannels, so bots using this API should either be\nsubscribed to appropriate channels or use a shared history\nsearch narrow with this endpoint.\n\n**Changes**: See [changes section](/api/construct-narrow#changes)\nof search/narrow filter documentation.\n",
+                    "type": "text/plain"
+                  },
+                  "key": "narrow",
+                  "value": ""
+                },
+                {
+                  "disabled": false,
+                  "key": "client_gravatar",
+                  "value": "true",
+                  "description": "Whether the client supports computing gravatars URLs. If\nenabled, `avatar_url` will be included in the response only\nif there is a Zulip avatar, and will be `null` for users who\nare using gravatar as their avatar. This option\nsignificantly reduces the compressed size of user data,\nsince gravatar URLs are long, random strings and thus do not\ncompress well. The `client_gravatar` field is set to `true` if\nclients can compute their own gravatars.\n\n**Changes**: The default value of this parameter was `false`\nprior to Zulip 5.0 (feature level 92).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "apply_markdown",
+                  "value": "true",
+                  "description": "If `true`, message content is returned in the rendered HTML\nformat. If `false`, message content is returned in the raw\nMarkdown-format text that user entered.\n\nSee [Markdown message formatting](/api/message-formatting) for details on Zulip's HTML format.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "use_first_unread_anchor",
+                  "value": "false",
+                  "description": "Legacy way to specify `\"anchor\": \"first_unread\"` in Zulip 2.1.x and older.\n\nWhether to use the (computed by the server) first unread message\nmatching the narrow as the `anchor`. Mutually exclusive with `anchor`.\n\n**Changes**: Deprecated in Zulip 3.0 (feature level 1) and replaced by\n`\"anchor\": \"first_unread\"`.\n"
+                },
+                {
+                  "description": {
+                    "content": "A list of message IDs to fetch. The server will return messages corresponding to the\nsubset of the requested message IDs that exist and the current user has access to,\npotentially filtered by the narrow (if that parameter is provided).\n\nIt is an error to pass this parameter as well as any of the parameters involved in\nspecifying a range of messages: `anchor`, `include_anchor`, `use_first_unread_anchor`,\n`num_before`, and `num_after`.\n\n**Changes**: New in Zulip 10.0 (feature level 300). Previously, there was\nno way to request a specific set of messages IDs.\n",
+                    "type": "text/plain"
+                  },
+                  "key": "message_ids",
+                  "value": ""
+                },
+                {
+                  "disabled": false,
+                  "key": "allow_empty_topic_name",
+                  "value": "false",
+                  "description": "Whether the client supports processing the empty string as a topic in the\ntopic name fields in the returned data, including in returned edit_history data.\n\nIf `false`, the server will use the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response instead of empty string\nto represent the empty string topic in its response.\n\n**Changes**: New in Zulip 10.0 (feature level 334). Previously, the empty string\nwas not a valid topic.\n"
+                }
+              ],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5998e344-7b5f-4bef-9bdf-e885ed026f10",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "anchor",
+                      "value": "43"
+                    },
+                    {
+                      "key": "include_anchor",
+                      "value": "false"
+                    },
+                    {
+                      "key": "anchor_date",
+                      "value": "2005-04-18T12:34:56Z"
+                    },
+                    {
+                      "key": "num_before",
+                      "value": "4"
+                    },
+                    {
+                      "key": "num_after",
+                      "value": "8"
+                    },
+                    {
+                      "key": "narrow",
+                      "value": ""
+                    },
+                    {
+                      "key": "client_gravatar",
+                      "value": "false"
+                    },
+                    {
+                      "key": "apply_markdown",
+                      "value": "false"
+                    },
+                    {
+                      "key": "use_first_unread_anchor",
+                      "value": "true"
+                    },
+                    {
+                      "key": "message_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "allow_empty_topic_name",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"anchor\": 21,\n  \"found_newest\": true,\n  \"found_anchor\": true,\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"messages\": [\n    {\n      \"subject\": \"\",\n      \"sender_realm_str\": \"zulip\",\n      \"type\": \"private\",\n      \"content\": \"<p>Security experts agree that relational algorithms are an interesting new topic in the field of networking, and scholars concur.</p>\",\n      \"flags\": [\n        \"read\"\n      ],\n      \"id\": 16,\n      \"display_recipient\": [\n        {\n          \"id\": 4,\n          \"is_mirror_dummy\": false,\n          \"email\": \"hamlet@zulip.com\",\n          \"full_name\": \"King Hamlet\"\n        },\n        {\n          \"id\": 5,\n          \"is_mirror_dummy\": false,\n          \"email\": \"iago@zulip.com\",\n          \"full_name\": \"Iago\"\n        },\n        {\n          \"id\": 8,\n          \"is_mirror_dummy\": false,\n          \"email\": \"prospero@zulip.com\",\n          \"full_name\": \"Prospero from The Tempest\"\n        }\n      ],\n      \"content_type\": \"text/html\",\n      \"is_me_message\": false,\n      \"timestamp\": 1527921326,\n      \"sender_id\": 4,\n      \"sender_full_name\": \"King Hamlet\",\n      \"recipient_id\": 27,\n      \"topic_links\": [],\n      \"client\": \"ZulipDataImport\",\n      \"avatar_url\": \"https://secure.gravatar.com/avatar/6d8cad0fd00256e7b40691d27ddfd466?d=identicon&version=1\",\n      \"submessages\": [],\n      \"sender_email\": \"hamlet@zulip.com\",\n      \"reactions\": []\n    },\n    {\n      \"subject\": \"Verona3\",\n      \"stream_id\": 5,\n      \"sender_realm_str\": \"zulip\",\n      \"type\": \"stream\",\n      \"content\": \"<p>Wait, is this from the frontend js code or backend python code</p>\",\n      \"flags\": [\n        \"read\"\n      ],\n      \"id\": 21,\n      \"display_recipient\": \"Verona\",\n      \"content_type\": \"text/html\",\n      \"is_me_message\": false,\n      \"timestamp\": 1527939746,\n      \"sender_id\": 4,\n      \"sender_full_name\": \"King Hamlet\",\n      \"recipient_id\": 20,\n      \"topic_links\": [],\n      \"client\": \"ZulipDataImport\",\n      \"avatar_url\": \"https://secure.gravatar.com/avatar/6d8cad0fd00256e7b40691d27ddfd466?d=identicon&version=1\",\n      \"submessages\": [],\n      \"sender_email\": \"hamlet@zulip.com\",\n      \"reactions\": []\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bd842253-c6c2-4b4a-9799-b35ec455758d",
+          "name": "Send a message",
+          "request": {
+            "name": "Send a message",
+            "description": {
+              "content": "Send a [channel message](/help/introduction-to-topics) or a\n[direct message](/help/direct-messages).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "(Required) The type of message to be sent.\n\n`\"direct\"` for a direct message and `\"stream\"` or `\"channel\"` for a\nchannel message.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to request a channel message.\n\nIn Zulip 7.0 (feature level 174), `\"direct\"` was added as\nthe preferred way to request a direct message, deprecating the original\n`\"private\"`. While `\"private\"` is still supported for requesting direct\nmessages, clients are encouraged to use to the modern convention with\nservers that support it, because support for `\"private\"` will eventually\nbe removed.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "(Required) The channel or users receiving the message.\n\nFor channel messages, this is either the name or integer ID of the\nchannel.\n\nFor direct messages, this is either a list containing integer user IDs or\na list containing string Zulip API email addresses. The ID or email\naddress of the user sending the message can be included in the list, but\nwill be ignored by the server, unless the user sending the message is the\nonly recipient of the message.\n\n**Changes**: In Zulip 2.0.0, support for using user/channel IDs was added.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "content",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "topic",
+                  "value": "<string>",
+                  "description": "The topic of the message. Only required for channel messages\n(`\"type\": \"stream\"` or `\"type\": \"channel\"`), ignored otherwise.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n\nNew in Zulip 2.0.0. Previous Zulip releases encoded\nthis as `subject`, which is currently a deprecated alias.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "queue_id",
+                  "value": "<string>",
+                  "description": "For clients supporting\n[local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),\nthe [event queue](/api/register-queue) ID for the client.\n\nIf passed, `local_id` is required.\n\nIf the message is successfully sent, the server will include\n`local_message_id` in the [`message` event](/api/get-events#message) that\nthe client with this `queue_id` will receive.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "local_id",
+                  "value": "<string>",
+                  "description": "For clients supporting\n[local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),\na unique string-format identifier chosen freely by the client.\n\nIf passed, `queue_id` is required.\n\nIf the message is successfully sent, the server will pass it back to\nthe client without inspecting it as `local_message_id` in the\n[`message` event](/api/get-events#message) that the client with the\nabove `queue_id` will receive.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "read_by_sender",
+                  "value": "<boolean>",
+                  "description": "Whether the message should be initially marked read by its\nsender. If unspecified, the server uses a heuristic based\non the client name.\n\n**Changes**: New in Zulip 8.0 (feature level 236).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "80b3495e-9d33-4290-9314-ab7b3867be69",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The type of message to be sent.\n\n`\"direct\"` for a direct message and `\"stream\"` or `\"channel\"` for a\nchannel message.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to request a channel message.\n\nIn Zulip 7.0 (feature level 174), `\"direct\"` was added as\nthe preferred way to request a direct message, deprecating the original\n`\"private\"`. While `\"private\"` is still supported for requesting direct\nmessages, clients are encouraged to use to the modern convention with\nservers that support it, because support for `\"private\"` will eventually\nbe removed.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "direct"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The channel or users receiving the message.\n\nFor channel messages, this is either the name or integer ID of the\nchannel.\n\nFor direct messages, this is either a list containing integer user IDs or\na list containing string Zulip API email addresses. The ID or email\naddress of the user sending the message can be included in the list, but\nwill be ignored by the server, unless the user sending the message is the\nonly recipient of the message.\n\n**Changes**: In Zulip 2.0.0, support for using user/channel IDs was added.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The topic of the message. Only required for channel messages\n(`\"type\": \"stream\"` or `\"type\": \"channel\"`), ignored otherwise.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n\nNew in Zulip 2.0.0. Previous Zulip releases encoded\nthis as `subject`, which is currently a deprecated alias.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "For clients supporting\n[local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),\nthe [event queue](/api/register-queue) ID for the client.\n\nIf passed, `local_id` is required.\n\nIf the message is successfully sent, the server will include\n`local_message_id` in the [`message` event](/api/get-events#message) that\nthe client with this `queue_id` will receive.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "queue_id",
+                      "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "For clients supporting\n[local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),\na unique string-format identifier chosen freely by the client.\n\nIf passed, `queue_id` is required.\n\nIf the message is successfully sent, the server will pass it back to\nthe client without inspecting it as `local_message_id` in the\n[`message` event](/api/get-events#message) that the client with the\nabove `queue_id` will receive.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "local_id",
+                      "value": "100.01"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the message should be initially marked read by its\nsender. If unspecified, the server uses a heuristic based\non the client name.\n\n**Changes**: New in Zulip 8.0 (feature level 236).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "read_by_sender",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"id\": 42,\n  \"automatic_new_visibility_policy\": 2,\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "628a4249-8968-4897-af2f-5c6159846067",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The type of message to be sent.\n\n`\"direct\"` for a direct message and `\"stream\"` or `\"channel\"` for a\nchannel message.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to request a channel message.\n\nIn Zulip 7.0 (feature level 174), `\"direct\"` was added as\nthe preferred way to request a direct message, deprecating the original\n`\"private\"`. While `\"private\"` is still supported for requesting direct\nmessages, clients are encouraged to use to the modern convention with\nservers that support it, because support for `\"private\"` will eventually\nbe removed.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "direct"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The channel or users receiving the message.\n\nFor channel messages, this is either the name or integer ID of the\nchannel.\n\nFor direct messages, this is either a list containing integer user IDs or\na list containing string Zulip API email addresses. The ID or email\naddress of the user sending the message can be included in the list, but\nwill be ignored by the server, unless the user sending the message is the\nonly recipient of the message.\n\n**Changes**: In Zulip 2.0.0, support for using user/channel IDs was added.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The topic of the message. Only required for channel messages\n(`\"type\": \"stream\"` or `\"type\": \"channel\"`), ignored otherwise.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n\nNew in Zulip 2.0.0. Previous Zulip releases encoded\nthis as `subject`, which is currently a deprecated alias.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "For clients supporting\n[local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),\nthe [event queue](/api/register-queue) ID for the client.\n\nIf passed, `local_id` is required.\n\nIf the message is successfully sent, the server will include\n`local_message_id` in the [`message` event](/api/get-events#message) that\nthe client with this `queue_id` will receive.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "queue_id",
+                      "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "For clients supporting\n[local echo](https://zulip.readthedocs.io/en/latest/subsystems/sending-messages.html#local-echo),\na unique string-format identifier chosen freely by the client.\n\nIf passed, `queue_id` is required.\n\nIf the message is successfully sent, the server will pass it back to\nthe client without inspecting it as `local_message_id` in the\n[`message` event](/api/get-events#message) that the client with the\nabove `queue_id` will receive.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "local_id",
+                      "value": "100.01"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the message should be initially marked read by its\nsender. If unspecified, the server uses a heuristic based\non the client name.\n\n**Changes**: New in Zulip 8.0 (feature level 236).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "read_by_sender",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"STREAM_DOES_NOT_EXIST\",\n  \"msg\": \"Channel 'nonexistent' does not exist\",\n  \"result\": \"error\",\n  \"stream\": \"nonexistent\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "446eb13d-ce19-45aa-b686-eb7d8ec450af",
+          "name": "Get a message's edit history",
+          "request": {
+            "name": "Get a message's edit history",
+            "description": {
+              "content": "Fetch the message edit history of a previously edited message.\n\nNote that edit history may be disabled in some organizations; see the\n[Zulip help center documentation on editing messages][edit-settings].\n\n[edit-settings]: /help/view-a-messages-edit-history\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "allow_empty_topic_name",
+                  "value": "false",
+                  "description": "Whether the topic names i.e. `topic` and `prev_topic` fields in\nthe `message_history` objects returned can be empty string.\n\nIf `false`, the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response is\nreturned replacing the empty string as the topic name.\n\n**Changes**: New in Zulip 10.0 (feature level 334).\n"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a58ec04c-5a63-4cf6-8e2d-7c75fc749e26",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "allow_empty_topic_name",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message_history\": [\n    {\n      \"content\": \"Hello!\",\n      \"topic\": \"party at my houz\",\n      \"rendered_content\": \"<p>Hello!</p>\",\n      \"timestamp\": 1530129122,\n      \"user_id\": 5\n    },\n    {\n      \"topic\": \"party at my house\",\n      \"content\": \"Howdy!\",\n      \"prev_content\": \"Hello!\",\n      \"rendered_content\": \"<p>Howdy!</p>\",\n      \"user_id\": 5,\n      \"prev_rendered_content\": \"<p>Hello!</p>\",\n      \"content_html_diff\": \"<div><p><span class=\\\"highlight_text_inserted\\\">Howdy!</span></p> <p><span class=\\\"highlight_text_deleted\\\">Hello!</span></p></div>\",\n      \"prev_topic\": \"party at my houz\",\n      \"timestamp\": 1530129134\n    }\n  ],\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5a2894fd-d6a2-4409-830d-fb58bd6ae3df",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "allow_empty_topic_name",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"Invalid message(s)\",\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "62c1055f-729f-4758-8330-3f307bacea3e",
+          "name": "Update personal message flags",
+          "request": {
+            "name": "Update personal message flags",
+            "description": {
+              "content": "Add or remove personal message flags like `read` and `starred`\non a collection of message IDs.\n\nSee also the endpoint for [updating flags on a range of\nmessages within a narrow](/api/update-message-flags-for-narrow).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                "flags"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "messages",
+                  "value": "<integer>",
+                  "description": "(Required) An array containing the IDs of the target messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "messages",
+                  "value": "<integer>",
+                  "description": "(Required) An array containing the IDs of the target messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "op",
+                  "value": "<string>",
+                  "description": "(Required) Whether to `add` the flag or `remove` it.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "flag",
+                  "value": "<string>",
+                  "description": "(Required) The flag that should be added/removed.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e7876315-dc41-40c1-844d-d83ee9723fe2",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    "flags"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) An array containing the IDs of the target messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "messages",
+                      "value": "4"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) An array containing the IDs of the target messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "messages",
+                      "value": "8"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) An array containing the IDs of the target messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "messages",
+                      "value": "15"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Whether to `add` the flag or `remove` it.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "op",
+                      "value": "add"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The flag that should be added/removed.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "flag",
+                      "value": "read"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"messages\": [\n    9715,\n    801\n  ],\n  \"ignored_because_not_subscribed_channels\": [\n    5181,\n    9766\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c98fba93-0032-46b7-bebd-34ff13a68e4c",
+          "name": "Update personal message flags for narrow",
+          "request": {
+            "name": "Update personal message flags for narrow",
+            "description": {
+              "content": "Add or remove personal message flags like `read` and `starred`\non a range of messages within a narrow.\n\nSee also [the endpoint for updating flags on specific message\nIDs](/api/update-message-flags).\n\n**Changes**: New in Zulip 6.0 (feature level 155).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                "flags",
+                "narrow"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "anchor",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "num_before",
+                  "value": "<integer>",
+                  "description": "(Required) Limit the number of messages preceding the anchor in the\nupdate range. The server may decrease this to bound\ntransaction sizes.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "num_after",
+                  "value": "<integer>",
+                  "description": "(Required) Limit the number of messages following the anchor in the\nupdate range. The server may decrease this to bound\ntransaction sizes.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "op",
+                  "value": "<string>",
+                  "description": "(Required) Whether to `add` the flag or `remove` it.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "flag",
+                  "value": "<string>",
+                  "description": "(Required) The flag that should be added/removed. See [available\nflags](/api/update-message-flags#available-flags).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_anchor",
+                  "value": "true",
+                  "description": "Whether a message with the specified ID matching the narrow\nshould be included in the update range.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f561a4ce-e10c-4b58-8761-88ba0876fca0",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    "flags",
+                    "narrow"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "anchor",
+                      "value": "43"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Limit the number of messages preceding the anchor in the\nupdate range. The server may decrease this to bound\ntransaction sizes.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "num_before",
+                      "value": "4"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Limit the number of messages following the anchor in the\nupdate range. The server may decrease this to bound\ntransaction sizes.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "num_after",
+                      "value": "8"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The narrow you want update flags within. See how to\n[construct a narrow](/api/construct-narrow).\n\nNote that, when adding the `read` flag to messages, clients should\nconsider including a narrow with the `is:unread` filter as an\noptimization. Including that filter takes advantage of the fact that\nthe server has a database index for unread messages.\n\n**Changes**: See [changes section](/api/construct-narrow#changes)\nof search/narrow filter documentation.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "narrow",
+                      "value": "{\"operand\":\"Denmark\",\"operator\":\"channel\"}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Whether to `add` the flag or `remove` it.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "op",
+                      "value": "add"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The flag that should be added/removed. See [available\nflags](/api/update-message-flags#available-flags).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "flag",
+                      "value": "read"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether a message with the specified ID matching the narrow\nshould be included in the update range.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_anchor",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"first_processed_id\": 4586,\n  \"found_newest\": true,\n  \"found_oldest\": false,\n  \"last_processed_id\": 6333,\n  \"msg\": \"string\",\n  \"processed_count\": 1451,\n  \"result\": \"string\",\n  \"updated_count\": 6975,\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"ignored_because_not_subscribed_channels\": [\n    5554,\n    4115\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3c40f151-3004-4fa7-9b57-25bb2d86a094",
+          "name": "Render a message",
+          "request": {
+            "name": "Render a message",
+            "description": {
+              "content": "Render a message to HTML.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                "render"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "content",
+                  "value": "<string>",
+                  "description": "(Required) "
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4869bbbe-be6b-4582-878c-54ac9b27e295",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    "render"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"rendered\": \"<p><strong>foo</strong></p>\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "536c550c-5b7a-411e-83a3-4ddedad395e8",
+          "name": "Add an emoji reaction",
+          "request": {
+            "name": "Add an emoji reaction",
+            "description": {
+              "content": "Add an [emoji reaction](/help/emoji-reactions) to a message.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id",
+                "reactions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "emoji_name",
+                  "value": "<string>",
+                  "description": "(Required) The target emoji's human-readable name.\n\nTo find an emoji's name, hover over a message to reveal\nthree icons on the right, then click the smiley face icon.\nImages of available reaction emojis appear. Hover over the\nemoji you want, and note that emoji's text name.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "emoji_code",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "reaction_type",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7c3ddca4-d80f-4367-8770-1577d95203f4",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "reactions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The target emoji's human-readable name.\n\nTo find an emoji's name, hover over a message to reveal\nthree icons on the right, then click the smiley face icon.\nImages of available reaction emojis appear. Hover over the\nemoji you want, and note that emoji's text name.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emoji_name",
+                      "value": "octopus"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "emoji_code",
+                      "value": "1f419"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "reaction_type",
+                      "value": "unicode_emoji"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0f08a9ac-3d16-4171-abe8-b224e7f20ffe",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "reactions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The target emoji's human-readable name.\n\nTo find an emoji's name, hover over a message to reveal\nthree icons on the right, then click the smiley face icon.\nImages of available reaction emojis appear. Hover over the\nemoji you want, and note that emoji's text name.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emoji_name",
+                      "value": "octopus"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "emoji_code",
+                      "value": "1f419"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "reaction_type",
+                      "value": "unicode_emoji"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"Invalid emoji code\",\n  \"code\": \"BAD_REQUEST\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bcd6d3ff-ab2b-4aa4-be8b-48dabae5789f",
+          "name": "Remove an emoji reaction",
+          "request": {
+            "name": "Remove an emoji reaction",
+            "description": {
+              "content": "Remove an [emoji reaction](/help/emoji-reactions) from a message.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id",
+                "reactions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "emoji_name",
+                  "value": "<string>",
+                  "description": "The target emoji's human-readable name.\n\nTo find an emoji's name, hover over a message to reveal\nthree icons on the right, then click the smiley face icon.\nImages of available reaction emojis appear. Hover over the\nemoji you want, and note that emoji's text name.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "emoji_code",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "reaction_type",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b2b17d3b-3035-45e9-b71f-1dcb1cfd9194",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "reactions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The target emoji's human-readable name.\n\nTo find an emoji's name, hover over a message to reveal\nthree icons on the right, then click the smiley face icon.\nImages of available reaction emojis appear. Hover over the\nemoji you want, and note that emoji's text name.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emoji_name",
+                      "value": "octopus"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "emoji_code",
+                      "value": "1f419"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "reaction_type",
+                      "value": "unicode_emoji"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e140982d-ee2a-4897-8388-a3448deec0f7",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "reactions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The target emoji's human-readable name.\n\nTo find an emoji's name, hover over a message to reveal\nthree icons on the right, then click the smiley face icon.\nImages of available reaction emojis appear. Hover over the\nemoji you want, and note that emoji's text name.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emoji_name",
+                      "value": "octopus"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "emoji_code",
+                      "value": "1f419"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "reaction_type",
+                      "value": "unicode_emoji"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"Invalid emoji code\",\n  \"code\": \"BAD_REQUEST\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2d65ea28-c129-493c-80e9-42f337710b8d",
+          "name": "Get a message's read receipts",
+          "request": {
+            "name": "Get a message's read receipts",
+            "description": {
+              "content": "Returns a list containing the IDs for all users who have\nmarked the message as read (and whose privacy settings allow\nsharing that information).\n\nThe list of users IDs will include any bots who have marked\nthe message as read via the API (providing a way for bots to\nindicate whether they have processed a message successfully in\na way that can be easily inspected in a Zulip client). Bots\nfor which this behavior is not desired may disable the\n`send_read_receipts` setting via the API.\n\nIt will never contain the message's sender.\n\n**Changes**: New in Zulip 6.0 (feature level 137).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id",
+                "read_receipts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d8cd9b10-46c0-4959-8388-1f23ce0d6951",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "read_receipts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"user_ids\": [\n    7032,\n    9856\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a1989299-21cd-47f0-bc47-2523cd9f18b0",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "read_receipts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"Invalid message(s)\",\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b899c1f9-c5ef-4aa9-9849-53fb55324478",
+          "name": "Check if messages match a narrow",
+          "request": {
+            "name": "Check if messages match a narrow",
+            "description": {
+              "content": "Check whether a set of messages match a [narrow](/api/construct-narrow).\n\nFor many common narrows (e.g. a topic), clients can write an efficient\nclient-side check to determine whether a newly arrived message belongs\nin the view.\n\nThis endpoint is designed to allow clients to handle more complex narrows\nfor which the client does not (or in the case of full-text search, cannot)\nimplement this check.\n\nThe format of the `match_subject` and `match_content` objects is designed\nto match those returned by the [`GET /messages`](/api/get-messages#response)\nendpoint, so that a client can splice these fields into a `message` object\nreceived from [`GET /events`](/api/get-events#message) and end up with an\nextended message object identical to how a [`GET /messages`](/api/get-messages)\nrequest for the current narrow would have returned the message.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                "matches_narrow"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "description": {
+                    "content": "(Required) List of IDs for the messages to check.",
+                    "type": "text/plain"
+                  },
+                  "key": "msg_ids",
+                  "value": ""
+                },
+                {
+                  "description": {
+                    "content": "(Required) A structure defining the narrow to check against. See how to\n[construct a narrow](/api/construct-narrow).\n\n**Changes**: See [changes section](/api/construct-narrow#changes)\nof search/narrow filter documentation.\n",
+                    "type": "text/plain"
+                  },
+                  "key": "narrow",
+                  "value": ""
+                }
+              ],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "02bd1cd6-602e-4b4a-b647-3fbe7d107436",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    "matches_narrow"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "msg_ids",
+                      "value": ""
+                    },
+                    {
+                      "key": "narrow",
+                      "value": ""
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"messages\": {\n    \"31\": {\n      \"match_content\": \"<p><a href=\\\"http://foo.com\\\" target=\\\"_blank\\\" title=\\\"http://foo.com\\\">http://foo.com</a></p>\",\n      \"match_subject\": \"test_topic\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d2922eb4-4e7e-4bff-a19b-040bc92a2950",
+          "name": "Fetch a single message",
+          "request": {
+            "name": "Fetch a single message",
+            "description": {
+              "content": "Given a message ID, return the message object.\n\nAdditionally, a `raw_content` field is included. This field is\nuseful for clients that primarily work with HTML-rendered\nmessages but might need to occasionally fetch the message's\nraw [Zulip-flavored Markdown](/help/format-your-message-using-markdown) (e.g. for [view\nsource](/help/view-the-markdown-source-of-a-message) or\nprefilling a message edit textarea).\n\n**Changes**: Before Zulip 5.0 (feature level 120), this\nendpoint only returned the `raw_content` field.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "apply_markdown",
+                  "value": "true",
+                  "description": "If `true`, message content is returned in the rendered HTML\nformat. If `false`, message content is returned in the raw\n[Zulip-flavored Markdown format](/help/format-your-message-using-markdown) text that user entered.\n\n**Changes**: New in Zulip 5.0 (feature level 120).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "allow_empty_topic_name",
+                  "value": "false",
+                  "description": "Whether the client supports processing the empty string as a topic in the\ntopic name fields in the returned data, including in returned edit_history data.\n\nIf `false`, the server will use the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response instead of empty string\nto represent the empty string topic in its response.\n\n**Changes**: New in Zulip 10.0 (feature level 334). Previously, the empty string\nwas not a valid topic.\n"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9d6a7a86-d9ae-4630-b8b2-b1f0e16b2815",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "apply_markdown",
+                      "value": "false"
+                    },
+                    {
+                      "key": "allow_empty_topic_name",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"raw_content\": \"**Don't** forget your towel!\",\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"message\": {\n    \"subject\": \"\",\n    \"sender_realm_str\": \"zulip\",\n    \"type\": \"private\",\n    \"content\": \"<p>Security experts agree that relational algorithms are an interesting new topic in the field of networking, and scholars concur.</p>\",\n    \"flags\": [\n      \"read\"\n    ],\n    \"id\": 16,\n    \"display_recipient\": [\n      {\n        \"id\": 4,\n        \"is_mirror_dummy\": false,\n        \"email\": \"hamlet@zulip.com\",\n        \"full_name\": \"King Hamlet\"\n      },\n      {\n        \"id\": 5,\n        \"is_mirror_dummy\": false,\n        \"email\": \"iago@zulip.com\",\n        \"full_name\": \"Iago\"\n      },\n      {\n        \"id\": 8,\n        \"is_mirror_dummy\": false,\n        \"email\": \"prospero@zulip.com\",\n        \"full_name\": \"Prospero from The Tempest\"\n      }\n    ],\n    \"content_type\": \"text/html\",\n    \"is_me_message\": false,\n    \"timestamp\": 1527921326,\n    \"sender_id\": 4,\n    \"sender_full_name\": \"King Hamlet\",\n    \"recipient_id\": 27,\n    \"topic_links\": [],\n    \"client\": \"ZulipDataImport\",\n    \"avatar_url\": \"https://secure.gravatar.com/avatar/6d8cad0fd00256e7b40691d27ddfd466?d=identicon&version=1\",\n    \"submessages\": [],\n    \"sender_email\": \"hamlet@zulip.com\",\n    \"reactions\": []\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "457905a6-063a-4a08-821e-13125af9ae9d",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "apply_markdown",
+                      "value": "false"
+                    },
+                    {
+                      "key": "allow_empty_topic_name",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"Invalid message(s)\",\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3d9b9932-89d7-429b-a4cc-0555e4641274",
+          "name": "Edit a message",
+          "request": {
+            "name": "Edit a message",
+            "description": {
+              "content": "Update the content, topic, or channel of the message with the specified\nID.\n\nYou can [resolve topics](/help/resolve-a-topic) by editing the topic to\n`✔ {original_topic}` with the `propagate_mode` parameter set to\n`\"change_all\"`.\n\nSee [configuring message editing][config-message-editing] for detailed\ndocumentation on when users are allowed to edit message content, and\n[restricting moving messages][restrict-move-messages] for detailed\ndocumentation on when users are allowed to change a message's topic\nand/or channel.\n\nThe relevant realm settings in the API that are related to the above\nlinked documentation on when users are allowed to update messages are:\n\n- `allow_message_editing`\n- `can_resolve_topics_group`\n- `can_move_messages_between_channels_group`\n- `can_move_messages_between_topics_group`\n- `message_content_edit_limit_seconds`\n- `move_messages_within_stream_limit_seconds`\n- `move_messages_between_streams_limit_seconds`\n\nMore details about these realm settings can be found in the\n[`POST /register`](/api/register-queue) response or in the documentation\nof the [`realm op: update_dict`](/api/get-events#realm-update_dict)\nevent in [`GET /events`](/api/get-events).\n\n**Changes**: Prior to Zulip 10.0 (feature level 367), the permission for\nresolving a topic was managed by `can_move_messages_between_topics_group`.\nAs of this feature level, users belonging to the `can_resolve_topics_group`\nwill have the permission to [resolve topics](/help/resolve-a-topic) in the organization.\n\nIn Zulip 10.0 (feature level 316), `edit_topic_policy`\nwas removed and replaced by `can_move_messages_between_topics_group`\nrealm setting.\n\n**Changes**: In Zulip 10.0 (feature level 310), `move_messages_between_streams_policy`\nwas removed and replaced by `can_move_messages_between_channels_group`\nrealm setting.\n\nPrior to Zulip 7.0 (feature level 172), anyone could add a\ntopic to channel messages without a topic, regardless of the organization's\n[topic editing permissions](/help/restrict-moving-messages). As of this\nfeature level, messages without topics have the same restrictions for\ntopic edits as messages with topics.\n\nBefore Zulip 7.0 (feature level 172), by using the `change_all` value for\nthe `propagate_mode` parameter, users could move messages after the\norganization's configured time limits for changing a message's topic or\nchannel had passed. As of this feature level, the server will [return an\nerror](/api/update-message#response) with `\"code\":\n\"MOVE_MESSAGES_TIME_LIMIT_EXCEEDED\"` if users, other than organization\nadministrators or moderators, try to move messages after these time\nlimits have passed.\n\nBefore Zulip 7.0 (feature level 162), users who were not administrators or\nmoderators could only edit topics if the target message was sent within the\nlast 3 days. As of this feature level, that time limit is now controlled by\nthe realm setting `move_messages_within_stream_limit_seconds`. Also at this\nfeature level, a similar time limit for moving messages between channels was\nadded, controlled by the realm setting\n`move_messages_between_streams_limit_seconds`. Previously, all users who\nhad permission to move messages between channels did not have any time limit\nrestrictions when doing so.\n\nBefore Zulip 7.0 (feature level 159), editing channels and topics of messages\nwas forbidden if the realm setting for `allow_message_editing` was `false`,\nregardless of an organization's configuration for the realm settings\n`edit_topic_policy` or `move_messages_between_streams_policy`.\n\nBefore Zulip 7.0 (feature level 159), message senders were allowed to edit\nthe topic of their messages indefinitely.\n\nIn Zulip 5.0 (feature level 75), the `edit_topic_policy` realm setting\nwas added, replacing the `allow_community_topic_editing` boolean.\n\nIn Zulip 4.0 (feature level 56), the `move_messages_between_streams_policy`\nrealm setting was added.\n\n[config-message-editing]: /help/restrict-message-editing-and-deletion\n[restrict-move-messages]: /help/restrict-moving-messages\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "topic",
+                  "value": "<string>",
+                  "description": "The topic to move the message(s) to, to request changing the topic.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length\n\nShould only be sent when changing the topic, and will throw an error\nif the target message is not a channel message.\n\nNote: When the value of `realm_empty_topic_display_name` found in\nthe [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\nYou can [resolve topics](/help/resolve-a-topic) by editing the topic to\n`✔ {original_topic}` with the `propagate_mode` parameter set to\n`\"change_all\"`. The empty string topic cannot be marked as resolved.\n\n**Changes**: Before Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n\nNew in Zulip 2.0.0. Previous Zulip releases encoded this as `subject`,\nwhich is currently a deprecated alias.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "propagate_mode",
+                  "value": "change_one",
+                  "description": "Which message(s) should be edited:\n\n- `\"change_later\"`: The target message and all following messages.\n- `\"change_one\"`: Only the target message.\n- `\"change_all\"`: All messages in this topic.\n\nOnly the default value of `\"change_one\"` is valid when editing\nonly the content of a message.\n\nThis parameter determines both which messages get moved and also whether\nclients that are currently narrowed to the topic containing the message\nshould navigate or adjust their compose box recipient to point to the\npost-edit channel/topic.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "send_notification_to_old_thread",
+                  "value": "false",
+                  "description": "Whether to send an automated message to the old topic to\nnotify users where the messages were moved to.\n\n**Changes**: Before Zulip 6.0 (feature level 152), this parameter\nhad a default of `true` and was ignored unless the channel was changed.\n\nNew in Zulip 3.0 (feature level 9).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "send_notification_to_new_thread",
+                  "value": "true",
+                  "description": "Whether to send an automated message to the new topic to\nnotify users where the messages came from.\n\nIf the move is just [resolving/unresolving a topic](/help/resolve-a-topic),\nthis parameter will not trigger an additional notification.\n\n**Changes**: Before Zulip 6.0 (feature level 152), this parameter\nwas ignored unless the channel was changed.\n\nNew in Zulip 3.0 (feature level 9).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "content",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "prev_content_sha256",
+                  "value": "<string>",
+                  "description": "An optional SHA-256 hash of the previous raw content of the message\nthat the client has at the time of the request.\n\nIf provided, the server will return an error if it does not match the\nSHA-256 hash of the message's content stored in the database.\n\nClients can use this feature to prevent races where multiple clients\nsave conflicting edits to a message.\n\n**Changes**: New in Zulip 11.0 (feature level 379).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "stream_id",
+                  "value": "<integer>",
+                  "description": "The channel ID to move the message(s) to, to request moving\nmessages to another channel.\n\nShould only be sent when changing the channel, and will throw an error\nif the target message is not a channel message.\n\nNote that a message's content and channel cannot be changed at the\nsame time, so sending both `content` and `stream_id` parameters will\nthrow an error.\n\n**Changes**: New in Zulip 3.0 (feature level 1).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1c80960d-7d18-429f-87d6-f1e86de8a290",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The topic to move the message(s) to, to request changing the topic.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length\n\nShould only be sent when changing the topic, and will throw an error\nif the target message is not a channel message.\n\nNote: When the value of `realm_empty_topic_display_name` found in\nthe [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\nYou can [resolve topics](/help/resolve-a-topic) by editing the topic to\n`✔ {original_topic}` with the `propagate_mode` parameter set to\n`\"change_all\"`. The empty string topic cannot be marked as resolved.\n\n**Changes**: Before Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n\nNew in Zulip 2.0.0. Previous Zulip releases encoded this as `subject`,\nwhich is currently a deprecated alias.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Which message(s) should be edited:\n\n- `\"change_later\"`: The target message and all following messages.\n- `\"change_one\"`: Only the target message.\n- `\"change_all\"`: All messages in this topic.\n\nOnly the default value of `\"change_one\"` is valid when editing\nonly the content of a message.\n\nThis parameter determines both which messages get moved and also whether\nclients that are currently narrowed to the topic containing the message\nshould navigate or adjust their compose box recipient to point to the\npost-edit channel/topic.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "propagate_mode",
+                      "value": "change_all"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to send an automated message to the old topic to\nnotify users where the messages were moved to.\n\n**Changes**: Before Zulip 6.0 (feature level 152), this parameter\nhad a default of `true` and was ignored unless the channel was changed.\n\nNew in Zulip 3.0 (feature level 9).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_notification_to_old_thread",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to send an automated message to the new topic to\nnotify users where the messages came from.\n\nIf the move is just [resolving/unresolving a topic](/help/resolve-a-topic),\nthis parameter will not trigger an additional notification.\n\n**Changes**: Before Zulip 6.0 (feature level 152), this parameter\nwas ignored unless the channel was changed.\n\nNew in Zulip 3.0 (feature level 9).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_notification_to_new_thread",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "An optional SHA-256 hash of the previous raw content of the message\nthat the client has at the time of the request.\n\nIf provided, the server will return an error if it does not match the\nSHA-256 hash of the message's content stored in the database.\n\nClients can use this feature to prevent races where multiple clients\nsave conflicting edits to a message.\n\n**Changes**: New in Zulip 11.0 (feature level 379).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "prev_content_sha256",
+                      "value": "6ae8a75555209fd6c44157c0aed8016e763ff435a19cf186f76863140143ff72"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The channel ID to move the message(s) to, to request moving\nmessages to another channel.\n\nShould only be sent when changing the channel, and will throw an error\nif the target message is not a channel message.\n\nNote that a message's content and channel cannot be changed at the\nsame time, so sending both `content` and `stream_id` parameters will\nthrow an error.\n\n**Changes**: New in Zulip 3.0 (feature level 1).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_id",
+                      "value": "43"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"detached_uploads\": [\n    {\n      \"id\": 3,\n      \"name\": \"1253601-1.jpg\",\n      \"path_id\": \"2/5d/BD5NRptFxPDKY3RUKwhhup8r/1253601-1.jpg\",\n      \"size\": 1339060,\n      \"create_time\": 1687984706,\n      \"message_ids\": []\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "79fa5656-3736-47ce-9ab7-08b5add5380c",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The topic to move the message(s) to, to request changing the topic.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length\n\nShould only be sent when changing the topic, and will throw an error\nif the target message is not a channel message.\n\nNote: When the value of `realm_empty_topic_display_name` found in\nthe [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\nYou can [resolve topics](/help/resolve-a-topic) by editing the topic to\n`✔ {original_topic}` with the `propagate_mode` parameter set to\n`\"change_all\"`. The empty string topic cannot be marked as resolved.\n\n**Changes**: Before Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n\nNew in Zulip 2.0.0. Previous Zulip releases encoded this as `subject`,\nwhich is currently a deprecated alias.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Which message(s) should be edited:\n\n- `\"change_later\"`: The target message and all following messages.\n- `\"change_one\"`: Only the target message.\n- `\"change_all\"`: All messages in this topic.\n\nOnly the default value of `\"change_one\"` is valid when editing\nonly the content of a message.\n\nThis parameter determines both which messages get moved and also whether\nclients that are currently narrowed to the topic containing the message\nshould navigate or adjust their compose box recipient to point to the\npost-edit channel/topic.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "propagate_mode",
+                      "value": "change_all"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to send an automated message to the old topic to\nnotify users where the messages were moved to.\n\n**Changes**: Before Zulip 6.0 (feature level 152), this parameter\nhad a default of `true` and was ignored unless the channel was changed.\n\nNew in Zulip 3.0 (feature level 9).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_notification_to_old_thread",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to send an automated message to the new topic to\nnotify users where the messages came from.\n\nIf the move is just [resolving/unresolving a topic](/help/resolve-a-topic),\nthis parameter will not trigger an additional notification.\n\n**Changes**: Before Zulip 6.0 (feature level 152), this parameter\nwas ignored unless the channel was changed.\n\nNew in Zulip 3.0 (feature level 9).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_notification_to_new_thread",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "An optional SHA-256 hash of the previous raw content of the message\nthat the client has at the time of the request.\n\nIf provided, the server will return an error if it does not match the\nSHA-256 hash of the message's content stored in the database.\n\nClients can use this feature to prevent races where multiple clients\nsave conflicting edits to a message.\n\n**Changes**: New in Zulip 11.0 (feature level 379).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "prev_content_sha256",
+                      "value": "6ae8a75555209fd6c44157c0aed8016e763ff435a19cf186f76863140143ff72"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The channel ID to move the message(s) to, to request moving\nmessages to another channel.\n\nShould only be sent when changing the channel, and will throw an error\nif the target message is not a channel message.\n\nNote that a message's content and channel cannot be changed at the\nsame time, so sending both `content` and `stream_id` parameters will\nthrow an error.\n\n**Changes**: New in Zulip 3.0 (feature level 1).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_id",
+                      "value": "43"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"You don't have permission to edit this message\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b0b17b22-6920-43a3-9233-9aefc0934f92",
+          "name": "Delete a message",
+          "request": {
+            "name": "Delete a message",
+            "description": {
+              "content": "Permanently delete a message.\n\nThis API corresponds to the [delete a message completely][delete-completely]\nfeature documented in the Zulip help center.\n\nA user must be able to access the content of a message in order to delete it.\nSee [channel permissions](/help/channel-permissions) for more information\nabout content access for channel messages. For direct messages, the user\nmust have received or sent the direct message to have content access.\n\nSee [restricting message deletion](/help/restrict-message-editing-and-deletion)\nfor documentation on when users are allowed to delete messages.\n\nThe relevant realm settings in the API that are related to the above linked\ndocumentation on when users are allowed to delete messages are:\n\n- `realm_can_delete_any_message_group`\n- `realm_can_delete_own_message_group`\n- `realm_can_set_delete_message_policy_group`\n- `realm_message_content_delete_limit_seconds`\n\nThe relevant per-channel permission settings in the API that are related to the\nabove linked documentation on when users are allowed to delete messages in a\nspecific channel are:\n\n- `can_delete_any_message_group`\n- `can_delete_own_message_group`\n\nMore details about these realm and channel settings can be found in the\n[`POST /register`](/api/register-queue) response.\n\n**Changes**: Prior to Zulip 10.0 (feature level 281), only organization\nadministrators had permission to permanently delete a message.\n\n[delete-completely]: /help/delete-a-message#delete-a-message-completely\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7c4a43bc-c896-473c-aaa1-ffbb241196ff",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "141150d7-6cfe-4253-9f22-25cdff37ede9",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"Invalid message(s)\",\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0b404bb5-c568-4d09-a91e-e626ff856714",
+          "name": "Report a message",
+          "request": {
+            "name": "Report a message",
+            "description": {
+              "content": "Sends a notification to the organization's [moderation request\nchannel](/help/enable-moderation-requests), if it is configured, that\nreports the targeted message for [review and moderation](/help/report-a-message).\n\nClients should check the `moderation_request_channel` realm setting to\ndecide whether to show the option to report messages in the UI.\n\nIf the `report_type` parameter value is `\"other\"`, the `description`\nparameter is required. Clients should also enforce and communicate this\nbehavior in the UI.\n\n**Changes**: New in Zulip 11.0 (feature level 382). This API builds on\nthe `moderation_request_channel` realm setting, which was added in\nfeature level 331.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "messages",
+                ":message_id",
+                "report"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "message_id",
+                  "description": "(Required) The target message's ID.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "report_type",
+                  "value": "<string>",
+                  "description": "(Required) The reason that best describes why the current user is reporting the\ntarget message for moderation.\n\nMust be one of the `key` values in the `server_report_message_types`\nfield in the [`POST /register`](/api/register-queue) response.\n\n**Changes**: Prior to Zulip 12.0 (feature level 435), the allowed\nvalues for this parameter were limited to: `\"harassment\"`,\n`\"inappropriate\"`, `\"norms\"`, `\"other\"`, `\"spam\"`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "description",
+                  "value": "<string>",
+                  "description": "A short description with additional context about why the current user\nis reporting the target message for moderation.\n\nClients should limit this string to 1000 Unicode code points.\n\nIf the `report_type` parameter is `\"other\"`, this parameter is required,\nand its value cannot be an empty string.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "617e9496-a61f-4672-8192-44ee89f6e1fe",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "report"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The reason that best describes why the current user is reporting the\ntarget message for moderation.\n\nMust be one of the `key` values in the `server_report_message_types`\nfield in the [`POST /register`](/api/register-queue) response.\n\n**Changes**: Prior to Zulip 12.0 (feature level 435), the allowed\nvalues for this parameter were limited to: `\"harassment\"`,\n`\"inappropriate\"`, `\"norms\"`, `\"other\"`, `\"spam\"`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "report_type",
+                      "value": "harassment"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A short description with additional context about why the current user\nis reporting the target message for moderation.\n\nClients should limit this string to 1000 Unicode code points.\n\nIf the `report_type` parameter is `\"other\"`, this parameter is required,\nand its value cannot be an empty string.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "description",
+                      "value": "This message insults and mocks Frodo, which is against the code of conduct."
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "744666b3-97ce-47b8-bea4-bff69a2307cd",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "messages",
+                    ":message_id",
+                    "report"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "message_id",
+                      "description": "(Required) The target message's ID.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The reason that best describes why the current user is reporting the\ntarget message for moderation.\n\nMust be one of the `key` values in the `server_report_message_types`\nfield in the [`POST /register`](/api/register-queue) response.\n\n**Changes**: Prior to Zulip 12.0 (feature level 435), the allowed\nvalues for this parameter were limited to: `\"harassment\"`,\n`\"inappropriate\"`, `\"norms\"`, `\"other\"`, `\"spam\"`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "report_type",
+                      "value": "harassment"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A short description with additional context about why the current user\nis reporting the target message for moderation.\n\nClients should limit this string to 1000 Unicode code points.\n\nIf the `report_type` parameter is `\"other\"`, this parameter is required,\nand its value cannot be an empty string.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "description",
+                      "value": "This message insults and mocks Frodo, which is against the code of conduct."
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"Moderation request channel must be specified to enable message reporting.\",\n  \"code\": \"BAD_REQUEST\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2ae67d14-f399-45eb-a0fe-16cd46851cd3",
+          "name": "Upload a file",
+          "request": {
+            "name": "Upload a file",
+            "description": {
+              "content": "[Upload](/help/share-and-upload-files) a single file and get the corresponding URL.\n\nInitially, only you will be able to access the link. To share the\nuploaded file, you'll need to [send a message][send-message]\ncontaining the resulting link. Users who can already access the link\ncan reshare it with other users by sending additional Zulip messages\ncontaining the link.\n\nThe maximum allowed file size is available in the `max_file_upload_size_mib`\nfield in the [`POST /register`](/api/register-queue) response. Note that\nlarge files (25MB+) may fail to upload using this API endpoint due to\nnetwork-layer timeouts, depending on the quality of your connection to the\nZulip server.\n\nFor uploading larger files, `/api/v1/tus` is an endpoint implementing the\n[`tus` resumable upload protocol](https://tus.io/protocols/resumable-upload),\nwhich supports uploading arbitrarily large files limited only by the server's\n`max_file_upload_size_mib` (Configured via `MAX_FILE_UPLOAD_SIZE` in\n`/etc/zulip/settings.py`). Clients which send authenticated credentials\n(either via browser-based cookies, or API key via `Authorization` header) may\nuse this endpoint to upload files.\n\n**Changes**: The `api/v1/tus` endpoint supporting resumable uploads was\nintroduced in Zulip 10.0 (feature level 296). Previously,\n`max_file_upload_size_mib` was typically 25MB.\n\n[uploaded-files]: /help/manage-your-uploaded-files\n[send-message]: /api/send-message\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "user_uploads"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "filename",
+                  "type": "file",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "61ab90f1-423e-49c3-a902-c9afea004b61",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "user_uploads"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "filename",
+                      "value": "/path/to/file",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"uri\": \"/user_uploads/1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt\",\n  \"url\": \"/user_uploads/1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt\",\n  \"filename\": \"zulip.txt\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "74938c1a-19ea-47e0-982b-a1a12948e963",
+          "name": "Check thumbnail status",
+          "request": {
+            "name": "Check thumbnail status",
+            "description": {
+              "content": "Check whether a thumbnail exists for a specific file uploaded by a user.\nThis endpoint is intended to be polled by clients to determine when\nthumbnail generation is complete.\n\n**Changes**: New in Zulip 12.0 (feature level 479).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "thumbnail",
+                "status",
+                ":realm_id_str",
+                ":filename"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "realm_id_str",
+                  "description": "(Required) The realm ID component of the file's `path_id`. If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.\n"
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "filename",
+                  "description": "(Required) The file path component of the file's `path_id` (everything\nafter the first `/`). If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`\nwould be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d1441596-5563-427b-be1d-b076a647c257",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "thumbnail",
+                    "status",
+                    ":realm_id_str",
+                    ":filename"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "realm_id_str",
+                      "description": "(Required) The realm ID component of the file's `path_id`. If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.\n"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filename",
+                      "description": "(Required) The file path component of the file's `path_id` (everything\nafter the first `/`). If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`\nwould be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"has_thumbnail\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "82dfe637-8821-4fdf-bc25-3293fac1c5a9",
+          "name": "Get public temporary URL for an uploaded file",
+          "request": {
+            "name": "Get public temporary URL for an uploaded file",
+            "description": {
+              "content": "Get a temporary URL for access to an [uploaded file](/api/upload-file)\nthat doesn't require authentication.\n\nThe `SIGNED_ACCESS_TOKEN_VALIDITY_IN_SECONDS` server setting controls\nthe valid length of time for temporary access, which generally is set\nto a default of 60 seconds. Consumers of this API are expected to\nimmediately request the URL that it returns, and should not store it\nin any way.\n\n**Changes**: New in Zulip 3.0 (feature level 1).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "user_uploads",
+                ":realm_id_str",
+                ":filename"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "realm_id_str",
+                  "description": "(Required) The realm ID component of the file's `path_id`. If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.\n"
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "filename",
+                  "description": "(Required) The file path component of the file's `path_id` (everything\nafter the first `/`). If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`\nwould be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "060751c1-4cc1-423e-929c-0556594652de",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "user_uploads",
+                    ":realm_id_str",
+                    ":filename"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "realm_id_str",
+                      "description": "(Required) The realm ID component of the file's `path_id`. If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.\n"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "filename",
+                      "description": "(Required) The file path component of the file's `path_id` (everything\nafter the first `/`). If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`\nwould be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"url\": \"/user_uploads/temporary/322F32632F39765378464E4C63306D3961396F4970705A4D74424565432F7A756C69702E7478743A316A5053616A3A3938625F44393446466D37357254315F4F414C425A4553464F6A55\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "c4bfb0da-0fbd-45da-aed7-b13eaf2bbaad",
+    "name": "Zulip REST authentication messages API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,1221 @@
+{
+  "item": [
+    {
+      "id": "aadd5f6a-df14-46fc-940a-ca92c414580a",
+      "name": "invites",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "64d0d53c-9878-4f97-b9e0-2fa25cd6b748",
+          "name": "Get all invitations",
+          "request": {
+            "name": "Get all invitations",
+            "description": {
+              "content": "Fetch all unexpired [invitations](/help/invite-new-users) (i.e. email\ninvitations and reusable invitation links) that can be managed by the user.\n\nNote that administrators can manage invitations that were created by other users.\n\n**Changes**: Prior to Zulip 8.0 (feature level 209), non-admin users could\nonly create email invitations, and therefore the response would never include\nreusable invitation links for these users.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invites"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "be254cf6-f03a-471b-8eb9-ab2672f8559e",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"invites\": [\n    {\n      \"email\": \"example@zulip.com\",\n      \"expiry_date\": null,\n      \"id\": 1,\n      \"invited\": 1710606654,\n      \"invited_as\": 200,\n      \"invited_by_user_id\": 9,\n      \"notify_referrer_on_join\": true,\n      \"is_multiuse\": false\n    },\n    {\n      \"expiry_date\": 1711463862,\n      \"id\": 1,\n      \"invited\": 1710599862,\n      \"invited_as\": 400,\n      \"invited_by_user_id\": 9,\n      \"is_multiuse\": true,\n      \"notify_referrer_on_join\": true,\n      \"link_url\": \"https://example.zulipchat.com/join/yddhtzk4jgl7rsmazc5fyyyy/\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "72f7971f-2023-46a6-b8da-94b3ba8ca6f3",
+          "name": "Send invitations",
+          "request": {
+            "name": "Send invitations",
+            "description": {
+              "content": "Send [invitations](/help/invite-new-users) to specified email addresses.\n\n**Changes**: In Zulip 6.0 (feature level 126), the `invite_expires_in_days`\nparameter was removed and replaced by `invite_expires_in_minutes`.\n\nIn Zulip 5.0 (feature level 117), added support for passing `null` as\nthe `invite_expires_in_days` parameter to request an invitation that never\nexpires.\n\nIn Zulip 5.0 (feature level 96), the `invite_expires_in_days` parameter was\nadded which specified the number of days before the invitation would expire.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invites"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "invitee_emails",
+                  "value": "<string>",
+                  "description": "(Required) The string containing the email addresses, separated by commas or\nnewlines, that will be sent an invitation.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "stream_ids",
+                  "value": "<integer>",
+                  "description": "(Required) A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to send invitations while lacking\npermission to [subscribe other users to channels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\nBefore Zulip 7.0 (feature level 180), specifying `stream_ids` as an\nempty list resulted in an error.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "stream_ids",
+                  "value": "<integer>",
+                  "description": "(Required) A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to send invitations while lacking\npermission to [subscribe other users to channels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\nBefore Zulip 7.0 (feature level 180), specifying `stream_ids` as an\nempty list resulted in an error.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "invite_expires_in_minutes",
+                  "value": "<integer>"
+                },
+                {
+                  "disabled": false,
+                  "key": "invite_as",
+                  "value": "400"
+                },
+                {
+                  "disabled": false,
+                  "key": "group_ids",
+                  "value": "<integer>",
+                  "description": "A list containing the [IDs of the user groups](/api/get-user-groups) that\nthe newly created user will be automatically added to if the invitation\nis accepted. If the list is empty, then the new user will not be\nadded to any user groups. The acting user must have permission to add users\nto the groups listed in this request.\n\n**Changes**: New in Zulip 10.0 (feature level 322).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "group_ids",
+                  "value": "<integer>",
+                  "description": "A list containing the [IDs of the user groups](/api/get-user-groups) that\nthe newly created user will be automatically added to if the invitation\nis accepted. If the list is empty, then the new user will not be\nadded to any user groups. The acting user must have permission to add users\nto the groups listed in this request.\n\n**Changes**: New in Zulip 10.0 (feature level 322).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_realm_default_subscriptions",
+                  "value": "false",
+                  "description": "Boolean indicating whether the newly created user should be subscribed\nto the [default channels][default-channels] for the organization.\n\nNote that this parameter can be `true` even if the user creating the\ninvitation does not generally have permission to [subscribe other\nusers to channels][can-subscribe-others].\n\n**Changes**: New in Zulip 9.0 (feature level 261). Previous versions\nof Zulip behaved as though this parameter was always `false`; clients\nneeded to include the organization's default channels in the\n`stream_ids` parameter for a newly created user to be automatically\nsubscribed to them.\n\n[default-channels]: /help/set-default-channels-for-new-users\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "notify_referrer_on_join",
+                  "value": "true",
+                  "description": "A boolean indicating whether the referrer would like to receive a\ndirect message from [notification\nbot](/help/configure-automated-notices) when a user account is created\nusing this invitation.\n\n**Changes**: New in Zulip 9.0 (feature level 267). Previously,\nreferrers always received such direct messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "welcome_message_custom_text",
+                  "value": "<string>",
+                  "description": "Custom message text, in Zulip Markdown format, to be sent by the\nWelcome Bot to new users that join the organization via this\ninvitation.\n\nMaximum length is 8000 Unicode code points.\n\nOnly organization administrators can use this feature; for other\nusers, the value is always `null`.\n\n- `null`: the organization's default `welcome_message_custom_text` is used.\n- Empty string: no Welcome Bot custom message is sent.\n- Otherwise, the provided string is the custom message.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "75576d92-912c-437f-90b5-7bd8f0fa289e",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The string containing the email addresses, separated by commas or\nnewlines, that will be sent an invitation.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "invitee_emails",
+                      "value": "example@zulip.com, logan@zulip.com"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to send invitations while lacking\npermission to [subscribe other users to channels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\nBefore Zulip 7.0 (feature level 180), specifying `stream_ids` as an\nempty list resulted in an error.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to send invitations while lacking\npermission to [subscribe other users to channels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\nBefore Zulip 7.0 (feature level 180), specifying `stream_ids` as an\nempty list resulted in an error.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "10"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "invite_expires_in_minutes",
+                      "value": "14400"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "invite_as",
+                      "value": "600"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Boolean indicating whether the newly created user should be subscribed\nto the [default channels][default-channels] for the organization.\n\nNote that this parameter can be `true` even if the user creating the\ninvitation does not generally have permission to [subscribe other\nusers to channels][can-subscribe-others].\n\n**Changes**: New in Zulip 9.0 (feature level 261). Previous versions\nof Zulip behaved as though this parameter was always `false`; clients\nneeded to include the organization's default channels in the\n`stream_ids` parameter for a newly created user to be automatically\nsubscribed to them.\n\n[default-channels]: /help/set-default-channels-for-new-users\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_realm_default_subscriptions",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A boolean indicating whether the referrer would like to receive a\ndirect message from [notification\nbot](/help/configure-automated-notices) when a user account is created\nusing this invitation.\n\n**Changes**: New in Zulip 9.0 (feature level 267). Previously,\nreferrers always received such direct messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "notify_referrer_on_join",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Custom message text, in Zulip Markdown format, to be sent by the\nWelcome Bot to new users that join the organization via this\ninvitation.\n\nMaximum length is 8000 Unicode code points.\n\nOnly organization administrators can use this feature; for other\nusers, the value is always `null`.\n\n- `null`: the organization's default `welcome_message_custom_text` is used.\n- Empty string: no Welcome Bot custom message is sent.\n- Otherwise, the provided string is the custom message.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "welcome_message_custom_text",
+                      "value": "Welcome to Zulip! We're excited to have you on board."
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3444b7ed-16d9-42ab-82fa-7e555faedad4",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The string containing the email addresses, separated by commas or\nnewlines, that will be sent an invitation.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "invitee_emails",
+                      "value": "example@zulip.com, logan@zulip.com"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to send invitations while lacking\npermission to [subscribe other users to channels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\nBefore Zulip 7.0 (feature level 180), specifying `stream_ids` as an\nempty list resulted in an error.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to send invitations while lacking\npermission to [subscribe other users to channels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\nBefore Zulip 7.0 (feature level 180), specifying `stream_ids` as an\nempty list resulted in an error.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "10"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "invite_expires_in_minutes",
+                      "value": "14400"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "invite_as",
+                      "value": "600"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Boolean indicating whether the newly created user should be subscribed\nto the [default channels][default-channels] for the organization.\n\nNote that this parameter can be `true` even if the user creating the\ninvitation does not generally have permission to [subscribe other\nusers to channels][can-subscribe-others].\n\n**Changes**: New in Zulip 9.0 (feature level 261). Previous versions\nof Zulip behaved as though this parameter was always `false`; clients\nneeded to include the organization's default channels in the\n`stream_ids` parameter for a newly created user to be automatically\nsubscribed to them.\n\n[default-channels]: /help/set-default-channels-for-new-users\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_realm_default_subscriptions",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A boolean indicating whether the referrer would like to receive a\ndirect message from [notification\nbot](/help/configure-automated-notices) when a user account is created\nusing this invitation.\n\n**Changes**: New in Zulip 9.0 (feature level 267). Previously,\nreferrers always received such direct messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "notify_referrer_on_join",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Custom message text, in Zulip Markdown format, to be sent by the\nWelcome Bot to new users that join the organization via this\ninvitation.\n\nMaximum length is 8000 Unicode code points.\n\nOnly organization administrators can use this feature; for other\nusers, the value is always `null`.\n\n- `null`: the organization's default `welcome_message_custom_text` is used.\n- Empty string: no Welcome Bot custom message is sent.\n- Otherwise, the provided string is the custom message.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "welcome_message_custom_text",
+                      "value": "Welcome to Zulip! We're excited to have you on board."
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"code\": \"string\",\n  \"errors\": [\n    [\n      \"string\",\n      \"string\"\n    ],\n    [\n      \"string\",\n      \"string\"\n    ]\n  ],\n  \"sent_invitations\": false,\n  \"daily_limit_reached\": false,\n  \"license_limit_reached\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "12bf9ab4-44b0-4d64-821e-dace76914b71",
+          "name": "Create a reusable invitation link",
+          "request": {
+            "name": "Create a reusable invitation link",
+            "description": {
+              "content": "Create a [reusable invitation link](/help/invite-new-users#create-a-reusable-invitation-link)\nwhich can be used to invite new users to the organization.\n\n**Changes**: In Zulip 8.0 (feature level 209), added support for non-admin\nusers [with permission](/help/restrict-account-creation#change-who-can-send-invitations)\nto use this endpoint. Previously, it was restricted to administrators only.\n\nIn Zulip 6.0 (feature level 126), the `invite_expires_in_days`\nparameter was removed and replaced by `invite_expires_in_minutes`.\n\nIn Zulip 5.0 (feature level 117), added support for passing `null` as\nthe `invite_expires_in_days` parameter to request an invitation that never\nexpires.\n\nIn Zulip 5.0 (feature level 96), the `invite_expires_in_days` parameter was\nadded which specified the number of days before the invitation would expire.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invites",
+                "multiuse"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "invite_expires_in_minutes",
+                  "value": "<integer>"
+                },
+                {
+                  "disabled": false,
+                  "key": "invite_as",
+                  "value": "400"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_realm_default_subscriptions",
+                  "value": "false",
+                  "description": "Boolean indicating whether the newly created user should be subscribed\nto the [default channels][default-channels] for the organization.\n\nNote that this parameter can be `true` even if the current user does\nnot generally have permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: New in Zulip 9.0 (feature level 261). Previous versions\nof Zulip behaved as though this parameter was always `false`; clients\nneeded to include the organization's default channels in the\n`stream_ids` parameter for a newly created user to be automatically\nsubscribed to them.\n\n[default-channels]: /help/set-default-channels-for-new-users\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "welcome_message_custom_text",
+                  "value": "<string>",
+                  "description": "Custom message text, in Zulip Markdown format, to be sent by the\nWelcome Bot to new users that join the organization via this\ninvitation.\n\nMaximum length is 8000 Unicode code points.\n\nOnly organization administrators can use this feature; for other\nusers, the value is always `null`.\n\n- `null`: the organization's default `welcome_message_custom_text` is used.\n- Empty string: no Welcome Bot custom message is sent.\n- Otherwise, the provided string is the custom message.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e0d0b67e-8822-4aab-b0e0-bfa1977f04d3",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    "multiuse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "key": "invite_expires_in_minutes",
+                      "value": "14400"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "invite_as",
+                      "value": "600"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to create reusable invitation links while\nlacking permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to create reusable invitation links while\nlacking permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "10"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Boolean indicating whether the newly created user should be subscribed\nto the [default channels][default-channels] for the organization.\n\nNote that this parameter can be `true` even if the current user does\nnot generally have permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: New in Zulip 9.0 (feature level 261). Previous versions\nof Zulip behaved as though this parameter was always `false`; clients\nneeded to include the organization's default channels in the\n`stream_ids` parameter for a newly created user to be automatically\nsubscribed to them.\n\n[default-channels]: /help/set-default-channels-for-new-users\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_realm_default_subscriptions",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Custom message text, in Zulip Markdown format, to be sent by the\nWelcome Bot to new users that join the organization via this\ninvitation.\n\nMaximum length is 8000 Unicode code points.\n\nOnly organization administrators can use this feature; for other\nusers, the value is always `null`.\n\n- `null`: the organization's default `welcome_message_custom_text` is used.\n- Empty string: no Welcome Bot custom message is sent.\n- Otherwise, the provided string is the custom message.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "welcome_message_custom_text",
+                      "value": "Welcome to Zulip! We're excited to have you on board."
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"invite_link\": \"https://example.zulipchat.com/join/yddhtzk4jgl7rsmazc5fyyyy/\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b10eeead-d38f-45a9-a2d2-01ee98bca2a8",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    "multiuse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "key": "invite_expires_in_minutes",
+                      "value": "14400"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "invite_as",
+                      "value": "600"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to create reusable invitation links while\nlacking permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A list containing the [IDs of the channels](/api/get-stream-id) that the\nnewly created user will be automatically subscribed to if the invitation\nis accepted, in addition to any default channels that the new user may\nbe subscribed to based on the `include_realm_default_subscriptions`\nparameter.\n\nRequested channels must either be default channels for the\norganization, or ones the acting user has permission to add\nsubscribers to.\n\nThis list must be empty if the current user has the unlikely\nconfiguration of being able to create reusable invitation links while\nlacking permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: Prior to Zulip 10.0 (feature level 342), default channels\nthat the acting user did not directly have permission to add\nsubscribers to would be rejected.\n\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "stream_ids",
+                      "value": "10"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Boolean indicating whether the newly created user should be subscribed\nto the [default channels][default-channels] for the organization.\n\nNote that this parameter can be `true` even if the current user does\nnot generally have permission to [subscribe other users to\nchannels][can-subscribe-others].\n\n**Changes**: New in Zulip 9.0 (feature level 261). Previous versions\nof Zulip behaved as though this parameter was always `false`; clients\nneeded to include the organization's default channels in the\n`stream_ids` parameter for a newly created user to be automatically\nsubscribed to them.\n\n[default-channels]: /help/set-default-channels-for-new-users\n[can-subscribe-others]: /help/configure-who-can-invite-to-channels\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_realm_default_subscriptions",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Custom message text, in Zulip Markdown format, to be sent by the\nWelcome Bot to new users that join the organization via this\ninvitation.\n\nMaximum length is 8000 Unicode code points.\n\nOnly organization administrators can use this feature; for other\nusers, the value is always `null`.\n\n- `null`: the organization's default `welcome_message_custom_text` is used.\n- Empty string: no Welcome Bot custom message is sent.\n- Otherwise, the provided string is the custom message.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "welcome_message_custom_text",
+                      "value": "Welcome to Zulip! We're excited to have you on board."
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"Insufficient permission\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c559ee76-3822-4667-b9a8-653937411b4d",
+          "name": "Revoke an email invitation",
+          "request": {
+            "name": "Revoke an email invitation",
+            "description": {
+              "content": "Revoke an [email invitation](/help/invite-new-users#send-email-invitations).\n\nA user can only revoke [invitations that they can\nmanage](/help/invite-new-users#manage-pending-invitations).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invites",
+                ":invite_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "invite_id",
+                  "description": "(Required) The ID of the email invitation to be revoked.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7a7edc74-492b-4461-bc40-7225a4bd4c97",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    ":invite_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "invite_id",
+                      "description": "(Required) The ID of the email invitation to be revoked.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "808d721a-501a-455d-ab8c-b1dd983e6345",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    ":invite_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "invite_id",
+                      "description": "(Required) The ID of the email invitation to be revoked.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"No such invitation\",\n  \"code\": \"BAD_REQUEST\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8b8bb887-2a5a-4878-a860-1acbc6d88aff",
+          "name": "Revoke a reusable invitation link",
+          "request": {
+            "name": "Revoke a reusable invitation link",
+            "description": {
+              "content": "Revoke a [reusable invitation link](/help/invite-new-users#create-a-reusable-invitation-link).\n\nA user can only revoke [invitations that they can\nmanage](/help/invite-new-users#manage-pending-invitations).\n\n**Changes**: Prior to Zulip 8.0 (feature level 209), only organization\nadministrators were able to create and revoke reusable invitation links.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invites",
+                "multiuse",
+                ":invite_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "invite_id",
+                  "description": "(Required) The ID of the reusable invitation link to be revoked.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "73606b23-0257-4a27-8765-503788134742",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    "multiuse",
+                    ":invite_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "invite_id",
+                      "description": "(Required) The ID of the reusable invitation link to be revoked.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4e1051a0-b7dd-4ec8-9153-3d50c39749de",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    "multiuse",
+                    ":invite_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "invite_id",
+                      "description": "(Required) The ID of the reusable invitation link to be revoked.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"No such invitation\",\n  \"code\": \"BAD_REQUEST\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fb6b4433-dcf8-4435-a7d1-9c967fdc4940",
+          "name": "Resend an email invitation",
+          "request": {
+            "name": "Resend an email invitation",
+            "description": {
+              "content": "Resend an [email invitation](/help/invite-new-users#send-email-invitations).\n\nA user can only resend [invitations that they can\nmanage](/help/invite-new-users#manage-pending-invitations).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invites",
+                ":invite_id",
+                "resend"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "invite_id",
+                  "description": "(Required) The ID of the email invitation to be resent.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ff56f488-8f7f-47ca-97c0-8d2318833258",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    ":invite_id",
+                    "resend"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "invite_id",
+                      "description": "(Required) The ID of the email invitation to be resent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2c38ff97-87cf-4a1d-8e01-00a7e27a127b",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invites",
+                    ":invite_id",
+                    "resend"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "invite_id",
+                      "description": "(Required) The ID of the email invitation to be resent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"No such invitation\",\n  \"code\": \"BAD_REQUEST\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "89c622a1-b896-4a3d-9bfb-4951a3d1dd0e",
+    "name": "Zulip REST authentication invites API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

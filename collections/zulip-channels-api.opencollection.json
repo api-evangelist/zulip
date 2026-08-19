@@ -1,0 +1,989 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication channels API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "channels",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get channel ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/get_stream_id",
+            "params": [
+              {
+                "name": "stream",
+                "value": "Denmark",
+                "type": "query",
+                "description": "The name of the channel to access.\n"
+              }
+            ]
+          },
+          "docs": "Get the unique ID of a given channel.\n"
+        },
+        {
+          "info": {
+            "name": "Add a default channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/default_streams",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "stream_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Add a channel to the set of [default channels][default-channels]\nfor new users joining the organization.\n\n[default-channels]: /help/set-default-channels-for-new-users\n"
+        },
+        {
+          "info": {
+            "name": "Remove a default channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/default_streams",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "stream_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Remove a channel from the set of [default channels][default-channels]\nfor new users joining the organization.\n\n[default-channels]: /help/set-default-channels-for-new-users\n"
+        },
+        {
+          "info": {
+            "name": "Get topics in a channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/:stream_id/topics",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              },
+              {
+                "name": "allow_empty_topic_name",
+                "value": "true",
+                "type": "query",
+                "description": "Whether the client supports processing the empty string as\na topic name in the returned data.\n\nIf `false`, the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response is\nreturned replacing the empty string as the topic name.\n\n**Changes**: New in Zulip 10.0 (feature level 334). Previously,\nthe empty string was not a valid topic.\n"
+              }
+            ]
+          },
+          "docs": "Get all topics the user has access to in a specific channel.\n\nNote that for [private channels with\nprotected history](/help/channel-permissions#private-channels),\nthe user will only have access to topics of messages sent after they\n[subscribed to](/api/subscribe) the channel. Similarly, a user's\n[bot](/help/bots-overview#bot-type) will only have access to messages\nsent after the bot was subscribed to the channel, instead of when the\nuser subscribed.\n\n**Changes**: Before Zulip 12.0 (feature level"
+        },
+        {
+          "info": {
+            "name": "Get subscribed channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions",
+            "params": [
+              {
+                "name": "include_subscribers",
+                "value": "true",
+                "type": "query",
+                "description": "Whether each returned channel object should include a `subscribers`\nfield containing a list of the user IDs of its subscribers.\n\nClient apps supporting organizations with many thousands of users\nshould not pass `true`, because the full subscriber matrix may be\nseveral megabytes of data. The `partial` value, combined with the\n`subscriber_count` and fetching subscribers for individual channels as\nneeded, is recommended to support client app features where\nchannel subscriber data is useful.\n\nIf a client passes `partial` for this parameter, the server may,\nfor some channels, return a subset of the channel's subscribers\nin the `partial_subscribers` field instead of the `subscribers` field,\nwhich always contains the complete set of subscribers.\n\nThe server guarantees that it will always return a `subscribers`\nfield for channels with fewer than 250 total subscribers. When\nreturning a `partial_subscribers` field, the server guarantees\nthat all bot users and users active within the last 14 days will\nbe included. For other cases, the server may use its discretion\nto determine which channels and users to include, balancing between\npayload size and usefulness of the data provided to the client.\n\n**Changes**: The `partial` value is new in Zulip 11.0 (feature level 412).\n\nNew in Zulip 2.1.0.\n"
+              }
+            ]
+          },
+          "docs": "Get all channels that the user is subscribed to.\n"
+        },
+        {
+          "info": {
+            "name": "Subscribe to a channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "subscriptions",
+                  "value": ""
+                },
+                {
+                  "name": "principals",
+                  "value": ""
+                },
+                {
+                  "name": "authorization_errors_fatal",
+                  "value": ""
+                },
+                {
+                  "name": "announce",
+                  "value": ""
+                },
+                {
+                  "name": "invite_only",
+                  "value": ""
+                },
+                {
+                  "name": "is_web_public",
+                  "value": ""
+                },
+                {
+                  "name": "is_default_stream",
+                  "value": ""
+                },
+                {
+                  "name": "history_public_to_subscribers",
+                  "value": ""
+                },
+                {
+                  "name": "message_retention_days",
+                  "value": ""
+                },
+                {
+                  "name": "topics_policy",
+                  "value": ""
+                },
+                {
+                  "name": "can_add_subscribers_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_remove_subscribers_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_administer_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_delete_any_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_delete_own_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_move_messages_out_of_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_move_messages_within_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_send_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_subscribe_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_resolve_topics_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_create_topic_group",
+                  "value": ""
+                },
+                {
+                  "name": "folder_id",
+                  "value": ""
+                },
+                {
+                  "name": "send_new_subscription_messages",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Subscribe one or more users to one or more channels.\n\nIf any of the specified channels do not exist, they are automatically\ncreated. The initial [channel settings](/api/update-stream) will be determined\nby the optional parameters, like `invite_only`, detailed below.\n\nNote that the ability to subscribe oneself and/or other users\nto a specified channel depends on the [channel's permissions\nsettings](/help/channel-permissions).\n\n**Changes**: Before Zulip 10.0 (feature level 362),\nsubscriptions in a"
+        },
+        {
+          "info": {
+            "name": "Update subscriptions",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "delete",
+                  "value": ""
+                },
+                {
+                  "name": "add",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update which channels you are subscribed to.\n\n**Changes**: Before Zulip 10.0 (feature level 362),\nsubscriptions in archived channels could not be modified.\n"
+        },
+        {
+          "info": {
+            "name": "Unsubscribe from a channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "subscriptions",
+                  "value": ""
+                },
+                {
+                  "name": "principals",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Unsubscribe yourself or other users from one or more channels.\n\nIn addition to managing the current user's subscriptions, this\nendpoint can be used to remove other users from channels. This\nis possible in 3 situations:\n\n- Organization administrators can remove any user from any\n  channel.\n- Users can remove a bot that they own from any channel that\n  the user [can access](/help/channel-permissions).\n- Users can unsubscribe any user from a channel if they [have\n  access](/help/channel-permissions"
+        },
+        {
+          "info": {
+            "name": "Topic muting",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions/muted_topics",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "stream_id",
+                  "value": ""
+                },
+                {
+                  "name": "stream",
+                  "value": ""
+                },
+                {
+                  "name": "topic",
+                  "value": ""
+                },
+                {
+                  "name": "op",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "[Mute or unmute a topic](/help/mute-a-topic) within a channel that\nthe current user is subscribed to.\n\n**Changes**: Deprecated in Zulip 7.0 (feature level 170). Clients connecting\nto newer servers should use the [POST /user_topics](/api/update-user-topic)\nendpoint, as this endpoint may be removed in a future release.\n\nBefore Zulip 7.0 (feature level 169), this endpoint\nreturned an error if asked to mute a topic that was already muted\nor asked to unmute a topic that had not previously been muted."
+        },
+        {
+          "info": {
+            "name": "Update personal preferences for a topic",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/user_topics",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "stream_id",
+                  "value": ""
+                },
+                {
+                  "name": "topic",
+                  "value": ""
+                },
+                {
+                  "name": "visibility_policy",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "This endpoint is used to update the personal preferences for a topic,\nsuch as the topic's visibility policy, which is used to implement\n[mute a topic](/help/mute-a-topic) and related features.\n\nThis endpoint can be used to update the visibility policy for the single\nchannel and topic pair indicated by the parameters for a user.\n\n**Changes**: New in Zulip 7.0 (feature level 170). Previously,\ntoggling whether a topic was muted or unmuted was managed by the\n[PATCH /users/me/subscriptions/muted_topi"
+        },
+        {
+          "info": {
+            "name": "Get subscription status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/:user_id/subscriptions/:stream_id",
+            "params": [
+              {
+                "name": "user_id",
+                "value": "12",
+                "type": "path",
+                "description": "The target user's ID.\n"
+              },
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ]
+          },
+          "docs": "Check whether a user is subscribed to a channel.\n\n**Changes**: Prior to Zulip 12.0 (feature level 458), this endpoint\ndid not support querying subscriptions of bot users.\n\nNew in Zulip 3.0 (feature level 12).\n"
+        },
+        {
+          "info": {
+            "name": "Get a user's subscribed channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/:user_id/channels",
+            "params": [
+              {
+                "name": "user_id",
+                "value": "12",
+                "type": "path",
+                "description": "The target user's ID.\n"
+              }
+            ]
+          },
+          "docs": "Gets the list of channels that the target user is subscribed to.\n\nThe [channel security model](/help/channel-permissions) means only those\nsubscribed channels to which the acting user has metadata access are\nreturned.\n\nFor organization administrators, this is guaranteed to be all channels\nthe target user is subscribed to, since organization administrators\nimplicitly have metadata access to all channels.\n\n**Changes**: Prior to Zulip 12.0 (feature level 458), target users that\nwere bots resulted i"
+        },
+        {
+          "info": {
+            "name": "Bulk update subscription settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions/properties",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "subscription_data",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update the current user's personal settings for channels they are\nsubscribed to. These settings include [color](/help/change-the-color-of-a-channel),\n[muting](/help/mute-a-channel), [pinning](/help/pin-a-channel)\nand [per-channel notification settings](/help/channel-notifications).\n\nThere is a single channel alternative to this bulk endpoint:\n[`POST /users/me/subscriptions/{stream_id}`](/api/update-subscription-property).\n\n**Changes**: Prior to Zulip 5.0 (feature level 111), the response object\n"
+        },
+        {
+          "info": {
+            "name": "Update a subscription setting",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/users/me/subscriptions/:stream_id",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "property",
+                  "value": ""
+                },
+                {
+                  "name": "value",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update the current user's personal settings for a specific channel they\nare subscribed to. These settings include [color](/help/change-the-color-of-a-channel),\n[muting](/help/mute-a-channel), [pinning](/help/pin-a-channel)\nand [per-channel notification settings](/help/channel-notifications).\n\nThis is a single channel alternative to the bulk endpoint:\n[`POST /users/me/subscriptions/properties`](/api/update-subscription-settings).\n"
+        },
+        {
+          "info": {
+            "name": "Get channel subscribers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams/:stream_id/members",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ]
+          },
+          "docs": "Get all users subscribed to a channel.\n\n**Changes**: Before Zulip 12.0 (feature level 480), this\nendpoint was not supported for archived channels.\n"
+        },
+        {
+          "info": {
+            "name": "Get all channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams",
+            "params": [
+              {
+                "name": "include_public",
+                "value": "false",
+                "type": "query",
+                "description": "Include all public channels.\n"
+              },
+              {
+                "name": "include_web_public",
+                "value": "true",
+                "type": "query",
+                "description": "Include all web-public channels.\n"
+              },
+              {
+                "name": "include_subscribed",
+                "value": "false",
+                "type": "query",
+                "description": "Include all channels that the user is subscribed to.\n"
+              },
+              {
+                "name": "exclude_archived",
+                "value": "true",
+                "type": "query",
+                "description": "Whether to exclude archived streams from the results.\n\n**Changes**: New in Zulip 10.0 (feature level 315).\n"
+              },
+              {
+                "name": "include_all_active",
+                "value": "true",
+                "type": "query",
+                "description": "Deprecated parameter to include all channels. The user must\nhave administrative privileges to use this parameter.\n\n**Changes**: Deprecated in Zulip 10.0 (feature level\n356). Clients interacting with newer servers should use\nthe equivalent `include_all` parameter, which does not\nincorrectly hint that this parameter, and not\n`exclude_archived`, controls whether archived channels\nappear in the response.\n"
+              },
+              {
+                "name": "include_all",
+                "value": "true",
+                "type": "query",
+                "description": "Include all channels that the user has metadata access to.\n\nFor organization administrators, this will be all channels\nin the organization, since organization administrators\nimplicitly have metadata access to all channels.\n\n**Changes**: New in Zulip 10.0 (feature level 356). On older\nversions, use `include_all_active`, which this replaces.\n"
+              },
+              {
+                "name": "include_default",
+                "value": "true",
+                "type": "query",
+                "description": "Include all default channels for the user's realm.\n"
+              },
+              {
+                "name": "include_owner_subscribed",
+                "value": "true",
+                "type": "query",
+                "description": "If the user is a bot, include all channels that the bot's owner is\nsubscribed to.\n"
+              },
+              {
+                "name": "include_can_access_content",
+                "value": "true",
+                "type": "query",
+                "description": "Include all the channels that the user has content access to.\n\n**Changes**: New in Zulip 10.0 (feature level 356).\n"
+              }
+            ]
+          },
+          "docs": "Get all channels that the user [has access to](/help/channel-permissions).\n"
+        },
+        {
+          "info": {
+            "name": "Get a channel by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams/:stream_id",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ]
+          },
+          "docs": "Fetch details for the channel with the ID `stream_id`.\n\n**Changes**: Before Zulip 12.0 (feature level 480), this\nendpoint was not supported for archived channels.\n\nNew in Zulip 6.0 (feature level 132).\n"
+        },
+        {
+          "info": {
+            "name": "Update a channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams/:stream_id",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "description",
+                  "value": ""
+                },
+                {
+                  "name": "new_name",
+                  "value": ""
+                },
+                {
+                  "name": "is_private",
+                  "value": ""
+                },
+                {
+                  "name": "is_web_public",
+                  "value": ""
+                },
+                {
+                  "name": "history_public_to_subscribers",
+                  "value": ""
+                },
+                {
+                  "name": "is_default_stream",
+                  "value": ""
+                },
+                {
+                  "name": "message_retention_days",
+                  "value": ""
+                },
+                {
+                  "name": "is_archived",
+                  "value": ""
+                },
+                {
+                  "name": "folder_id",
+                  "value": ""
+                },
+                {
+                  "name": "topics_policy",
+                  "value": ""
+                },
+                {
+                  "name": "can_add_subscribers_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_remove_subscribers_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_administer_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_delete_any_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_delete_own_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_move_messages_out_of_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_move_messages_within_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_send_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_subscribe_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_resolve_topics_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_create_topic_group",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Configure the channel with the ID `stream_id`. This endpoint supports\nan organization administrator editing any property of a channel,\nincluding:\n\n- Channel [name](/help/rename-a-channel) and [description](/help/change-the-channel-description)\n- Channel [permissions](/help/channel-permissions), including\n  [privacy](/help/change-the-privacy-of-a-channel) and [who can\n  send](/help/channel-posting-policy).\n\nNote that an organization administrator's ability to change a\n[private channel's permissio"
+        },
+        {
+          "info": {
+            "name": "Archive a channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams/:stream_id",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ]
+          },
+          "docs": "[Archive the channel](/help/archive-a-channel) with the ID `stream_id`.\n"
+        },
+        {
+          "info": {
+            "name": "Get channel's email address",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams/:stream_id/email_address",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              },
+              {
+                "name": "sender_id",
+                "value": "1",
+                "type": "query",
+                "description": "The ID of a user or bot which should appear as the sender when messages\nare sent to the channel using the returned channel email address.\n\n`sender_id` can be:\n\n- ID of the current user.\n- ID of the Email gateway bot. (Default value)\n- ID of a bot owned by the current user.\n\n**Changes**: New in Zulip 10.0 (feature level 335).\n\nPreviously, the sender was always Email gateway bot.\n"
+              }
+            ]
+          },
+          "docs": "Get email address of a channel.\n\nNote that only users with permission to post messages in the channel\ncan access the channel's email address.\n\n**Changes**: Prior to Zulip 12.0 (feature level 448), users without\npermission to post messages in the channel could access the channel's email\nif they had metadata access.\n\nNew in Zulip 8.0 (feature level 226).\n"
+        },
+        {
+          "info": {
+            "name": "Delete a topic",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/streams/:stream_id/delete_topic",
+            "params": [
+              {
+                "name": "stream_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the channel to access.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "topic_name",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Delete all messages in a topic.\n\nTopics are a field on messages (not an independent data structure), so\ndeleting all the messages in the topic deletes the topic from Zulip.\n\nBecause this endpoint deletes messages in batches, it is possible for\nthe request to time out after only deleting some messages in the topic.\nWhen this happens, the `complete` boolean field in the success response\nwill be `false`. Clients should repeat the request when handling such a\nresponse. If all messages in the topic w"
+        },
+        {
+          "info": {
+            "name": "Create a channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/channels/create",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "name",
+                  "value": ""
+                },
+                {
+                  "name": "description",
+                  "value": ""
+                },
+                {
+                  "name": "subscribers",
+                  "value": ""
+                },
+                {
+                  "name": "announce",
+                  "value": ""
+                },
+                {
+                  "name": "invite_only",
+                  "value": ""
+                },
+                {
+                  "name": "is_web_public",
+                  "value": ""
+                },
+                {
+                  "name": "is_default_stream",
+                  "value": ""
+                },
+                {
+                  "name": "folder_id",
+                  "value": ""
+                },
+                {
+                  "name": "topics_policy",
+                  "value": ""
+                },
+                {
+                  "name": "history_public_to_subscribers",
+                  "value": ""
+                },
+                {
+                  "name": "message_retention_days",
+                  "value": ""
+                },
+                {
+                  "name": "can_add_subscribers_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_create_topic_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_delete_any_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_delete_own_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_remove_subscribers_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_administer_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_move_messages_out_of_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_move_messages_within_channel_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_send_message_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_subscribe_group",
+                  "value": ""
+                },
+                {
+                  "name": "can_resolve_topics_group",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a new [channel](/help/create-channels), and optionally subscribe\nusers to the newly created channel.\n\nThe initial [channel settings](/api/update-stream) will be determined\nby the optional parameters, like `invite_only`, detailed below.\n\n**Changes**: New in Zulip 11.0 (feature level 417). Previously, this was\nonly possible via the [`POST /api/subscribe`](/api/subscribe) endpoint,\nwhich handles both channel subscription and creation.\n"
+        },
+        {
+          "info": {
+            "name": "Create a channel folder",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/channel_folders/create",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "name",
+                  "value": ""
+                },
+                {
+                  "name": "description",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a new [channel folder](/help/channel-folders).\n\n**Changes**: New in Zulip 11.0 (feature level 389).\n"
+        },
+        {
+          "info": {
+            "name": "Get channel folders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/channel_folders",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "include_archived",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Fetches all of the [channel folders](/help/channel-folders) in the\norganization, sorted by the `order` field.\n\n**Changes**: Before Zulip 11.0 (feature level 414), the list of channel\nfolders was sorted by ID as the `order` field didn't exist.\n\nNew in Zulip 11.0 (feature level 389).\n"
+        },
+        {
+          "info": {
+            "name": "Reorder channel folders",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/channel_folders",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "order",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Reorder the [channel folders](/help/channel-folders) in the user's\norganization.\n\nChannel folders are displayed in Zulip UI in order; this endpoint allows\nadministrative settings UI to change the ordering of channel folders.\n\nThis endpoint is used to implement the dragging feature described in the\n[manage channel folders documentation](/help/manage-channel-folders).\n\n**Changes**: New in Zulip 11.0 (feature level 414).\n"
+        },
+        {
+          "info": {
+            "name": "Update a channel folder",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/channel_folders/:channel_folder_id",
+            "params": [
+              {
+                "name": "channel_folder_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the target channel folder.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "name",
+                  "value": ""
+                },
+                {
+                  "name": "description",
+                  "value": ""
+                },
+                {
+                  "name": "is_archived",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update the name or description of a [channel folder](/help/channel-folders)\nwith the specified ID.\n\nThis endpoint is also used to archive or unarchive the specified channel\nfolder.\n\n**Changes**: New in Zulip 11.0 (feature level 389).\n"
+        },
+        {
+          "info": {
+            "name": "Create BigBlueButton video call",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/calls/bigbluebutton/create",
+            "params": [
+              {
+                "name": "meeting_name",
+                "value": "test_channel meeting",
+                "type": "query",
+                "description": "Meeting name for the BigBlueButton video call.\n"
+              },
+              {
+                "name": "voice_only",
+                "value": "true",
+                "type": "query",
+                "description": "Configures whether the call is voice-only; if true,\ndisables cameras for all users. Only the call\ncreator/moderator can edit this configuration.\n\n**Changes**: New in Zulip 10.0 (feature level 337).\n"
+              }
+            ]
+          },
+          "docs": "Create a video call URL for a BigBlueButton video call.\nRequires [BigBlueButton 2.4+](/integrations/big-blue-button)\nto be configured on the Zulip server.\n\nThe acting user will be given the moderator role on the call.\n\n**Changes**: Prior to Zulip 10.0 (feature level 337), every\nuser was given the moderator role on BigBlueButton calls, via\nencoding a moderator password in the generated URLs.\n"
+        },
+        {
+          "info": {
+            "name": "Create Nextcloud Talk video call",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/calls/nextcloud_talk/create",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "room_name",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a video call URL for a Nextcloud Talk video call. Requires\n[Nextcloud Talk](/integrations/nextcloud-talk) to be configured on the\nZulip server.\n\n**Changes**: New in Zulip 12.0 (feature level 465).\n"
+        },
+        {
+          "info": {
+            "name": "Create Webex video call",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/calls/webex/create"
+          },
+          "docs": "Create a video call URL for a Webex video call.\n\nRequires [Webex integration](/integrations/webex) to be configured\non the Zulip server.\n\nClients should confirm that the user has completed the OAuth process\nwith Webex and has a Webex token before attempting to create a video\ncall URL. See the `has_webex_token` field in the [`POST /register`\nresponse](/api/register-queue), as well as the [`has_webex_token`\nevent type](/api/get-events#has_webex_token).\n\n**Changes**: New in Zulip 12.0 (feature leve"
+        },
+        {
+          "info": {
+            "name": "Create Constructor Groups video call",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/calls/constructorgroups/create"
+          },
+          "docs": "Create a video call URL for a Constructor Groups video call.\nRequires [Constructor Groups](/integrations/constructor-groups)\nto be configured on the Zulip server.\n\n**Changes**: New in Zulip 12.0 (feature level 460).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

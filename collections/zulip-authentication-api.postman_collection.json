@@ -1,0 +1,517 @@
+{
+  "item": [
+    {
+      "id": "159edb51-17bc-417b-9734-ad6a929c3dbd",
+      "name": "authentication",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "a405d0b0-82d0-4397-9fdd-d70db0ddf470",
+          "name": "Fetch an API key (production)",
+          "request": {
+            "name": "Fetch an API key (production)",
+            "description": {
+              "content": "This API endpoint is used by clients such as the Zulip mobile and\nterminal apps to implement password-based authentication. Given the\nuser's Zulip login credentials, it returns a Zulip API key that the client\ncan use to make requests as the user.\n\nThis endpoint is only useful for Zulip servers/organizations with\nEmailAuthBackend or LDAPAuthBackend enabled.\n\nThe Zulip mobile apps also support SSO/social authentication (GitHub\nauth, Google auth, SAML, etc.) that does not use this endpoint. Instead,\nthe mobile apps reuse the web login flow passing the `mobile_flow_otp` in\na webview, and the credentials are returned to the app (encrypted) via a redirect\nto a `zulip://` URL.\n\n!!! warn \"\"\n\n    **Note:** If you signed up using passwordless authentication and\n    never had a password, you can [reset your password](/help/change-your-password).\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to download an API key manually.\n\nIn a [Zulip development environment](https://zulip.readthedocs.io/en/latest/development/overview.html),\nsee also [the unauthenticated variant](/api/dev-fetch-api-key).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "fetch_api_key"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "username",
+                  "value": "<string>",
+                  "description": "(Required) The username to be used for authentication (typically, the email\naddress, but depending on configuration, it could be an LDAP username).\n\nSee the `require_email_format_usernames` parameter documented in\n[GET /server_settings](/api/get-server-settings) for details.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "password",
+                  "value": "<string>",
+                  "description": "(Required) The user's Zulip password (or LDAP password, if LDAP authentication is in use).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "85b8e077-0cef-41a8-b576-28806fb2cfc0",
+              "name": "Valid credentials the client can use to access the Zulip API:\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "fetch_api_key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The username to be used for authentication (typically, the email\naddress, but depending on configuration, it could be an LDAP username).\n\nSee the `require_email_format_usernames` parameter documented in\n[GET /server_settings](/api/get-server-settings) for details.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "username",
+                      "value": "iago@zulip.com"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The user's Zulip password (or LDAP password, if LDAP authentication is in use).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "password",
+                      "value": "abcd1234"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api_key\": \"gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv\",\n  \"email\": \"iago@zulip.com\",\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"user_id\": 5\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "52306dbb-7951-43ab-a5b2-dd21168defb1",
+          "name": "Fetch an API key (JWT)",
+          "request": {
+            "name": "Fetch an API key (JWT)",
+            "description": {
+              "content": "This API endpoint is used by clients to implement JSON Web Token\n(JWT) authentication. Given a JWT identifying a Zulip user, it\nreturns a Zulip API key that the client can use to make requests\nas the user.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only useful for Zulip servers/organizations\n    with [JSON web token authentication][prod-jwt-auth] enabled.\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to manage API keys manually.\n\n**Changes**: New in Zulip 7.0 (feature level 160).\n\n[prod-jwt-auth]: https://zulip.readthedocs.io/en/latest/production/authentication-methods.html#json-web-tokens-jwt\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "jwt",
+                "fetch_api_key"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "token",
+                  "value": "<string>",
+                  "description": "(Required) A JSON Web Token for the target user.\n\nThe token payload must contain a custom `email` claim with the target\nuser's email address, e.g., `{\"email\": \"<target user email>\"}`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_profile",
+                  "value": "false",
+                  "description": "Whether to include a `user` object containing the target\nuser's profile details in the response.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a835de17-2fc6-4b11-a297-f33b1537e60f",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "jwt",
+                    "fetch_api_key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A JSON Web Token for the target user.\n\nThe token payload must contain a custom `email` claim with the target\nuser's email address, e.g., `{\"email\": \"<target user email>\"}`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhbWxldEB6dWxpcC5jb20ifQ.EsHxSVt54zPR-ywgPH54TB1FYmrGKsfq7hsQEhp_9w0"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to include a `user` object containing the target\nuser's profile details in the response.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_profile",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api_key\": \"gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv\",\n  \"email\": \"hamlet@zulip.com\",\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a43fe495-2a0c-49ae-8533-081bfa754a38",
+          "name": "Fetch an API key (development only)",
+          "request": {
+            "name": "Fetch an API key (development only)",
+            "description": {
+              "content": "For easy testing of mobile apps and other clients and against Zulip\ndevelopment servers, we support fetching a Zulip API key for any user\non the development server without authentication (so that they can\nimplement analogues of the one-click login process available for Zulip\ndevelopment servers on the web).\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "dev_fetch_api_key"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "username",
+                  "value": "<string>",
+                  "description": "(Required) The email address for the user that owns the API key.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b462f625-b54c-40ff-90a3-6ce37c541bab",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dev_fetch_api_key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The email address for the user that owns the API key.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "username",
+                      "value": "iago@zulip.com"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api_key\": \"gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv\",\n  \"email\": \"iago@zulip.com\",\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"user_id\": 5\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ef5a4bfe-2545-40ce-be83-1431ed0862b5",
+          "name": "List users (development only)",
+          "request": {
+            "name": "List users (development only)",
+            "description": {
+              "content": "Get a list of all, non-bot users in a [Zulip development\nserver](https://zulip.readthedocs.io/en/latest/development/overview.html).\nThis endpoint is used by mobile developers to fetch users for the\ndevelopment login flow.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "dev_list_users"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d5d40437-fbda-4019-a74a-c7b054b4016a",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "dev_list_users"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\",\n  \"direct_admins\": [\n    {\n      \"email\": \"iago@zulip.com\",\n      \"realm_url\": \"http://localhost:9991\"\n    }\n  ],\n  \"direct_users\": [\n    {\n      \"email\": \"hamlet@zulip.com\",\n      \"realm_url\": \"http://localhost:9991\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "e4437dd3-2575-4b75-a078-0f99a5ff94e7",
+    "name": "Zulip REST authentication API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

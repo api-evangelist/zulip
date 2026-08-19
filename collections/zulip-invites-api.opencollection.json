@@ -1,0 +1,174 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication invites API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "invites",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get all invitations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/invites"
+          },
+          "docs": "Fetch all unexpired [invitations](/help/invite-new-users) (i.e. email\ninvitations and reusable invitation links) that can be managed by the user.\n\nNote that administrators can manage invitations that were created by other users.\n\n**Changes**: Prior to Zulip 8.0 (feature level 209), non-admin users could\nonly create email invitations, and therefore the response would never include\nreusable invitation links for these users.\n"
+        },
+        {
+          "info": {
+            "name": "Send invitations",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/invites",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "invitee_emails",
+                  "value": ""
+                },
+                {
+                  "name": "invite_expires_in_minutes",
+                  "value": ""
+                },
+                {
+                  "name": "invite_as",
+                  "value": ""
+                },
+                {
+                  "name": "stream_ids",
+                  "value": ""
+                },
+                {
+                  "name": "group_ids",
+                  "value": ""
+                },
+                {
+                  "name": "include_realm_default_subscriptions",
+                  "value": ""
+                },
+                {
+                  "name": "notify_referrer_on_join",
+                  "value": ""
+                },
+                {
+                  "name": "welcome_message_custom_text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Send [invitations](/help/invite-new-users) to specified email addresses.\n\n**Changes**: In Zulip 6.0 (feature level 126), the `invite_expires_in_days`\nparameter was removed and replaced by `invite_expires_in_minutes`.\n\nIn Zulip 5.0 (feature level 117), added support for passing `null` as\nthe `invite_expires_in_days` parameter to request an invitation that never\nexpires.\n\nIn Zulip 5.0 (feature level 96), the `invite_expires_in_days` parameter was\nadded which specified the number of days before the"
+        },
+        {
+          "info": {
+            "name": "Create a reusable invitation link",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/invites/multiuse",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "invite_expires_in_minutes",
+                  "value": ""
+                },
+                {
+                  "name": "invite_as",
+                  "value": ""
+                },
+                {
+                  "name": "stream_ids",
+                  "value": ""
+                },
+                {
+                  "name": "group_ids",
+                  "value": ""
+                },
+                {
+                  "name": "include_realm_default_subscriptions",
+                  "value": ""
+                },
+                {
+                  "name": "welcome_message_custom_text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a [reusable invitation link](/help/invite-new-users#create-a-reusable-invitation-link)\nwhich can be used to invite new users to the organization.\n\n**Changes**: In Zulip 8.0 (feature level 209), added support for non-admin\nusers [with permission](/help/restrict-account-creation#change-who-can-send-invitations)\nto use this endpoint. Previously, it was restricted to administrators only.\n\nIn Zulip 6.0 (feature level 126), the `invite_expires_in_days`\nparameter was removed and replaced by `inv"
+        },
+        {
+          "info": {
+            "name": "Revoke an email invitation",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/invites/:invite_id",
+            "params": [
+              {
+                "name": "invite_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the email invitation to be revoked.\n"
+              }
+            ]
+          },
+          "docs": "Revoke an [email invitation](/help/invite-new-users#send-email-invitations).\n\nA user can only revoke [invitations that they can\nmanage](/help/invite-new-users#manage-pending-invitations).\n"
+        },
+        {
+          "info": {
+            "name": "Revoke a reusable invitation link",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/invites/multiuse/:invite_id",
+            "params": [
+              {
+                "name": "invite_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the reusable invitation link to be revoked.\n"
+              }
+            ]
+          },
+          "docs": "Revoke a [reusable invitation link](/help/invite-new-users#create-a-reusable-invitation-link).\n\nA user can only revoke [invitations that they can\nmanage](/help/invite-new-users#manage-pending-invitations).\n\n**Changes**: Prior to Zulip 8.0 (feature level 209), only organization\nadministrators were able to create and revoke reusable invitation links.\n"
+        },
+        {
+          "info": {
+            "name": "Resend an email invitation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/invites/:invite_id/resend",
+            "params": [
+              {
+                "name": "invite_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the email invitation to be resent.\n"
+              }
+            ]
+          },
+          "docs": "Resend an [email invitation](/help/invite-new-users#send-email-invitations).\n\nA user can only resend [invitations that they can\nmanage](/help/invite-new-users#manage-pending-invitations).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

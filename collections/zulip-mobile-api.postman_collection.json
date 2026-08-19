@@ -1,0 +1,1398 @@
+{
+  "item": [
+    {
+      "id": "6cb76d1c-9285-47ff-8249-0cff0bcdb504",
+      "name": "mobile",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "8e7b8aa8-ee69-428c-b84e-25188ae4ff14",
+          "name": "Send a test notification to mobile device(s)",
+          "request": {
+            "name": "Send a test notification to mobile device(s)",
+            "description": {
+              "content": "Trigger sending a test push notification to the user's\nselected mobile device or all of their mobile devices.\n\n**Changes**: Deprecated in Zulip 11.0 (feature level 420).\nClients connecting to newer servers and with E2EE push\nnotifications support should use the\n[Send an E2EE test notification to mobile device(s)](/api/e2ee-test-notify)\nendpoint, as this endpoint will be removed in a future release.\n\nStarting with Zulip 8.0 (feature level 234), test\nnotifications sent via this endpoint use `test` rather than\n`test-by-device-token` in the `event` field. Also, as of this\nfeature level, all mobile push notifications now include a\n`realm_name` field.\n\nNew in Zulip 8.0 (feature level 217).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "mobile_push",
+                "test_notification"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "token",
+                  "value": "<string>",
+                  "description": "The push token for the device to which to send the test notification.\n\nIf this parameter is not submitted, the test notification will be sent\nto all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ab7d1d3c-cb34-4a0e-b350-ed80f508c4c8",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "test_notification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The push token for the device to which to send the test notification.\n\nIf this parameter is not submitted, the test notification will be sent\nto all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token",
+                      "value": "111222"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3b3997f9-bf02-4d87-b0e3-78d40f2bfb04",
+              "name": "Bad request.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "test_notification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The push token for the device to which to send the test notification.\n\nIf this parameter is not submitted, the test notification will be sent\nto all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token",
+                      "value": "111222"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"INVALID_PUSH_DEVICE_TOKEN\",\n  \"msg\": \"Device not recognized\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b49b81e4-6952-436e-b188-bf997897e170",
+          "name": "Send an E2EE test notification to mobile device(s)",
+          "request": {
+            "name": "Send an E2EE test notification to mobile device(s)",
+            "description": {
+              "content": "Trigger sending an end-to-end encrypted (E2EE) test push notification\nto the user's selected mobile device or all of their mobile devices.\n\n**Changes**: New in Zulip 11.0 (feature level 420).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "mobile_push",
+                "e2ee",
+                "test_notification"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "device_id",
+                  "value": "<integer>",
+                  "description": "The ID for the device to which to send the test notification.\n\nIf this parameter is not submitted, the E2EE test notification will\nbe sent to all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor details on device ID.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n\nPreviously, `push_account_id` was used.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "465a89f5-e389-4867-a94f-ee2c1dbf14b6",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "e2ee",
+                    "test_notification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The ID for the device to which to send the test notification.\n\nIf this parameter is not submitted, the E2EE test notification will\nbe sent to all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor details on device ID.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n\nPreviously, `push_account_id` was used.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "1144"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "29528cdb-8485-4bc1-9f52-e54df21499a2",
+              "name": "Bad request.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "e2ee",
+                    "test_notification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The ID for the device to which to send the test notification.\n\nIf this parameter is not submitted, the E2EE test notification will\nbe sent to all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor details on device ID.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n\nPreviously, `push_account_id` was used.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "1144"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"NO_ACTIVE_PUSH_DEVICE\",\n  \"msg\": \"No active registered push device\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "82ff05ea-c4ae-4931-885d-d162b00652f5",
+              "name": "Forbidden.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "e2ee",
+                    "test_notification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The ID for the device to which to send the test notification.\n\nIf this parameter is not submitted, the E2EE test notification will\nbe sent to all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor details on device ID.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n\nPreviously, `push_account_id` was used.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "1144"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"ADMIN_ACTION_REQUIRED\",\n  \"msg\": \"Push notification configuration issue on server, contact the server administrator or retry later.\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e8363801-01ac-4267-a042-c0e7dae5dbd1",
+              "name": "Bad gateway.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "e2ee",
+                    "test_notification"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The ID for the device to which to send the test notification.\n\nIf this parameter is not submitted, the E2EE test notification will\nbe sent to all of the user's devices registered on the server.\n\nA mobile client should pass this parameter, to avoid triggering a test\nnotification for other clients.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor details on device ID.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n\nPreviously, `push_account_id` was used.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "1144"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"FAILED_TO_CONNECT_BOUNCER\",\n  \"msg\": \"Network error while connecting to Zulip push notification service.\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "97710d26-3be7-4333-a8eb-d61b25843932",
+          "name": "Register E2EE push device",
+          "request": {
+            "name": "Register E2EE push device",
+            "description": {
+              "content": "Register a device to receive end-to-end encrypted mobile push notifications,\nor update such a registration.\n\nTo perform an initial registration, clients must provide both the\npush key fields (`push_key` and `push_key_id`) and the token fields\n(`token_kind`, `token_id`, `bouncer_public_key`, and `encrypted_push_registration`).\n\nOnce registered, clients should use this endpoint to rotate `push_key` or\nFCM/APNs provided token:\n\n- **Rotate push key**: Provide only the push key fields.\n- **Rotate token**: Provide only the token fields.\n\nOn a successful registration, the server automatically removes\nany legacy push device registration with a matching token for\nthe user. For self-hosted servers, if removing the legacy\nregistration from the push notification bouncer fails (e.g.,\ndue to a network error), legacy notifications to that token\nwill continue until all of the user's legacy registrations\nhave been removed from the local server, at which point the\nserver will stop sending legacy notification requests to the\nbouncer entirely.\n\n**Changes**: In Zulip 12.0 (feature level 483),\nthe server began automatically removing legacy registrations\nwith a matching token on successful E2EE registration.\n\nIn Zulip 12.0 (feature level 468), the endpoint was significantly\nredesigned to support rotation of `push_key` and token provided by FCM/APNs.\n\nNew in Zulip 11.0 (feature level 406).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "mobile_push",
+                "register"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "device_id",
+                  "value": "<integer>",
+                  "description": "(Required) The ID of the device to configure for push notifications.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor how to obtain a device ID.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "push_key_id",
+                  "value": "<integer>",
+                  "description": "A random unsigned 32-bit integer generated by the client as an identifier\nfor `push_key`. It will be included in mobile push notifications\nalong with encrypted payloads to identify the `push_key` to decrypt.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "push_key",
+                  "value": "<string>",
+                  "description": "Key that the client would like the server to use to encrypt notifications,\nencoded with Base64.\n\nThe key is a byte sequence beginning with a single byte that encodes which\ncryptosystem to use, followed by the key to use for that cryptosystem.\nThis byte sequence is encoded using standard Base64 encoding as defined in RFC 4648.\n\nThe client should avoid sharing the key anywhere else: in particular it should\ngenerate a fresh key for each server, and to the extent possible keep the key\nout of any backups of the client's data.\n\nSupported cryptosystems are:\n\n- `0x31`: LibSodium's [SecretBox][libsodium-secretbox] symmetric key encryption\n  system. Keys are 32 bytes, which the server will use with libsodium's\n  `crypto_secretbox_easy`. See the [NaCl documentation][nacl-secretbox], which\n  details how this system uses `XSalsa20` and `Poly1305` to provide authenticated\n  encryption.\n\n[libsodium-secretbox]: https://libsodium.gitbook.io/doc/secret-key_cryptography/secretbox\n[nacl-secretbox]: https://nacl.cr.yp.to/secretbox.html\n\n**Changes**: New in Zulip 12.0 (feature level 432). This replaced the\n`push_public_key` parameter which had a prototype asymmetric cryptosystem, and\ndid not have a natural way to support multiple cryptosystems.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "token_kind",
+                  "value": "<string>",
+                  "description": "Whether the token was generated by FCM or APNs.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "token_id",
+                  "value": "<string>",
+                  "description": "Identifier for the FCM/APNs provided token to the device,\nproduced by taking the first 8 bytes of the SHA-256 hash of\nthe token, then encoding those bytes using standard Base64 encoding\nas defined in RFC 4648.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "bouncer_public_key",
+                  "value": "<string>",
+                  "description": "Which of the bouncer's public keys the client used to encrypt the\n`PushRegistration` dictionary.\n\nWhen the bouncer rotates the key, a new asymmetric key pair is created,\nand the new public key is baked into a new client release. Because\nthe bouncer routinely rotates key, this field clarifies which\npublic key the client is using.\n\nThe public key is encoded using standard Base64 encoding as defined\nin RFC 4648.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "encrypted_push_registration",
+                  "value": "<string>",
+                  "description": "Ciphertext generated by encrypting a `PushRegistration` dictionary\nusing the `bouncer_public_key`, encoded using a RFC 4648 standard\nbase64 encoder.\n\nThe `PushRegistration` dictionary contains the fields `token`,\n`token_kind`, `timestamp`, and (for iOS devices) `ios_app_id`.\nThe dictionary is JSON-encoded before encryption.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1a28bff3-401c-488d-8938-0c21d09bf090",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of the device to configure for push notifications.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor how to obtain a device ID.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A random unsigned 32-bit integer generated by the client as an identifier\nfor `push_key`. It will be included in mobile push notifications\nalong with encrypted payloads to identify the `push_key` to decrypt.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "push_key_id",
+                      "value": "2408"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Key that the client would like the server to use to encrypt notifications,\nencoded with Base64.\n\nThe key is a byte sequence beginning with a single byte that encodes which\ncryptosystem to use, followed by the key to use for that cryptosystem.\nThis byte sequence is encoded using standard Base64 encoding as defined in RFC 4648.\n\nThe client should avoid sharing the key anywhere else: in particular it should\ngenerate a fresh key for each server, and to the extent possible keep the key\nout of any backups of the client's data.\n\nSupported cryptosystems are:\n\n- `0x31`: LibSodium's [SecretBox][libsodium-secretbox] symmetric key encryption\n  system. Keys are 32 bytes, which the server will use with libsodium's\n  `crypto_secretbox_easy`. See the [NaCl documentation][nacl-secretbox], which\n  details how this system uses `XSalsa20` and `Poly1305` to provide authenticated\n  encryption.\n\n[libsodium-secretbox]: https://libsodium.gitbook.io/doc/secret-key_cryptography/secretbox\n[nacl-secretbox]: https://nacl.cr.yp.to/secretbox.html\n\n**Changes**: New in Zulip 12.0 (feature level 432). This replaced the\n`push_public_key` parameter which had a prototype asymmetric cryptosystem, and\ndid not have a natural way to support multiple cryptosystems.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "push_key",
+                      "value": "MTaUDJDMWypQ1WufZ1NRTHSSvgYtXh1qVNSjN3aBiEFt"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the token was generated by FCM or APNs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_kind",
+                      "value": "fcm"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Identifier for the FCM/APNs provided token to the device,\nproduced by taking the first 8 bytes of the SHA-256 hash of\nthe token, then encoding those bytes using standard Base64 encoding\nas defined in RFC 4648.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_id",
+                      "value": "hGsEWGmyyfI="
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Which of the bouncer's public keys the client used to encrypt the\n`PushRegistration` dictionary.\n\nWhen the bouncer rotates the key, a new asymmetric key pair is created,\nand the new public key is baked into a new client release. Because\nthe bouncer routinely rotates key, this field clarifies which\npublic key the client is using.\n\nThe public key is encoded using standard Base64 encoding as defined\nin RFC 4648.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "bouncer_public_key",
+                      "value": "bouncer-public-key"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Ciphertext generated by encrypting a `PushRegistration` dictionary\nusing the `bouncer_public_key`, encoded using a RFC 4648 standard\nbase64 encoder.\n\nThe `PushRegistration` dictionary contains the fields `token`,\n`token_kind`, `timestamp`, and (for iOS devices) `ios_app_id`.\nThe dictionary is JSON-encoded before encryption.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "encrypted_push_registration",
+                      "value": "encrypted-push-registration-data"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "90577f5e-b861-48b7-a452-744f6ef5f968",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "mobile_push",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of the device to configure for push notifications.\n\nSee [`POST /register_client_device`](/api/register-client-device)\nfor how to obtain a device ID.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A random unsigned 32-bit integer generated by the client as an identifier\nfor `push_key`. It will be included in mobile push notifications\nalong with encrypted payloads to identify the `push_key` to decrypt.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "push_key_id",
+                      "value": "2408"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Key that the client would like the server to use to encrypt notifications,\nencoded with Base64.\n\nThe key is a byte sequence beginning with a single byte that encodes which\ncryptosystem to use, followed by the key to use for that cryptosystem.\nThis byte sequence is encoded using standard Base64 encoding as defined in RFC 4648.\n\nThe client should avoid sharing the key anywhere else: in particular it should\ngenerate a fresh key for each server, and to the extent possible keep the key\nout of any backups of the client's data.\n\nSupported cryptosystems are:\n\n- `0x31`: LibSodium's [SecretBox][libsodium-secretbox] symmetric key encryption\n  system. Keys are 32 bytes, which the server will use with libsodium's\n  `crypto_secretbox_easy`. See the [NaCl documentation][nacl-secretbox], which\n  details how this system uses `XSalsa20` and `Poly1305` to provide authenticated\n  encryption.\n\n[libsodium-secretbox]: https://libsodium.gitbook.io/doc/secret-key_cryptography/secretbox\n[nacl-secretbox]: https://nacl.cr.yp.to/secretbox.html\n\n**Changes**: New in Zulip 12.0 (feature level 432). This replaced the\n`push_public_key` parameter which had a prototype asymmetric cryptosystem, and\ndid not have a natural way to support multiple cryptosystems.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "push_key",
+                      "value": "MTaUDJDMWypQ1WufZ1NRTHSSvgYtXh1qVNSjN3aBiEFt"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the token was generated by FCM or APNs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_kind",
+                      "value": "fcm"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Identifier for the FCM/APNs provided token to the device,\nproduced by taking the first 8 bytes of the SHA-256 hash of\nthe token, then encoding those bytes using standard Base64 encoding\nas defined in RFC 4648.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_id",
+                      "value": "hGsEWGmyyfI="
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Which of the bouncer's public keys the client used to encrypt the\n`PushRegistration` dictionary.\n\nWhen the bouncer rotates the key, a new asymmetric key pair is created,\nand the new public key is baked into a new client release. Because\nthe bouncer routinely rotates key, this field clarifies which\npublic key the client is using.\n\nThe public key is encoded using standard Base64 encoding as defined\nin RFC 4648.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "bouncer_public_key",
+                      "value": "bouncer-public-key"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Ciphertext generated by encrypting a `PushRegistration` dictionary\nusing the `bouncer_public_key`, encoded using a RFC 4648 standard\nbase64 encoder.\n\nThe `PushRegistration` dictionary contains the fields `token`,\n`token_kind`, `timestamp`, and (for iOS devices) `ios_app_id`.\nThe dictionary is JSON-encoded before encryption.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "encrypted_push_registration",
+                      "value": "encrypted-push-registration-data"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"error\",\n  \"msg\": \"Server is not configured to use push notification service.\",\n  \"code\": \"PUSH_SERVICE_NOT_CONFIGURED\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "958b13e5-97bc-417e-a706-389248a0a130",
+          "name": "Register E2EE push device to bouncer",
+          "request": {
+            "name": "Register E2EE push device to bouncer",
+            "description": {
+              "content": "Register a push device to bouncer to receive end-to-end encrypted\nmobile push notifications.\n\nSelf-hosted servers use this endpoint to asynchronously register\na push device to the bouncer server after receiving a request from\nthe mobile client to [register E2EE push device](/api/register-push-device).\n\nIt is not meant to be used by mobile clients directly.\n\n**Changes**: New in Zulip 11.0 (feature level 406).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "remotes",
+                "push",
+                "e2ee",
+                "register"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "realm_uuid",
+                  "value": "<string>",
+                  "description": "(Required) The UUID of the realm to which the push device\nbeing registered belongs.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "token_id",
+                  "value": "<string>",
+                  "description": "(Required) The `token_id` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n\n**Changes**: New in Zulip 12.0 (feature level 468),\nreplacing `push_account_id`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "encrypted_push_registration",
+                  "value": "<string>",
+                  "description": "(Required) The `encrypted_push_registration` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "bouncer_public_key",
+                  "value": "<string>",
+                  "description": "(Required) The `bouncer_public_key` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a77aa1aa-93ad-479a-ba2d-e04f93ad7cee",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "remotes",
+                    "push",
+                    "e2ee",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The UUID of the realm to which the push device\nbeing registered belongs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "realm_uuid",
+                      "value": "9aa61d0b-8ce5-488d-8e9e-fedc346e6836"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `token_id` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n\n**Changes**: New in Zulip 12.0 (feature level 468),\nreplacing `push_account_id`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_id",
+                      "value": "+wKIhyAx/Eg="
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `encrypted_push_registration` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "encrypted_push_registration",
+                      "value": "encrypted-push-registration-data"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `bouncer_public_key` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "bouncer_public_key",
+                      "value": "bouncer-public-key"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "18a9289a-1c63-4496-a18a-d075d0a98d5a",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "remotes",
+                    "push",
+                    "e2ee",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The UUID of the realm to which the push device\nbeing registered belongs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "realm_uuid",
+                      "value": "9aa61d0b-8ce5-488d-8e9e-fedc346e6836"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `token_id` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n\n**Changes**: New in Zulip 12.0 (feature level 468),\nreplacing `push_account_id`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_id",
+                      "value": "+wKIhyAx/Eg="
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `encrypted_push_registration` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "encrypted_push_registration",
+                      "value": "encrypted-push-registration-data"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `bouncer_public_key` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "bouncer_public_key",
+                      "value": "bouncer-public-key"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"INVALID_BOUNCER_PUBLIC_KEY\",\n  \"msg\": \"Invalid bouncer_public_key\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9d87ee64-4220-453b-a2c4-259144972a23",
+              "name": "Forbidden.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "remotes",
+                    "push",
+                    "e2ee",
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The UUID of the realm to which the push device\nbeing registered belongs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "realm_uuid",
+                      "value": "9aa61d0b-8ce5-488d-8e9e-fedc346e6836"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `token_id` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n\n**Changes**: New in Zulip 12.0 (feature level 468),\nreplacing `push_account_id`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "token_id",
+                      "value": "+wKIhyAx/Eg="
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `encrypted_push_registration` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "encrypted_push_registration",
+                      "value": "encrypted-push-registration-data"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The `bouncer_public_key` value provided by the mobile client\nto [register E2EE push device](/api/register-push-device).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "bouncer_public_key",
+                      "value": "bouncer-public-key"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"MISSING_REMOTE_REALM\",\n  \"msg\": \"Organization not registered\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "42f790e4-f363-46aa-a95e-2e004b5d04eb",
+          "name": "Register a logged-in device",
+          "request": {
+            "name": "Register a logged-in device",
+            "description": {
+              "content": "Logged-in mobile devices use this endpoint as an initial step to\nregister themselves, before registering for E2EE push notifications.\n\nThis endpoint is currently not useful for clients other than mobile.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "register_client_device"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "8cd48fd8-d565-4fba-9e95-09ab3987bc77",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "register_client_device"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"device_id\": 2,\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e745c2c9-54d6-49c9-907e-31b0b779b34d",
+          "name": "Remove a registered device",
+          "request": {
+            "name": "Remove a registered device",
+            "description": {
+              "content": "Mobile devices use this endpoint to remove their device record\nregistered using [`POST /register_client_device`](/api/register-client-device)\nwhen the user logs out.\n\nThis endpoint is currently not useful for clients other than mobile.\n\n**Changes**: New in Zulip 12.0 (feature level 470).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "remove_client_device"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "device_id",
+                  "value": "<integer>",
+                  "description": "(Required) The ID of the device to remove.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "70bdc88a-dcb6-42f1-98ef-9f09d6af4369",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "remove_client_device"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of the device to remove.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "device_id",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "03543085-9dab-4951-a139-bc5c12abd5ff",
+    "name": "Zulip REST authentication mobile API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication scheduled_messages API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "scheduled_messages",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get scheduled messages",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/scheduled_messages"
+          },
+          "docs": "Fetch all [scheduled messages](/help/schedule-a-message) for\nthe current user.\n\nScheduled messages are messages the user has scheduled to be\nsent in the future via the send later feature.\n\n**Changes**: New in Zulip 7.0 (feature level 173).\n"
+        },
+        {
+          "info": {
+            "name": "Create a scheduled message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/scheduled_messages",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "type",
+                  "value": ""
+                },
+                {
+                  "name": "to",
+                  "value": ""
+                },
+                {
+                  "name": "content",
+                  "value": ""
+                },
+                {
+                  "name": "topic",
+                  "value": ""
+                },
+                {
+                  "name": "scheduled_delivery_timestamp",
+                  "value": ""
+                },
+                {
+                  "name": "read_by_sender",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a new [scheduled message](/help/schedule-a-message).\n\n**Changes**: In Zulip 7.0 (feature level 184), moved support for\n[editing a scheduled message](/api/update-scheduled-message) to a\nseparate API endpoint, which removed the `scheduled_message_id`\nparameter from this endpoint.\n\nNew in Zulip 7.0 (feature level 179).\n"
+        },
+        {
+          "info": {
+            "name": "Edit a scheduled message",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/scheduled_messages/:scheduled_message_id",
+            "params": [
+              {
+                "name": "scheduled_message_id",
+                "value": "2",
+                "type": "path",
+                "description": "The ID of the scheduled message to update.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "type",
+                  "value": ""
+                },
+                {
+                  "name": "to",
+                  "value": ""
+                },
+                {
+                  "name": "content",
+                  "value": ""
+                },
+                {
+                  "name": "topic",
+                  "value": ""
+                },
+                {
+                  "name": "scheduled_delivery_timestamp",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Edit an existing [scheduled message](/help/schedule-a-message).\n\n**Changes**: New in Zulip 7.0 (feature level 184).\n"
+        },
+        {
+          "info": {
+            "name": "Delete a scheduled message",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/scheduled_messages/:scheduled_message_id",
+            "params": [
+              {
+                "name": "scheduled_message_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the scheduled message to delete.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+              }
+            ]
+          },
+          "docs": "Delete, and therefore cancel sending, a previously [scheduled\nmessage](/help/schedule-a-message).\n\n**Changes**: New in Zulip 7.0 (feature level 173).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,743 @@
+{
+  "item": [
+    {
+      "id": "e9d64c1c-620f-4a46-a77e-921be7f456ca",
+      "name": "navigation_views",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "1a5e60a0-74e4-4615-ab43-f4354b764696",
+          "name": "Get all navigation views",
+          "request": {
+            "name": "Get all navigation views",
+            "description": {
+              "content": "Fetch all configured custom navigation views for the current user.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "navigation_views"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7442158a-6af1-47da-9f0f-4a7d520f3d84",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"navigation_views\": [\n    {\n      \"fragment\": \"narrow/is/alerted\",\n      \"is_pinned\": false,\n      \"name\": \"Alert Words\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c7c4daea-bb83-41ba-9e51-fecaa9cd5b9a",
+          "name": "Add a navigation view",
+          "request": {
+            "name": "Add a navigation view",
+            "description": {
+              "content": "Adds a new custom left sidebar navigation view configuration\nfor the current user.\n\nThis can be used both to configure built-in navigation views,\nor to add new navigation views.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "navigation_views"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "fragment",
+                  "value": "<string>",
+                  "description": "(Required) A unique identifier for the view, used to determine navigation\nbehavior when clicked.\n\nClients should use this value to navigate to the corresponding URL hash.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "is_pinned",
+                  "value": "<boolean>",
+                  "description": "(Required) Determines whether the view appears directly in the sidebar or\nis hidden in the \"More Views\" menu.\n\n- `true` - Pinned and visible in the sidebar.\n- `false` - Hidden and accessible via the \"More Views\" menu.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "The user-facing name for custom navigation views. Omit this\nfield for built-in views.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "aa88bd2e-803a-4930-b948-882c2e549abe",
+              "name": "Request succeeded.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A unique identifier for the view, used to determine navigation\nbehavior when clicked.\n\nClients should use this value to navigate to the corresponding URL hash.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "fragment",
+                      "value": "narrow/is/alerted"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Determines whether the view appears directly in the sidebar or\nis hidden in the \"More Views\" menu.\n\n- `true` - Pinned and visible in the sidebar.\n- `false` - Hidden and accessible via the \"More Views\" menu.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "is_pinned",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The user-facing name for custom navigation views. Omit this\nfield for built-in views.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "Alert Words"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8e95da65-3609-4d96-8ef2-0fb4c69408ee",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A unique identifier for the view, used to determine navigation\nbehavior when clicked.\n\nClients should use this value to navigate to the corresponding URL hash.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "fragment",
+                      "value": "narrow/is/alerted"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Determines whether the view appears directly in the sidebar or\nis hidden in the \"More Views\" menu.\n\n- `true` - Pinned and visible in the sidebar.\n- `false` - Hidden and accessible via the \"More Views\" menu.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "is_pinned",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The user-facing name for custom navigation views. Omit this\nfield for built-in views.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "Alert Words"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"fragment cannot be blank\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fd79abf6-5dbf-4775-9dad-ebe30248e31c",
+          "name": "Update the navigation view",
+          "request": {
+            "name": "Update the navigation view",
+            "description": {
+              "content": "Update the details of an existing configured navigation view,\nsuch as its name or whether it's pinned.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "navigation_views",
+                ":fragment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "fragment",
+                  "description": "(Required) The unique URL hash of the navigation view to be updated.\n\nThis also serves as the identifier for the navigation view.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            }
+          },
+          "response": [
+            {
+              "id": "b30abfa7-c1ca-4d66-a876-d01a3d4a81fc",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views",
+                    ":fragment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "fragment",
+                      "description": "(Required) The unique URL hash of the navigation view to be updated.\n\nThis also serves as the identifier for the navigation view.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0886e565-16b8-4b9b-80d0-cc33adac0839",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views",
+                    ":fragment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "fragment",
+                      "description": "(Required) The unique URL hash of the navigation view to be updated.\n\nThis also serves as the identifier for the navigation view.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": []
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"Built-in views cannot have a custom name\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5e27b9d4-1092-42ae-a7d4-00ee4f076234",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views",
+                    ":fragment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "fragment",
+                      "description": "(Required) The unique URL hash of the navigation view to be updated.\n\nThis also serves as the identifier for the navigation view.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": []
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"NOT_FOUND\",\n  \"result\": \"error\",\n  \"msg\": \"Navigation view does not exist.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ff89b595-0d88-4ecc-aaf7-e0bd52e4df6a",
+          "name": "Remove a navigation view",
+          "request": {
+            "name": "Remove a navigation view",
+            "description": {
+              "content": "Remove a navigation view.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "navigation_views",
+                ":fragment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "fragment",
+                  "description": "(Required) The unique URL hash of the navigation view to be removed.\n\nThis also serves as the identifier for the navigation view.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1c2b8b57-0b54-4b57-bc36-6ffb753d276f",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views",
+                    ":fragment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "fragment",
+                      "description": "(Required) The unique URL hash of the navigation view to be removed.\n\nThis also serves as the identifier for the navigation view.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e05f3a6a-13c5-4af7-a134-8254d8a5b963",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "navigation_views",
+                    ":fragment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "fragment",
+                      "description": "(Required) The unique URL hash of the navigation view to be removed.\n\nThis also serves as the identifier for the navigation view.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\",\n  \"msg\": \"Navigation view does not exist.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "173e4a89-1bf1-4ca2-9fa3-216505724801",
+    "name": "Zulip REST authentication navigation_views API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

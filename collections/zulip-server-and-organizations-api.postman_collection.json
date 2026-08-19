@@ -1,0 +1,4099 @@
+{
+  "item": [
+    {
+      "id": "96adf64b-3af4-4d55-8020-772bf24e8c9b",
+      "name": "server_and_organizations",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f4017e5a-d18d-4ce6-919e-240bf999cc94",
+          "name": "Upload custom emoji",
+          "request": {
+            "name": "Upload custom emoji",
+            "description": {
+              "content": "This endpoint is used to upload a custom emoji for use in the user's\norganization. Access to this endpoint depends on the\n[organization's configuration](https://zulip.com/help/custom-emoji#change-who-can-add-custom-emoji).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "emoji",
+                ":emoji_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "emoji_name",
+                  "description": "(Required) The name that should be associated with the uploaded emoji image/gif.\nThe emoji name can only contain letters, numbers, dashes, and spaces.\nUpper and lower case letters are treated the same, and underscores (\\_)\nare treated the same as spaces (consistent with how the Zulip UI\nhandles emoji).\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "filename",
+                  "type": "file",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "568078fe-b117-4bbf-8af6-567a4da42784",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "emoji",
+                    ":emoji_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "emoji_name",
+                      "description": "(Required) The name that should be associated with the uploaded emoji image/gif.\nThe emoji name can only contain letters, numbers, dashes, and spaces.\nUpper and lower case letters are treated the same, and underscores (\\_)\nare treated the same as spaces (consistent with how the Zulip UI\nhandles emoji).\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "filename",
+                      "value": "/path/to/img.png",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bfe30d90-0d84-4a3a-8851-d824b4e020cf",
+          "name": "Deactivate custom emoji",
+          "request": {
+            "name": "Deactivate custom emoji",
+            "description": {
+              "content": "[Deactivate a custom emoji](/help/custom-emoji#deactivate-custom-emoji) from\nthe user's organization.\n\nUsers can only deactivate custom emoji that they added themselves except for\norganization administrators, who can deactivate any custom emoji.\n\nNote that deactivated emoji will still be visible in old messages, reactions,\nuser statuses and channel descriptions.\n\n**Changes**: Before Zulip 8.0 (feature level 190), this endpoint returned an\nHTTP status code of 400 when the emoji did not exist, instead of 404.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "emoji",
+                ":emoji_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "emoji_name",
+                  "description": "(Required) The name of the custom emoji to deactivate.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ce53ab98-ef8c-4c24-9eb1-116a19863381",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "emoji",
+                    ":emoji_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "emoji_name",
+                      "description": "(Required) The name of the custom emoji to deactivate.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "31ab8d8c-0fce-4a08-b21e-581796c6405b",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "emoji",
+                    ":emoji_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "emoji_name",
+                      "description": "(Required) The name of the custom emoji to deactivate.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\",\n  \"msg\": \"Emoji 'green_tick' does not exist\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6ad0da6f-9568-4713-bf8b-40932f06243b",
+          "name": "Get all custom emoji",
+          "request": {
+            "name": "Get all custom emoji",
+            "description": {
+              "content": "Get all the custom emoji in the user's organization.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "emoji"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d2009153-3319-4f39-8be5-197437a6e36f",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "emoji"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"emoji\": {\n    \"1\": {\n      \"name\": \"green_tick\",\n      \"source_url\": \"/user_avatars/1/emoji/images/1.png\",\n      \"deactivated\": false,\n      \"author_id\": 5\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e78515bc-84b3-4b32-9bf1-8e417705769f",
+          "name": "Get presence of all users",
+          "request": {
+            "name": "Get presence of all users",
+            "description": {
+              "content": "Get the presence information of all the users in an organization.\n\nIf the `CAN_ACCESS_ALL_USERS_GROUP_LIMITS_PRESENCE` server-level\nsetting is set to `true`, presence information of only accessible\nusers are returned.\n\nComplete Zulip apps are recommended to fetch presence\ninformation when they post their own state using the [`POST\n/presence`](/api/update-presence) API endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "presence"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "054ec2bb-df37-41c3-99bc-bf912e147c44",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "presence"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"presences\": {\n    \"iago@zulip.com\": {\n      \"website\": {\n        \"client\": \"website\",\n        \"pushable\": false,\n        \"status\": \"active\",\n        \"timestamp\": 1656958485\n      },\n      \"aggregated\": {\n        \"client\": \"website\",\n        \"status\": \"active\",\n        \"timestamp\": 1656958485\n      }\n    }\n  },\n  \"result\": \"success\",\n  \"server_timestamp\": 1656958539.6287155\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6ed43453-fed5-4313-a423-a57e5a73c46f",
+          "name": "Get allowed domains",
+          "request": {
+            "name": "Get allowed domains",
+            "description": {
+              "content": "Get the set of allowed domains configured in the organization for user\naccount email addresses.\n\nAs each Zulip user account is associated with an email address, organization\nowners can [restrict new account creation (and email\nchanges)](/help/restrict-account-creation) to email addresses with these\ndomains.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "domains"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "19599097-fd42-4ab9-8524-5f75eb68c9ed",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"domains\": [\n    {\n      \"domain\": \"example.com\",\n      \"allow_subdomains\": false\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ad952406-6acd-4dbb-8dee-c569ce782ab0",
+          "name": "Add an allowed domain",
+          "request": {
+            "name": "Add an allowed domain",
+            "description": {
+              "content": "Add a domain to the set of allowed domains configured in the organization\nfor [user account email addresses](/help/restrict-account-creation).\n\n**Changes**: Prior to Zulip 6.0 (feature level 143), organization\nadministrators who were not owners could access this endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "domains"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "domain",
+                  "value": "<string>",
+                  "description": "(Required) The new domain.\n\n**Changes**: In Zulip 4.0 (feature level 63), the unnecessary\nJSON-encoding of this parameter was removed.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "allow_subdomains",
+                  "value": "<boolean>",
+                  "description": "(Required) Whether subdomains are allowed for this domain.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "edc06f0c-0787-4db9-9398-0d32ed501228",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The new domain.\n\n**Changes**: In Zulip 4.0 (feature level 63), the unnecessary\nJSON-encoding of this parameter was removed.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "domain",
+                      "value": "example.com"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Whether subdomains are allowed for this domain.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "allow_subdomains",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"new_domain\": [\n    9278,\n    5177\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "75a6ad52-d035-4d1b-8847-706151f56f21",
+          "name": "Update an allowed domain",
+          "request": {
+            "name": "Update an allowed domain",
+            "description": {
+              "content": "Update whether subdomains are allowed in [user account email\naddresses](/help/restrict-account-creation) for the specified domain.\n\n**Changes**: Prior to Zulip 6.0 (feature level 143), organization\nadministrators who were not owners could access this endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "domains",
+                ":domain"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) The domain to update.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "allow_subdomains",
+                  "value": "<boolean>",
+                  "description": "(Required) Whether subdomains are allowed for this domain.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8a808cc7-4fa1-4978-b381-2e35417f55e1",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "domains",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) The domain to update.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Whether subdomains are allowed for this domain.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "allow_subdomains",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4335954a-6252-461e-b201-76f63c4020d4",
+          "name": "Remove an allowed domain",
+          "request": {
+            "name": "Remove an allowed domain",
+            "description": {
+              "content": "Remove the specified domain from the set of allowed domains configured in\nthe organization for [user account email addresses](/help/restrict-account-creation).\n\n**Changes**: Prior to Zulip 6.0 (feature level 143), organization\nadministrators who were not owners could access this endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "domains",
+                ":domain"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "domain",
+                  "description": "(Required) The domain to remove.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7e49a3c2-013f-42f9-ac9f-b11521dbb761",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "domains",
+                    ":domain"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "domain",
+                      "description": "(Required) The domain to remove.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b4f11658-5a9a-4a38-a6f1-eb5f9d85ff22",
+          "name": "Get all custom profile fields",
+          "request": {
+            "name": "Get all custom profile fields",
+            "description": {
+              "content": "Get all the [custom profile fields](/help/custom-profile-fields)\nconfigured for the user's organization.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "profile_fields"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "0fcdd0c9-a4f9-4809-9669-bb17337413fe",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "profile_fields"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"custom_fields\": [\n    {\n      \"id\": 3543,\n      \"type\": 3040,\n      \"order\": 3562,\n      \"name\": \"string\",\n      \"hint\": \"string\",\n      \"required\": false,\n      \"editable_by_user\": true,\n      \"field_data\": \"string\",\n      \"display_in_profile_summary\": false,\n      \"use_for_user_matching\": false\n    },\n    {\n      \"id\": 2343,\n      \"type\": 4192,\n      \"order\": 7998,\n      \"name\": \"string\",\n      \"hint\": \"string\",\n      \"required\": false,\n      \"editable_by_user\": true,\n      \"field_data\": \"string\",\n      \"display_in_profile_summary\": false,\n      \"use_for_user_matching\": false\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e51683aa-d101-4846-a4b9-db8412c3b136",
+          "name": "Reorder custom profile fields",
+          "request": {
+            "name": "Reorder custom profile fields",
+            "description": {
+              "content": "Reorder the custom profile fields in the user's organization.\n\nCustom profile fields are displayed in Zulip UI widgets in order; this\nendpoint allows administrative settings UI to change the field ordering.\n\nThis endpoint is used to implement the dragging feature described in the\n[custom profile fields documentation](/help/custom-profile-fields).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "profile_fields"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "<integer>",
+                  "description": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "<integer>",
+                  "description": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "471bb9a3-8f3a-453b-8dc9-fdab9d7ce75e",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "profile_fields"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "11"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "10"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "9"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "8"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "7"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "6"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "5"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "4"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "3"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "2"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the custom profile fields defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "order",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bc19c71f-f450-46e6-8951-3f81f4de85d2",
+          "name": "Create a custom profile field",
+          "request": {
+            "name": "Create a custom profile field",
+            "description": {
+              "content": "[Create a custom profile field](/help/custom-profile-fields#add-a-custom-profile-field) in the user's organization.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "profile_fields"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "field_type",
+                  "value": "<integer>",
+                  "description": "(Required) The field type can be any of the supported custom profile field types. See the\n[custom profile fields documentation](/help/custom-profile-fields)\nfor more details on what each type means.\n\n- **1**: Short text\n- **2**: Paragraph\n- **3**: Dropdown\n- **4**: Date\n- **5**: Link\n- **6**: Users\n- **7**: External account\n- **8**: Pronouns\n\n**Changes**: Field type `8` added in Zulip 6.0 (feature level 151).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "The name of the custom profile field, which will appear both in\nuser-facing settings UI for configuring custom profile fields and\nin UI displaying a user's profile.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "hint",
+                  "value": "<string>",
+                  "description": "The help text to be displayed for the custom profile field in user-facing\nsettings UI for configuring custom profile fields.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "field_data",
+                  "value": "<object>",
+                  "description": "Field types 3 (Dropdown) and 7 (External account) support storing\nadditional configuration for the field type in the `field_data` attribute.\n\nFor field type 3 (Dropdown), this attribute is a JSON dictionary\ndefining the choices and the order they will be displayed in the\ndropdown UI for individual users to select an option.\n\nThe interface for field type 7 is not yet stabilized.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "display_in_profile_summary",
+                  "value": "<boolean>",
+                  "description": "Whether clients should display this profile field in a summary section of a\nuser's profile (or in a more easily accessible \"small profile\").\n\nAt most 2 profile fields may have this property be true in a given\norganization.\n\nThe \"Users\" profile field is not supported, but that is likely to\nbe temporary.\n\n[profile-field-types]: /help/custom-profile-fields#profile-field-types\n\n**Changes**: Before Zulip 12.0 (feature level 476), the\n\"Paragraph\" field type was not supported.\n\nNew in Zulip 6.0 (feature level 146).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "required",
+                  "value": "<boolean>",
+                  "description": "Whether an organization administrator has configured this profile field as\nrequired.\n\nBecause the required property is mutable, clients cannot assume that a required\ncustom profile field has a value. The Zulip web application displays a prominent\nbanner to any user who has not set a value for a required field.\n\n**Changes**: New in Zulip 9.0 (feature level 244).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "editable_by_user",
+                  "value": "<boolean>",
+                  "description": "Whether regular users can edit this profile field on their own account.\n\nNote that organization administrators can edit custom profile fields for any user\nregardless of this setting.\n\n**Changes**: New in Zulip 10.0 (feature level 296).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "use_for_user_matching",
+                  "value": "<boolean>",
+                  "description": "Whether this custom profile field should be used to match users in typeahead\nsuggestions. Only allowed for Short Text and External Account\n[profile field types](/help/custom-profile-fields#profile-field-types).\n\nThis field is only included when its value is `true`.\n\n**Changes**: New in Zulip 12.0 (feature level 455).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ab67c0bb-7873-4b34-bf23-fce97f496cdf",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "profile_fields"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The field type can be any of the supported custom profile field types. See the\n[custom profile fields documentation](/help/custom-profile-fields)\nfor more details on what each type means.\n\n- **1**: Short text\n- **2**: Paragraph\n- **3**: Dropdown\n- **4**: Date\n- **5**: Link\n- **6**: Users\n- **7**: External account\n- **8**: Pronouns\n\n**Changes**: Field type `8` added in Zulip 6.0 (feature level 151).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "field_type",
+                      "value": "3"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The name of the custom profile field, which will appear both in\nuser-facing settings UI for configuring custom profile fields and\nin UI displaying a user's profile.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "Favorite programming language"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The help text to be displayed for the custom profile field in user-facing\nsettings UI for configuring custom profile fields.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "hint",
+                      "value": "Your favorite programming language."
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Field types 3 (Dropdown) and 7 (External account) support storing\nadditional configuration for the field type in the `field_data` attribute.\n\nFor field type 3 (Dropdown), this attribute is a JSON dictionary\ndefining the choices and the order they will be displayed in the\ndropdown UI for individual users to select an option.\n\nThe interface for field type 7 is not yet stabilized.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "python",
+                      "value": "{\"text\":\"Python\",\"order\":\"1\"}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Field types 3 (Dropdown) and 7 (External account) support storing\nadditional configuration for the field type in the `field_data` attribute.\n\nFor field type 3 (Dropdown), this attribute is a JSON dictionary\ndefining the choices and the order they will be displayed in the\ndropdown UI for individual users to select an option.\n\nThe interface for field type 7 is not yet stabilized.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "java",
+                      "value": "{\"text\":\"Java\",\"order\":\"2\"}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether clients should display this profile field in a summary section of a\nuser's profile (or in a more easily accessible \"small profile\").\n\nAt most 2 profile fields may have this property be true in a given\norganization.\n\nThe \"Users\" profile field is not supported, but that is likely to\nbe temporary.\n\n[profile-field-types]: /help/custom-profile-fields#profile-field-types\n\n**Changes**: Before Zulip 12.0 (feature level 476), the\n\"Paragraph\" field type was not supported.\n\nNew in Zulip 6.0 (feature level 146).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "display_in_profile_summary",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether an organization administrator has configured this profile field as\nrequired.\n\nBecause the required property is mutable, clients cannot assume that a required\ncustom profile field has a value. The Zulip web application displays a prominent\nbanner to any user who has not set a value for a required field.\n\n**Changes**: New in Zulip 9.0 (feature level 244).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "required",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether regular users can edit this profile field on their own account.\n\nNote that organization administrators can edit custom profile fields for any user\nregardless of this setting.\n\n**Changes**: New in Zulip 10.0 (feature level 296).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "editable_by_user",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether this custom profile field should be used to match users in typeahead\nsuggestions. Only allowed for Short Text and External Account\n[profile field types](/help/custom-profile-fields#profile-field-types).\n\nThis field is only included when its value is `true`.\n\n**Changes**: New in Zulip 12.0 (feature level 455).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "use_for_user_matching",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"id\": 9\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e161a5b8-ce3a-4f42-9f82-747b11779385",
+          "name": "Update realm-level defaults of user settings",
+          "request": {
+            "name": "Update realm-level defaults of user settings",
+            "description": {
+              "content": "Change the [default values of settings][new-user-defaults] for new users\njoining the organization. Essentially all\n[personal preference settings](/api/update-settings) are supported.\n\nThis feature can be invaluable for customizing Zulip's default\nsettings for notifications or UI to be appropriate for how the\norganization is using Zulip. (Note that this only supports\npersonal preference settings, like when to send push\nnotifications or what emoji set to use, not profile or\nidentity settings that naturally should be different for each user).\n\nNote that this endpoint cannot, at present, be used to modify\nsettings for existing users in any way.\n\n**Changes**: Removed `dense_mode` setting in Zulip 10.0 (feature level 364)\nas we now have `web_font_size_px` and `web_line_height_percent`\nsettings for more control.\n\nNew in Zulip 5.0 (feature level 96). If any parameters sent in the\nrequest are not supported by this endpoint, an\n[`ignored_parameters_unsupported`][ignored-parameters] array will\nbe returned in the JSON success response.\n\n[new-user-defaults]: /help/configure-default-new-user-settings\n[ignored-parameters]: /api/rest-error-handling#ignored-parameters\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "user_settings_defaults"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "starred_message_counts",
+                  "value": "<boolean>",
+                  "description": "Whether clients should display the [number of starred\nmessages](/help/star-a-message#display-the-number-of-starred-messages).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "receives_typing_notifications",
+                  "value": "<boolean>",
+                  "description": "Whether the user is configured to receive typing notifications from other users.\nThe server will only deliver typing notifications events to users who for whom this\nis enabled.\n\n**Changes**: New in Zulip 9.0 (feature level 253). Previously, there were\nonly options to disable sending typing notifications.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_suggest_update_timezone",
+                  "value": "<boolean>",
+                  "description": "Whether the user should be shown an alert, offering to update their\n[profile time zone](/help/change-your-timezone), when the time displayed\nfor the profile time zone differs from the current time displayed by the\ntime zone configured on their device.\n\n**Changes**: New in Zulip 10.0 (feature level 329).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "fluid_layout_width",
+                  "value": "<boolean>",
+                  "description": "Whether to use the [maximum available screen width](/help/enable-full-width-display)\nfor the web app's center panel (message feed, recent conversations) on wide screens.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "high_contrast_mode",
+                  "value": "<boolean>",
+                  "description": "This setting is reserved for use to control variations in Zulip's design\nto help visually impaired users.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_mark_read_on_scroll_policy",
+                  "value": "<integer>",
+                  "description": "Whether or not to mark messages as read when the user scrolls through their\nfeed.\n\n- 1 - Always\n- 2 - Only in conversation views\n- 3 - Never\n\n**Changes**: New in Zulip 7.0 (feature level 175). Previously, there was no\nway for the user to configure this behavior on the web, and the Zulip web and\ndesktop apps behaved like the \"Always\" setting when marking messages as read.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_channel_default_view",
+                  "value": "<integer>",
+                  "description": "Web/desktop app setting controlling the default navigation\nbehavior when clicking on a channel link.\n\n- 1 - Top topic in the channel\n- 2 - Channel feed\n- 3 - List of topics\n- 4 - Top unread topic in channel\n\n**Changes**: The \"Top unread topic in channel\" is new in Zulip 11.0\n(feature level 401).\n\nThe \"List of topics\" option is new in Zulip 11.0 (feature level 383).\n\nNew in Zulip 9.0 (feature level 269). Previously, this\nwas not configurable, and every user had the \"Channel feed\" behavior.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_font_size_px",
+                  "value": "<integer>",
+                  "description": "User-configured primary `font-size` for the web application, in pixels.\n\n**Changes**: New in Zulip 9.0 (feature level 245). Previously, font size was\nonly adjustable via browser zoom. Note that this setting was not fully\nimplemented at this feature level.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_line_height_percent",
+                  "value": "<integer>",
+                  "description": "User-configured primary `line-height` for the web application, in percent, so a\nvalue of 120 represents a `line-height` of 1.2.\n\n**Changes**: New in Zulip 9.0 (feature level 245). Previously, line height was\nnot user-configurable. Note that this setting was not fully implemented at this\nfeature level.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "color_scheme",
+                  "value": "<integer>",
+                  "description": "Controls which [color theme](/help/dark-theme) to use.\n\n- 1 - Automatic\n- 2 - Dark theme\n- 3 - Light theme\n\nAutomatic detection is implementing using the standard `prefers-color-scheme`\nmedia query.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_drafts_synchronization",
+                  "value": "<boolean>",
+                  "description": "A boolean parameter to control whether synchronizing drafts is enabled for\nthe user. When synchronization is disabled, all drafts stored in the server\nwill be automatically deleted from the server.\n\nThis does not do anything (like sending events) to delete local copies of\ndrafts stored in clients.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "translate_emoticons",
+                  "value": "<boolean>",
+                  "description": "Whether to [translate emoticons to emoji](/help/configure-emoticon-translations)\nin messages the user sends.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "display_emoji_reaction_users",
+                  "value": "<boolean>",
+                  "description": "Whether to display the names of reacting users on a message.\n\nWhen enabled, clients should display the names of reacting users, rather than\na count, for messages with few total reactions. The ideal cutoff may depend on\nthe space available for displaying reactions; the official web application\ndisplays names when 3 or fewer total reactions are present with this setting\nenabled.\n\n**Changes**: New in Zulip 6.0 (feature level 125).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_home_view",
+                  "value": "<string>",
+                  "description": "The [home view](/help/configure-home-view) used when opening a new\nZulip web app window or hitting the `Esc` keyboard shortcut repeatedly.\n\n- \"recent\" - Recent conversations view\n- \"inbox\" - Inbox view\n- \"all_messages\" - Combined feed view\n\n**Changes**: Before Zulip 12.0 (feature level 454), the Recent\nview had `\"recent_topics\"` as its string encoding.\n\nNew in Zulip 8.0 (feature level 219). Previously, this was\ncalled `default_view`, which was new in Zulip 4.0 (feature level 42).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_escape_navigates_to_home_view",
+                  "value": "<boolean>",
+                  "description": "Whether the escape key navigates to the\n[configured home view](/help/configure-home-view).\n\n**Changes**: New in Zulip 8.0 (feature level 219). Previously, this was called\n`escape_navigates_to_default_view`, which was new in Zulip 5.0 (feature level 107).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "left_side_userlist",
+                  "value": "<boolean>",
+                  "description": "Whether the users list on left sidebar in narrow windows.\n\nThis feature is not heavily used and is likely to be reworked.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "emojiset",
+                  "value": "<string>",
+                  "description": "The user's configured [emoji set](/help/emoji-and-emoticons#use-emoticons),\nused to display emoji to the user everywhere they appear in the UI.\n\n- \"google\" - Google\n- \"twitter\" - Twitter\n- \"text\" - Plain text\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "demote_inactive_streams",
+                  "value": "<integer>",
+                  "description": "Whether to [hide inactive channels](/help/manage-inactive-channels) in the left sidebar.\n\n- 1 - Automatic\n- 2 - Always\n- 3 - Never\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "user_list_style",
+                  "value": "<integer>",
+                  "description": "The style selected by the user for the right sidebar user list.\n\n- 1 - Compact\n- 2 - With status\n- 3 - With avatar and status\n\n**Changes**: New in Zulip 6.0 (feature level 141).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_animate_image_previews",
+                  "value": "<string>",
+                  "description": "Controls how animated images should be played in the message feed in the web/desktop application.\n\n- \"always\" - Always play the animated images in the message feed.\n- \"on_hover\" - Play the animated images on hover over them in the message feed.\n- \"never\" - Never play animated images in the message feed.\n\n**Changes**: New in Zulip 9.0 (feature level 275). Previously, animated images\nalways used to play in the message feed by default. This setting controls this\nbehaviour.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_stream_unreads_count_display_policy",
+                  "value": "<integer>",
+                  "description": "Configuration for which channels should be displayed with a numeric unread count in the left sidebar.\nChannels that do not have an unread count will have a simple dot indicator for whether there are any\nunread messages.\n\n- 1 - All channels\n- 2 - Unmuted channels and topics\n- 3 - No channels\n\n**Changes**: New in Zulip 8.0 (feature level 210).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "hide_ai_features",
+                  "value": "<boolean>",
+                  "description": "Controls whether user wants AI features like topic summarization to\nbe hidden in all Zulip clients.\n\n**Changes**: New in Zulip 10.0 (feature level 350).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_inbox_show_channel_folders",
+                  "value": "<boolean>",
+                  "description": "Determines whether [channel folders](/help/channel-folders)\nare used to organize how conversations with unread messages\nare displayed in the web/desktop application's Inbox view.\n\n**Changes**: New in Zulip 12.0 (feature level 431).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_left_sidebar_show_channel_folders",
+                  "value": "<boolean>",
+                  "description": "Determines whether [channel folders](/help/channel-folders)\nare used to organize how channels are displayed in the\nweb/desktop application's left sidebar.\n\n**Changes**: New in Zulip 11.0 (feature level 411).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_left_sidebar_unreads_count_summary",
+                  "value": "<boolean>",
+                  "description": "Determines whether the web/desktop application's left sidebar displays\nthe unread message count summary.\n\n**Changes**: New in Zulip 11.0 (feature level 398).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_stream_desktop_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable visual desktop notifications for channel messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_stream_email_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable email notifications for channel messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_stream_push_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable mobile notifications for channel messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_stream_audible_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable audible desktop notifications for channel messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "notification_sound",
+                  "value": "<string>",
+                  "description": "Notification sound name.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_desktop_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable visual desktop notifications for direct messages and @-mentions.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_sounds",
+                  "value": "<boolean>",
+                  "description": "Enable audible desktop notifications for direct messages and\n@-mentions.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_followed_topic_desktop_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable visual desktop notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_followed_topic_email_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable email notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_followed_topic_push_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable push notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_followed_topic_audible_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable audible desktop notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "email_notifications_batching_period_seconds",
+                  "value": "<integer>",
+                  "description": "The duration (in seconds) for which the server should wait to batch\nemail notifications before sending them.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_offline_email_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable email notifications for direct messages and @-mentions received\nwhen the user is offline.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_offline_push_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable mobile notification for direct messages and @-mentions received\nwhen the user is offline.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_online_push_notifications",
+                  "value": "<boolean>",
+                  "description": "Enable mobile notification for direct messages and @-mentions received\nwhen the user is online.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_digest_emails",
+                  "value": "<boolean>",
+                  "description": "Enable digest emails when the user is away.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "message_content_in_email_notifications",
+                  "value": "<boolean>",
+                  "description": "Include the message's content in email notifications for new messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "pm_content_in_desktop_notifications",
+                  "value": "<boolean>",
+                  "description": "Include content of direct messages in desktop notifications.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "wildcard_mentions_notify",
+                  "value": "<boolean>",
+                  "description": "Whether wildcard mentions (E.g. @**all**) should send notifications\nlike a personal mention.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enable_followed_topic_wildcard_mentions_notify",
+                  "value": "<boolean>",
+                  "description": "Whether wildcard mentions (e.g., @**all**) in messages sent to followed topics\nshould send notifications like a personal mention.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "desktop_icon_count_display",
+                  "value": "<integer>",
+                  "description": "Unread count badge (appears in desktop sidebar and browser tab)\n\n- 1 - All unread messages\n- 2 - DMs, mentions, and followed topics\n- 3 - DMs and mentions\n- 4 - None\n\n**Changes**: In Zulip 8.0 (feature level 227), added `DMs, mentions, and followed\ntopics` option, renumbering the options to insert it in order.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "realm_name_in_email_notifications_policy",
+                  "value": "<integer>",
+                  "description": "Whether to [include organization name in subject of message notification\nemails](/help/email-notifications#include-organization-name-in-subject-line).\n\n- 1 - Automatic\n- 2 - Always\n- 3 - Never\n\n**Changes**: New in Zulip 7.0 (feature level 168), replacing the\nprevious `realm_name_in_notifications` boolean;\n`true` corresponded to `Always`, and `false` to `Never`.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "automatically_follow_topics_policy",
+                  "value": "<integer>",
+                  "description": "Which [topics to follow automatically](/help/mute-a-topic).\n\n- 1 - Topics the user participates in\n- 2 - Topics the user sends a message to\n- 3 - Topics the user starts\n- 4 - Never\n\n**Changes**: New in Zulip 8.0 (feature level 214).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "automatically_unmute_topics_in_muted_streams_policy",
+                  "value": "<integer>",
+                  "description": "Which [topics to unmute automatically in muted channels](/help/mute-a-topic).\n\n- 1 - Topics the user participates in\n- 2 - Topics the user sends a message to\n- 3 - Topics the user starts\n- 4 - Never\n\n**Changes**: New in Zulip 8.0 (feature level 214).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "automatically_follow_topics_where_mentioned",
+                  "value": "<boolean>",
+                  "description": "Whether the server will automatically mark the user as following\ntopics where the user is mentioned.\n\n**Changes**: New in Zulip 8.0 (feature level 235).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "resolved_topic_notice_auto_read_policy",
+                  "value": "<string>",
+                  "description": "Controls whether the resolved-topic notices are marked as read.\n\n- \"always\" - Always mark resolved-topic notices as read.\n- \"except_followed\" - Mark resolved-topic notices as read in topics not followed by the user.\n- \"never\" - Never mark resolved-topic notices as read.\n\n**Changes**: New in Zulip 11.0 (feature level 385).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "presence_enabled",
+                  "value": "<boolean>",
+                  "description": "Display the presence status to other users when online.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "enter_sends",
+                  "value": "<boolean>",
+                  "description": "Whether pressing Enter in the compose box sends a message\n(or saves a message edit).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "twenty_four_hour_time",
+                  "value": "<boolean>",
+                  "description": "Whether time should be [displayed in 24-hour notation](/help/change-the-time-format).\n\n**Changes**: New in Zulip 5.0 (feature level 99).\nPreviously, this default was edited using the\n`default_twenty_four_hour_time` parameter to the `PATCH /realm` endpoint.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "send_private_typing_notifications",
+                  "value": "<boolean>",
+                  "description": "Whether [typing notifications](/help/typing-notifications) be sent when composing\ndirect messages.\n\n**Changes**: New in Zulip 5.0 (feature level 105).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "send_stream_typing_notifications",
+                  "value": "<boolean>",
+                  "description": "Whether [typing notifications](/help/typing-notifications) be sent when composing\nchannel messages.\n\n**Changes**: New in Zulip 5.0 (feature level 105).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "send_read_receipts",
+                  "value": "<boolean>",
+                  "description": "Whether other users are allowed to see whether you've\nread messages.\n\n**Changes**: New in Zulip 5.0 (feature level 105).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "email_address_visibility",
+                  "value": "<integer>",
+                  "description": "The [policy][permission-level] for [which other users][help-email-visibility]\nin this organization can see the user's real email address.\n\n- 1 = Everyone\n- 2 = Members only\n- 3 = Administrators only\n- 4 = Nobody\n- 5 = Moderators only\n\n**Changes**: New in Zulip 7.0 (feature level 163), replacing the\nrealm-level setting.\n\n[permission-level]: /api/roles-and-permissions#permission-levels\n[help-email-visibility]: /help/configure-email-visibility\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "web_navigate_to_sent_message",
+                  "value": "<boolean>",
+                  "description": "Web/desktop app setting for whether the user's view should\nautomatically go to the conversation where they sent a message.\n\n**Changes**: New in Zulip 9.0 (feature level 268). Previously,\nthis behavior was not configurable.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a99735dd-027e-4502-b081-b31551880880",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "user_settings_defaults"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether clients should display the [number of starred\nmessages](/help/star-a-message#display-the-number-of-starred-messages).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "starred_message_counts",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the user is configured to receive typing notifications from other users.\nThe server will only deliver typing notifications events to users who for whom this\nis enabled.\n\n**Changes**: New in Zulip 9.0 (feature level 253). Previously, there were\nonly options to disable sending typing notifications.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "receives_typing_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the user should be shown an alert, offering to update their\n[profile time zone](/help/change-your-timezone), when the time displayed\nfor the profile time zone differs from the current time displayed by the\ntime zone configured on their device.\n\n**Changes**: New in Zulip 10.0 (feature level 329).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_suggest_update_timezone",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to use the [maximum available screen width](/help/enable-full-width-display)\nfor the web app's center panel (message feed, recent conversations) on wide screens.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "fluid_layout_width",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "This setting is reserved for use to control variations in Zulip's design\nto help visually impaired users.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "high_contrast_mode",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether or not to mark messages as read when the user scrolls through their\nfeed.\n\n- 1 - Always\n- 2 - Only in conversation views\n- 3 - Never\n\n**Changes**: New in Zulip 7.0 (feature level 175). Previously, there was no\nway for the user to configure this behavior on the web, and the Zulip web and\ndesktop apps behaved like the \"Always\" setting when marking messages as read.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_mark_read_on_scroll_policy",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Web/desktop app setting controlling the default navigation\nbehavior when clicking on a channel link.\n\n- 1 - Top topic in the channel\n- 2 - Channel feed\n- 3 - List of topics\n- 4 - Top unread topic in channel\n\n**Changes**: The \"Top unread topic in channel\" is new in Zulip 11.0\n(feature level 401).\n\nThe \"List of topics\" option is new in Zulip 11.0 (feature level 383).\n\nNew in Zulip 9.0 (feature level 269). Previously, this\nwas not configurable, and every user had the \"Channel feed\" behavior.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_channel_default_view",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "User-configured primary `font-size` for the web application, in pixels.\n\n**Changes**: New in Zulip 9.0 (feature level 245). Previously, font size was\nonly adjustable via browser zoom. Note that this setting was not fully\nimplemented at this feature level.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_font_size_px",
+                      "value": "14"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "User-configured primary `line-height` for the web application, in percent, so a\nvalue of 120 represents a `line-height` of 1.2.\n\n**Changes**: New in Zulip 9.0 (feature level 245). Previously, line height was\nnot user-configurable. Note that this setting was not fully implemented at this\nfeature level.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_line_height_percent",
+                      "value": "122"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Controls which [color theme](/help/dark-theme) to use.\n\n- 1 - Automatic\n- 2 - Dark theme\n- 3 - Light theme\n\nAutomatic detection is implementing using the standard `prefers-color-scheme`\nmedia query.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "color_scheme",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A boolean parameter to control whether synchronizing drafts is enabled for\nthe user. When synchronization is disabled, all drafts stored in the server\nwill be automatically deleted from the server.\n\nThis does not do anything (like sending events) to delete local copies of\ndrafts stored in clients.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_drafts_synchronization",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to [translate emoticons to emoji](/help/configure-emoticon-translations)\nin messages the user sends.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "translate_emoticons",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to display the names of reacting users on a message.\n\nWhen enabled, clients should display the names of reacting users, rather than\na count, for messages with few total reactions. The ideal cutoff may depend on\nthe space available for displaying reactions; the official web application\ndisplays names when 3 or fewer total reactions are present with this setting\nenabled.\n\n**Changes**: New in Zulip 6.0 (feature level 125).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "display_emoji_reaction_users",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The [home view](/help/configure-home-view) used when opening a new\nZulip web app window or hitting the `Esc` keyboard shortcut repeatedly.\n\n- \"recent\" - Recent conversations view\n- \"inbox\" - Inbox view\n- \"all_messages\" - Combined feed view\n\n**Changes**: Before Zulip 12.0 (feature level 454), the Recent\nview had `\"recent_topics\"` as its string encoding.\n\nNew in Zulip 8.0 (feature level 219). Previously, this was\ncalled `default_view`, which was new in Zulip 4.0 (feature level 42).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_home_view",
+                      "value": "all_messages"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the escape key navigates to the\n[configured home view](/help/configure-home-view).\n\n**Changes**: New in Zulip 8.0 (feature level 219). Previously, this was called\n`escape_navigates_to_default_view`, which was new in Zulip 5.0 (feature level 107).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_escape_navigates_to_home_view",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the users list on left sidebar in narrow windows.\n\nThis feature is not heavily used and is likely to be reworked.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "left_side_userlist",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The user's configured [emoji set](/help/emoji-and-emoticons#use-emoticons),\nused to display emoji to the user everywhere they appear in the UI.\n\n- \"google\" - Google\n- \"twitter\" - Twitter\n- \"text\" - Plain text\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emojiset",
+                      "value": "google"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to [hide inactive channels](/help/manage-inactive-channels) in the left sidebar.\n\n- 1 - Automatic\n- 2 - Always\n- 3 - Never\n",
+                        "type": "text/plain"
+                      },
+                      "key": "demote_inactive_streams",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The style selected by the user for the right sidebar user list.\n\n- 1 - Compact\n- 2 - With status\n- 3 - With avatar and status\n\n**Changes**: New in Zulip 6.0 (feature level 141).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "user_list_style",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Controls how animated images should be played in the message feed in the web/desktop application.\n\n- \"always\" - Always play the animated images in the message feed.\n- \"on_hover\" - Play the animated images on hover over them in the message feed.\n- \"never\" - Never play animated images in the message feed.\n\n**Changes**: New in Zulip 9.0 (feature level 275). Previously, animated images\nalways used to play in the message feed by default. This setting controls this\nbehaviour.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_animate_image_previews",
+                      "value": "on_hover"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Configuration for which channels should be displayed with a numeric unread count in the left sidebar.\nChannels that do not have an unread count will have a simple dot indicator for whether there are any\nunread messages.\n\n- 1 - All channels\n- 2 - Unmuted channels and topics\n- 3 - No channels\n\n**Changes**: New in Zulip 8.0 (feature level 210).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_stream_unreads_count_display_policy",
+                      "value": "2"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Controls whether user wants AI features like topic summarization to\nbe hidden in all Zulip clients.\n\n**Changes**: New in Zulip 10.0 (feature level 350).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "hide_ai_features",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Determines whether [channel folders](/help/channel-folders)\nare used to organize how conversations with unread messages\nare displayed in the web/desktop application's Inbox view.\n\n**Changes**: New in Zulip 12.0 (feature level 431).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_inbox_show_channel_folders",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Determines whether [channel folders](/help/channel-folders)\nare used to organize how channels are displayed in the\nweb/desktop application's left sidebar.\n\n**Changes**: New in Zulip 11.0 (feature level 411).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_left_sidebar_show_channel_folders",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Determines whether the web/desktop application's left sidebar displays\nthe unread message count summary.\n\n**Changes**: New in Zulip 11.0 (feature level 398).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_left_sidebar_unreads_count_summary",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable visual desktop notifications for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_stream_desktop_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable email notifications for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_stream_email_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable mobile notifications for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_stream_push_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable audible desktop notifications for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_stream_audible_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Notification sound name.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "notification_sound",
+                      "value": "ding"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable visual desktop notifications for direct messages and @-mentions.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_desktop_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable audible desktop notifications for direct messages and\n@-mentions.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_sounds",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable visual desktop notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_followed_topic_desktop_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable email notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_followed_topic_email_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable push notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_followed_topic_push_notifications",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable audible desktop notifications for messages sent to followed topics.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_followed_topic_audible_notifications",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The duration (in seconds) for which the server should wait to batch\nemail notifications before sending them.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "email_notifications_batching_period_seconds",
+                      "value": "120"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable email notifications for direct messages and @-mentions received\nwhen the user is offline.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_offline_email_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable mobile notification for direct messages and @-mentions received\nwhen the user is offline.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_offline_push_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable mobile notification for direct messages and @-mentions received\nwhen the user is online.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_online_push_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Enable digest emails when the user is away.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_digest_emails",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Include the message's content in email notifications for new messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "message_content_in_email_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Include content of direct messages in desktop notifications.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pm_content_in_desktop_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether wildcard mentions (E.g. @**all**) should send notifications\nlike a personal mention.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "wildcard_mentions_notify",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether wildcard mentions (e.g., @**all**) in messages sent to followed topics\nshould send notifications like a personal mention.\n\n**Changes**: New in Zulip 8.0 (feature level 189).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enable_followed_topic_wildcard_mentions_notify",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Unread count badge (appears in desktop sidebar and browser tab)\n\n- 1 - All unread messages\n- 2 - DMs, mentions, and followed topics\n- 3 - DMs and mentions\n- 4 - None\n\n**Changes**: In Zulip 8.0 (feature level 227), added `DMs, mentions, and followed\ntopics` option, renumbering the options to insert it in order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "desktop_icon_count_display",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether to [include organization name in subject of message notification\nemails](/help/email-notifications#include-organization-name-in-subject-line).\n\n- 1 - Automatic\n- 2 - Always\n- 3 - Never\n\n**Changes**: New in Zulip 7.0 (feature level 168), replacing the\nprevious `realm_name_in_notifications` boolean;\n`true` corresponded to `Always`, and `false` to `Never`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "realm_name_in_email_notifications_policy",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Which [topics to follow automatically](/help/mute-a-topic).\n\n- 1 - Topics the user participates in\n- 2 - Topics the user sends a message to\n- 3 - Topics the user starts\n- 4 - Never\n\n**Changes**: New in Zulip 8.0 (feature level 214).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "automatically_follow_topics_policy",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Which [topics to unmute automatically in muted channels](/help/mute-a-topic).\n\n- 1 - Topics the user participates in\n- 2 - Topics the user sends a message to\n- 3 - Topics the user starts\n- 4 - Never\n\n**Changes**: New in Zulip 8.0 (feature level 214).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "automatically_unmute_topics_in_muted_streams_policy",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the server will automatically mark the user as following\ntopics where the user is mentioned.\n\n**Changes**: New in Zulip 8.0 (feature level 235).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "automatically_follow_topics_where_mentioned",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Controls whether the resolved-topic notices are marked as read.\n\n- \"always\" - Always mark resolved-topic notices as read.\n- \"except_followed\" - Mark resolved-topic notices as read in topics not followed by the user.\n- \"never\" - Never mark resolved-topic notices as read.\n\n**Changes**: New in Zulip 11.0 (feature level 385).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "resolved_topic_notice_auto_read_policy",
+                      "value": "except_followed"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Display the presence status to other users when online.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "presence_enabled",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether pressing Enter in the compose box sends a message\n(or saves a message edit).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "enter_sends",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether time should be [displayed in 24-hour notation](/help/change-the-time-format).\n\n**Changes**: New in Zulip 5.0 (feature level 99).\nPreviously, this default was edited using the\n`default_twenty_four_hour_time` parameter to the `PATCH /realm` endpoint.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "twenty_four_hour_time",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether [typing notifications](/help/typing-notifications) be sent when composing\ndirect messages.\n\n**Changes**: New in Zulip 5.0 (feature level 105).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_private_typing_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether [typing notifications](/help/typing-notifications) be sent when composing\nchannel messages.\n\n**Changes**: New in Zulip 5.0 (feature level 105).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_stream_typing_notifications",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether other users are allowed to see whether you've\nread messages.\n\n**Changes**: New in Zulip 5.0 (feature level 105).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "send_read_receipts",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The [policy][permission-level] for [which other users][help-email-visibility]\nin this organization can see the user's real email address.\n\n- 1 = Everyone\n- 2 = Members only\n- 3 = Administrators only\n- 4 = Nobody\n- 5 = Moderators only\n\n**Changes**: New in Zulip 7.0 (feature level 163), replacing the\nrealm-level setting.\n\n[permission-level]: /api/roles-and-permissions#permission-levels\n[help-email-visibility]: /help/configure-email-visibility\n",
+                        "type": "text/plain"
+                      },
+                      "key": "email_address_visibility",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Web/desktop app setting for whether the user's view should\nautomatically go to the conversation where they sent a message.\n\n**Changes**: New in Zulip 9.0 (feature level 268). Previously,\nthis behavior was not configurable.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "web_navigate_to_sent_message",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"ignored_parameters_unsupported\": [\n    \"invalid_param_1\",\n    \"invalid_param_2\"\n  ],\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "47d450ca-5343-497e-b2a6-9a27e73fb627",
+          "name": "Get linkifiers",
+          "request": {
+            "name": "Get linkifiers",
+            "description": {
+              "content": "List all of an organization's configured\n[linkifiers](/help/add-a-custom-linkifier), regular\nexpression patterns that are automatically linkified when they appear\nin messages and topics.\n\n**Changes**: New in Zulip 4.0 (feature level 54). On older versions,\na similar `GET /realm/filters` endpoint was available with each entry in\na `[pattern, url_format, id]` tuple format.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "linkifiers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "66fb1f87-5175-4cae-9411-a1d14475c7ba",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "linkifiers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"linkifiers\": [\n    {\n      \"pattern\": \"#(?P<id>[0-9]+)\",\n      \"url_template\": \"https://github.com/zulip/zulip/issues/{id}\",\n      \"id\": 1,\n      \"example_input\": \"#1234\",\n      \"reverse_template\": \"#{id}\",\n      \"alternative_url_templates\": [\n        \"https://github.com/zulip/zulip/pull/{id}\"\n      ]\n    }\n  ],\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3aaa6394-f1b4-4db9-bd82-88bfdea5eec9",
+          "name": "Reorder linkifiers",
+          "request": {
+            "name": "Reorder linkifiers",
+            "description": {
+              "content": "Change the order that the regular expression patterns in the organization's\n[linkifiers](/help/add-a-custom-linkifier) are matched in messages and topics.\nUseful when defining linkifiers with overlapping patterns.\n\n**Changes**: New in Zulip 8.0 (feature level 202). Before this feature level,\nlinkifiers were always processed in order by ID, which meant users would\nneed to delete and recreate them to reorder the list of linkifiers.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "linkifiers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "ordered_linkifier_ids",
+                  "value": "<integer>",
+                  "description": "(Required) A list of the IDs of all the linkifiers defined in this\norganization, in the desired new order.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "ordered_linkifier_ids",
+                  "value": "<integer>",
+                  "description": "(Required) A list of the IDs of all the linkifiers defined in this\norganization, in the desired new order.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "133ee7cf-af59-4385-a749-d7f6e0cbf5f3",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "linkifiers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the linkifiers defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "ordered_linkifier_ids",
+                      "value": "3"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the linkifiers defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "ordered_linkifier_ids",
+                      "value": "2"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the linkifiers defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "ordered_linkifier_ids",
+                      "value": "1"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A list of the IDs of all the linkifiers defined in this\norganization, in the desired new order.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "ordered_linkifier_ids",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "da8469ae-bf5e-4f3a-890f-10cd9cd5ccb9",
+          "name": "Add a linkifier",
+          "request": {
+            "name": "Add a linkifier",
+            "description": {
+              "content": "Configure [linkifiers](/help/add-a-custom-linkifier),\nregular expression patterns that are automatically linkified when they\nappear in messages and topics.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "filters"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "pattern",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "url_template",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "example_input",
+                  "value": "<string>",
+                  "description": "An example input string that matches the linkifier's pattern.\nThis is required for reverse linkifiers.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "reverse_template",
+                  "value": "<string>",
+                  "description": "A simple template using `{variable}` for variables that can\nbe used to generate the Markdown linkifier syntax, given a\nURL matching the URL template.\n\n`{{ \"{{/}}\" }}` can be used for literal `{/}` characters.\n\nServer verifies that variables extracted from example_input using\nurl_pattern when passed to reverse_template returns example_input\nback to us.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alternative_url_templates",
+                  "value": "<string>",
+                  "description": "An array of additional [RFC 6570][rfc6570] compliant URL\ntemplate strings that are used for reverse linkification\n(converting pasted URLs to linkifier pattern text). These\ntemplates have no effect on forward linkification.\n\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n\n**Changes**: New in Zulip 12.0 (feature level e2b257).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alternative_url_templates",
+                  "value": "<string>",
+                  "description": "An array of additional [RFC 6570][rfc6570] compliant URL\ntemplate strings that are used for reverse linkification\n(converting pasted URLs to linkifier pattern text). These\ntemplates have no effect on forward linkification.\n\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n\n**Changes**: New in Zulip 12.0 (feature level e2b257).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9080967c-abb6-4e1a-a8de-4a4f377c7053",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "filters"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "pattern",
+                      "value": "#(?P<id>[0-9]+)"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "url_template",
+                      "value": "https://github.com/zulip/zulip/issues/{id}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "An example input string that matches the linkifier's pattern.\nThis is required for reverse linkifiers.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "example_input",
+                      "value": "#1234"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A simple template using `{variable}` for variables that can\nbe used to generate the Markdown linkifier syntax, given a\nURL matching the URL template.\n\n`{{ \"{{/}}\" }}` can be used for literal `{/}` characters.\n\nServer verifies that variables extracted from example_input using\nurl_pattern when passed to reverse_template returns example_input\nback to us.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "reverse_template",
+                      "value": "#{id}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "An array of additional [RFC 6570][rfc6570] compliant URL\ntemplate strings that are used for reverse linkification\n(converting pasted URLs to linkifier pattern text). These\ntemplates have no effect on forward linkification.\n\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n\n**Changes**: New in Zulip 12.0 (feature level e2b257).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "alternative_url_templates",
+                      "value": "https://github.com/zulip/zulip/pull/{id}"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 42,\n  \"result\": \"success\",\n  \"msg\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e576bb27-2bde-4712-941c-00ebb8cd2d34",
+          "name": "Remove a linkifier",
+          "request": {
+            "name": "Remove a linkifier",
+            "description": {
+              "content": "Remove [linkifiers](/help/add-a-custom-linkifier), regular\nexpression patterns that are automatically linkified when they appear\nin messages and topics.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "filters",
+                ":filter_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "filter_id",
+                  "description": "(Required) The ID of the linkifier that you want to remove.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "01bee894-6fd0-4a40-9fbe-f87b7537ff48",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "filters",
+                    ":filter_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "filter_id",
+                      "description": "(Required) The ID of the linkifier that you want to remove.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f622b27f-8ed9-4e0a-beb9-163f9cb66bea",
+          "name": "Update a linkifier",
+          "request": {
+            "name": "Update a linkifier",
+            "description": {
+              "content": "Update a [linkifier](/help/add-a-custom-linkifier), regular\nexpression patterns that are automatically linkified when they appear\nin messages and topics.\n\n**Changes**: New in Zulip 4.0 (feature level 57).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "filters",
+                ":filter_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "filter_id",
+                  "description": "(Required) The ID of the linkifier that you want to update.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "pattern",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "url_template",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "example_input",
+                  "value": "<string>",
+                  "description": "An example input string that matches the linkifier's pattern.\nThis is required for reverse linkifiers. Passing an empty string\nwill set this field back to null.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "reverse_template",
+                  "value": "<string>",
+                  "description": "A simple template using `{variable}` for variables that can\nbe used to generate the Markdown linkifier syntax, given a\nURL matching the URL template. Passing an empty string\nwill set this field back to null.\n\nServer verifies that variables extracted from example_input using\nurl_pattern when passed to reverse_template returns example_input\nback to us.\n\n`{{ \"{{/}}\" }}` can be used for literal `{/}` characters.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alternative_url_templates",
+                  "value": "<string>",
+                  "description": "An array of additional [RFC 6570][rfc6570] compliant URL\ntemplate strings that are used for reverse linkification\n(converting pasted URLs to linkifier pattern text). These\ntemplates have no effect on forward linkification.\n\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n\n**Changes**: New in Zulip 12.0 (feature level e2b257).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "alternative_url_templates",
+                  "value": "<string>",
+                  "description": "An array of additional [RFC 6570][rfc6570] compliant URL\ntemplate strings that are used for reverse linkification\n(converting pasted URLs to linkifier pattern text). These\ntemplates have no effect on forward linkification.\n\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n\n**Changes**: New in Zulip 12.0 (feature level e2b257).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b110bae3-5d7c-4c66-976a-327f1ebe8cc8",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "filters",
+                    ":filter_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "filter_id",
+                      "description": "(Required) The ID of the linkifier that you want to update.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "pattern",
+                      "value": "#(?P<id>[0-9]+)"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "url_template",
+                      "value": "https://github.com/zulip/zulip/issues/{id}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "An example input string that matches the linkifier's pattern.\nThis is required for reverse linkifiers. Passing an empty string\nwill set this field back to null.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "example_input",
+                      "value": "#1234"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A simple template using `{variable}` for variables that can\nbe used to generate the Markdown linkifier syntax, given a\nURL matching the URL template. Passing an empty string\nwill set this field back to null.\n\nServer verifies that variables extracted from example_input using\nurl_pattern when passed to reverse_template returns example_input\nback to us.\n\n`{{ \"{{/}}\" }}` can be used for literal `{/}` characters.\n\n**Changes**: New in Zulip 12.0 (feature level 471).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "reverse_template",
+                      "value": "#{id}"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "An array of additional [RFC 6570][rfc6570] compliant URL\ntemplate strings that are used for reverse linkification\n(converting pasted URLs to linkifier pattern text). These\ntemplates have no effect on forward linkification.\n\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n\n**Changes**: New in Zulip 12.0 (feature level e2b257).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "alternative_url_templates",
+                      "value": "https://github.com/zulip/zulip/pull/{id}"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "19f2b617-e92c-47df-92fb-cd49d28a7801",
+          "name": "Add a code playground",
+          "request": {
+            "name": "Add a code playground",
+            "description": {
+              "content": "Configure [code playgrounds](/help/code-blocks#code-playgrounds) for the organization.\n\n**Changes**: New in Zulip 4.0 (feature level 49). A parameter encoding bug was\nfixed in Zulip 4.0 (feature level 57).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "playgrounds"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "(Required) The user-visible display name of the playground which can be\nused to pick the target playground, especially when multiple\nplayground options exist for that programming language.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "pygments_language",
+                  "value": "<string>",
+                  "description": "(Required) The name of the Pygments language lexer for that\nprogramming language.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "url_template",
+                  "value": "<string>",
+                  "description": "(Required) The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)\ncompliant URL template for the playground. The template should\ncontain exactly one variable named `code`, which determines how the\nextracted code should be substituted in the playground URL.\n\n**Changes**: New in Zulip 8.0 (feature level 196). This replaced the\n`url_prefix` parameter, which was used to construct URLs by just\nconcatenating `url_prefix` and `code`.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "cf56ec25-78a0-4f8b-bdfd-b514be9c7808",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "playgrounds"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The user-visible display name of the playground which can be\nused to pick the target playground, especially when multiple\nplayground options exist for that programming language.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "Python playground"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The name of the Pygments language lexer for that\nprogramming language.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pygments_language",
+                      "value": "Python"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)\ncompliant URL template for the playground. The template should\ncontain exactly one variable named `code`, which determines how the\nextracted code should be substituted in the playground URL.\n\n**Changes**: New in Zulip 8.0 (feature level 196). This replaced the\n`url_prefix` parameter, which was used to construct URLs by just\nconcatenating `url_prefix` and `code`.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "url_template",
+                      "value": "https://python.example.com?code={code}"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"result\": \"success\",\n  \"msg\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6990736f-2309-420c-be5e-ff9fd9b3687b",
+          "name": "Remove a code playground",
+          "request": {
+            "name": "Remove a code playground",
+            "description": {
+              "content": "Remove a [code playground](/help/code-blocks#code-playgrounds) previously\nconfigured for an organization.\n\n**Changes**: New in Zulip 4.0 (feature level 49).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "playgrounds",
+                ":playground_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "playground_id",
+                  "description": "(Required) The ID of the playground that you want to remove.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "046ef55e-a2b8-4429-84ff-0856bc71864c",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "playgrounds",
+                    ":playground_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "playground_id",
+                      "description": "(Required) The ID of the playground that you want to remove.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0889dcca-18b0-401d-b90f-24fa19fb654e",
+          "name": "Get all data exports",
+          "request": {
+            "name": "Get all data exports",
+            "description": {
+              "content": "Fetch all the public and standard [data exports][export-data]\nof the organization.\n\n**Changes**: Prior to Zulip 10.0 (feature level 304), only\npublic data exports could be fetched using this endpoint.\n\nNew in Zulip 2.1.\n\n[export-data]: /help/export-your-organization#export-data-in-an-importable-format\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "export",
+                "realm"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2b8cc644-d447-49b8-a5a6-0f8f53def8bd",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "export",
+                    "realm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"exports\": [\n    {\n      \"acting_user_id\": 11,\n      \"deleted_timestamp\": null,\n      \"export_type\": \"public\",\n      \"export_time\": 1722243168.134179,\n      \"export_url\": \"http://example.zulipchat.com/user_avatars/exports/2/FprbwiF0c_sCN0O-rf-ryFtc/zulip-export-p6yuxc45.tar.gz\",\n      \"id\": 323,\n      \"failed_timestamp\": null,\n      \"pending\": false\n    }\n  ],\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cec3e658-9617-4e4c-b932-1a22f35b7ec8",
+          "name": "Create a data export",
+          "request": {
+            "name": "Create a data export",
+            "description": {
+              "content": "Create a public or a standard [data export][export-data] of the organization.\n\n!!! warn \"\"\n\n    **Note**: If you're the administrator of a self-hosted installation,\n    you may be looking for the documentation on [server data export and\n    import][data-export] or [server backups][backups].\n\n**Changes**: Prior to Zulip 10.0 (feature level 304), only\npublic data exports could be created using this endpoint.\n\nNew in Zulip 2.1.\n\n[export-data]: /help/export-your-organization#export-data-in-an-importable-format\n[data-export]: https://zulip.readthedocs.io/en/stable/production/export-and-import.html#data-export\n[backups]: https://zulip.readthedocs.io/en/stable/production/export-and-import.html#backups\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "export",
+                "realm"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "export_type",
+                  "value": "public",
+                  "description": "Whether the data export should be public, full with consent,\nor full without consent.\n\n- `public` = Public data only export.\n- `full_with_consent` = Public and private data export (with consent), which includes\n  private data for users who have granted consent.\n- `full_without_consent` = All public and private data export, which includes private data for\n  all users. This option requires the organization to have\n  the `owner_full_content_access` feature enabled.\n\nIf not specified, defaults to `public`.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nall export requests were public data exports.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "079e0131-95e2-47ae-8774-9cc279a6bb40",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "export",
+                    "realm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the data export should be public, full with consent,\nor full without consent.\n\n- `public` = Public data only export.\n- `full_with_consent` = Public and private data export (with consent), which includes\n  private data for users who have granted consent.\n- `full_without_consent` = All public and private data export, which includes private data for\n  all users. This option requires the organization to have\n  the `owner_full_content_access` feature enabled.\n\nIf not specified, defaults to `public`.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nall export requests were public data exports.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "export_type",
+                      "value": "full_with_consent"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"result\": \"success\",\n  \"msg\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "92d37ba9-8402-46a4-8309-4da912831d6a",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "export",
+                    "realm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the data export should be public, full with consent,\nor full without consent.\n\n- `public` = Public data only export.\n- `full_with_consent` = Public and private data export (with consent), which includes\n  private data for users who have granted consent.\n- `full_without_consent` = All public and private data export, which includes private data for\n  all users. This option requires the organization to have\n  the `owner_full_content_access` feature enabled.\n\nIf not specified, defaults to `public`.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nall export requests were public data exports.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "export_type",
+                      "value": "full_with_consent"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"Please request a manual export from zulip-admin@example.com.\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fa57f0ea-e18b-48a5-822f-851f07f152a2",
+          "name": "Get data export consent state",
+          "request": {
+            "name": "Get data export consent state",
+            "description": {
+              "content": "Fetches which users have [consented](/help/export-your-organization#configure-whether-administrators-can-export-your-private-data)\nfor their private data to be exported by organization administrators.\n\n**Changes**: Changes in Zulip 12.0 (feature level 430). Added an\ninteger field `email_address_visibility` to the objects in the\n`export_consents` array.\n\nNew in Zulip 10.0 (feature level 295).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "export",
+                "realm",
+                "consents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "784a01ef-9bba-40a6-9bb2-a2bb84064825",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "export",
+                    "realm",
+                    "consents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"export_consents\": [\n    {\n      \"user_id\": 11,\n      \"consented\": true,\n      \"email_address_visibility\": 1\n    },\n    {\n      \"user_id\": 6,\n      \"consented\": false,\n      \"email_address_visibility\": 2\n    }\n  ],\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7bd55bec-5908-4ffb-9376-c7c7214a4973",
+          "name": "Test welcome bot custom message",
+          "request": {
+            "name": "Test welcome bot custom message",
+            "description": {
+              "content": "Sends a test Welcome Bot custom message to the acting administrator.\nThis allows administrators to preview how the custom welcome message will\nappear when received by new users upon joining the organization.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "realm",
+                "test_welcome_bot_custom_message"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "welcome_message_custom_text",
+                  "value": "<string>",
+                  "description": "(Required) Custom message text, in Zulip Markdown format, to be used for\nthis test message.\n\nMaximum length is 8000 Unicode code points.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1e70f177-4fe1-4740-9178-c51cd14f274f",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "realm",
+                    "test_welcome_bot_custom_message"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Custom message text, in Zulip Markdown format, to be used for\nthis test message.\n\nMaximum length is 8000 Unicode code points.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "welcome_message_custom_text",
+                      "value": "Welcome to Zulip! We're excited to have you on board."
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"message_id\": 1\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fd97cddb-c9eb-46f3-b515-9289c180ab13",
+          "name": "Get server settings",
+          "request": {
+            "name": "Get server settings",
+            "description": {
+              "content": "Fetch global settings for a Zulip server.\n\n**Note:** this endpoint does not require any authentication at all, and you can use it to check:\n\n- If this is a Zulip server, and if so, what version of Zulip it's running.\n- What a Zulip client (e.g. a mobile app or\n  [zulip-terminal](https://github.com/zulip/zulip-terminal/)) needs to\n  know in order to display a login prompt for the server (e.g. what\n  authentication methods are available).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "server_settings"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6ff02bee-4624-4d00-8229-0c6b1b13eba6",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "server_settings"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"authentication_methods\": {\n    \"password\": true,\n    \"dev\": false,\n    \"email\": false,\n    \"ldap\": true,\n    \"remoteuser\": true,\n    \"github\": true,\n    \"azuread\": false,\n    \"gitlab\": false,\n    \"apple\": false,\n    \"google\": true,\n    \"saml\": false,\n    \"openid connect\": true,\n    \"discord\": false\n  },\n  \"external_authentication_methods\": [\n    {\n      \"name\": \"string\",\n      \"display_name\": \"string\",\n      \"display_icon\": \"string\",\n      \"login_url\": \"string\",\n      \"signup_url\": \"string\"\n    },\n    {\n      \"name\": \"string\",\n      \"display_name\": \"string\",\n      \"display_icon\": \"string\",\n      \"login_url\": \"string\",\n      \"signup_url\": \"string\"\n    }\n  ],\n  \"zulip_feature_level\": 1775,\n  \"zulip_version\": \"string\",\n  \"zulip_merge_base\": \"string\",\n  \"push_notifications_enabled\": true,\n  \"is_incompatible\": true,\n  \"email_auth_enabled\": false,\n  \"require_email_format_usernames\": true,\n  \"realm_uri\": \"string\",\n  \"realm_url\": \"string\",\n  \"realm_name\": \"string\",\n  \"realm_icon\": \"string\",\n  \"realm_description\": \"string\",\n  \"realm_web_public_access_enabled\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "9b701911-ad2c-4c3a-b5f9-8b546b99155a",
+    "name": "Zulip REST authentication server_and_organizations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

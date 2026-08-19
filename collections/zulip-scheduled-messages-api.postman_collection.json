@@ -1,0 +1,984 @@
+{
+  "item": [
+    {
+      "id": "e6ffdf4f-4ce0-47e1-8023-46d0101f831f",
+      "name": "scheduled_messages",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "a745d556-110f-4569-8996-ca41e31250e5",
+          "name": "Get scheduled messages",
+          "request": {
+            "name": "Get scheduled messages",
+            "description": {
+              "content": "Fetch all [scheduled messages](/help/schedule-a-message) for\nthe current user.\n\nScheduled messages are messages the user has scheduled to be\nsent in the future via the send later feature.\n\n**Changes**: New in Zulip 7.0 (feature level 173).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scheduled_messages"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b1aa8e63-8de3-4704-8105-5a3424860af7",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"scheduled_messages\": [\n    {\n      \"scheduled_message_id\": 27,\n      \"to\": 14,\n      \"type\": \"stream\",\n      \"content\": \"Hi\",\n      \"rendered_content\": \"<p>Hi</p>\",\n      \"topic\": \"Introduction\",\n      \"scheduled_delivery_timestamp\": 1681662420,\n      \"failed\": false\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "545022fa-be8e-42f3-b22b-b6cfbd5ddd86",
+          "name": "Create a scheduled message",
+          "request": {
+            "name": "Create a scheduled message",
+            "description": {
+              "content": "Create a new [scheduled message](/help/schedule-a-message).\n\n**Changes**: In Zulip 7.0 (feature level 184), moved support for\n[editing a scheduled message](/api/update-scheduled-message) to a\nseparate API endpoint, which removed the `scheduled_message_id`\nparameter from this endpoint.\n\nNew in Zulip 7.0 (feature level 179).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scheduled_messages"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "(Required) The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<integer>",
+                  "description": "(Required) The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "content",
+                  "value": "<string>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "scheduled_delivery_timestamp",
+                  "value": "<integer>",
+                  "description": "(Required) The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "topic",
+                  "value": "<string>",
+                  "description": "The topic of the message. Only required for channel messages\n(`\"type\": \"stream\"` or `\"type\": \"channel\"`), ignored otherwise.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "read_by_sender",
+                  "value": "<boolean>",
+                  "description": "Whether the message should be initially marked read by its\nsender. If unspecified, the server uses a heuristic based\non the client name and the recipient.\n\n**Changes**: New in Zulip 8.0 (feature level 236).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2e92cdbb-ffe6-4c03-98d7-0b3f3ddf4cce",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "direct"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "scheduled_delivery_timestamp",
+                      "value": "3165826990"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The topic of the message. Only required for channel messages\n(`\"type\": \"stream\"` or `\"type\": \"channel\"`), ignored otherwise.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the message should be initially marked read by its\nsender. If unspecified, the server uses a heuristic based\non the client name and the recipient.\n\n**Changes**: New in Zulip 8.0 (feature level 236).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "read_by_sender",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"scheduled_message_id\": 42,\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e9c0a406-487a-47d9-890a-a9476c2afe3d",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "direct"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "scheduled_delivery_timestamp",
+                      "value": "3165826990"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The topic of the message. Only required for channel messages\n(`\"type\": \"stream\"` or `\"type\": \"channel\"`), ignored otherwise.\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the message should be initially marked read by its\nsender. If unspecified, the server uses a heuristic based\non the client name and the recipient.\n\n**Changes**: New in Zulip 8.0 (feature level 236).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "read_by_sender",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"STREAM_DOES_NOT_EXIST\",\n  \"msg\": \"Channel with ID '9' does not exist\",\n  \"result\": \"error\",\n  \"stream_id\": 9\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5a77aa29-1629-4904-870d-0402be0ea662",
+          "name": "Edit a scheduled message",
+          "request": {
+            "name": "Edit a scheduled message",
+            "description": {
+              "content": "Edit an existing [scheduled message](/help/schedule-a-message).\n\n**Changes**: New in Zulip 7.0 (feature level 184).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scheduled_messages",
+                ":scheduled_message_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "scheduled_message_id",
+                  "description": "(Required) The ID of the scheduled message to update.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nWhen updating the type of the scheduled message, the `to` parameter\nis required. And, if updating the type of the scheduled message to\n`\"stream\"`/`\"channel\"`, then the `topic` parameter is also required.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<integer>",
+                  "description": "The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n\nRequired when updating the `type` of the scheduled message.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "content",
+                  "value": "<string>",
+                  "description": "The updated content of the scheduled message.\n\nClients should use the `max_message_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum message size.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "topic",
+                  "value": "<string>",
+                  "description": "The updated topic of the scheduled message.\n\nRequired when updating the `type` of the scheduled message to\n`\"stream\"` or `\"channel\"`. Ignored when the existing or updated\n`type` of the scheduled message is `\"direct\"` (or `\"private\"`).\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "scheduled_delivery_timestamp",
+                  "value": "<integer>",
+                  "description": "The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n\nRequired when updating a scheduled message that the server\nhas already tried and failed to send. This state is indicated\nwith `\"failed\": true` in `scheduled_messages` objects; see\nresponse description at\n[`GET /scheduled_messages`](/api/get-scheduled-messages#response).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e2553d6b-8445-4ac6-97c1-f51797ff2ba7",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages",
+                    ":scheduled_message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "scheduled_message_id",
+                      "description": "(Required) The ID of the scheduled message to update.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nWhen updating the type of the scheduled message, the `to` parameter\nis required. And, if updating the type of the scheduled message to\n`\"stream\"`/`\"channel\"`, then the `topic` parameter is also required.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "stream"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n\nRequired when updating the `type` of the scheduled message.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The updated content of the scheduled message.\n\nClients should use the `max_message_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum message size.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The updated topic of the scheduled message.\n\nRequired when updating the `type` of the scheduled message to\n`\"stream\"` or `\"channel\"`. Ignored when the existing or updated\n`type` of the scheduled message is `\"direct\"` (or `\"private\"`).\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n\nRequired when updating a scheduled message that the server\nhas already tried and failed to send. This state is indicated\nwith `\"failed\": true` in `scheduled_messages` objects; see\nresponse description at\n[`GET /scheduled_messages`](/api/get-scheduled-messages#response).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "scheduled_delivery_timestamp",
+                      "value": "3165826990"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "54386c16-450d-4dbf-a2fe-d735880849a2",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages",
+                    ":scheduled_message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "scheduled_message_id",
+                      "description": "(Required) The ID of the scheduled message to update.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nWhen updating the type of the scheduled message, the `to` parameter\nis required. And, if updating the type of the scheduled message to\n`\"stream\"`/`\"channel\"`, then the `topic` parameter is also required.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "stream"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n\nRequired when updating the `type` of the scheduled message.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The updated content of the scheduled message.\n\nClients should use the `max_message_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum message size.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The updated topic of the scheduled message.\n\nRequired when updating the `type` of the scheduled message to\n`\"stream\"` or `\"channel\"`. Ignored when the existing or updated\n`type` of the scheduled message is `\"direct\"` (or `\"private\"`).\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n\nRequired when updating a scheduled message that the server\nhas already tried and failed to send. This state is indicated\nwith `\"failed\": true` in `scheduled_messages` objects; see\nresponse description at\n[`GET /scheduled_messages`](/api/get-scheduled-messages#response).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "scheduled_delivery_timestamp",
+                      "value": "3165826990"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"STREAM_DOES_NOT_EXIST\",\n  \"msg\": \"Channel with ID '9' does not exist\",\n  \"result\": \"error\",\n  \"stream_id\": 9\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1853c112-71b4-434b-bbc6-5fa8e7d5ce7f",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages",
+                    ":scheduled_message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "scheduled_message_id",
+                      "description": "(Required) The ID of the scheduled message to update.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The type of scheduled message to be sent. `\"direct\"` for a direct\nmessage and `\"stream\"` or `\"channel\"` for a channel message.\n\nWhen updating the type of the scheduled message, the `to` parameter\nis required. And, if updating the type of the scheduled message to\n`\"stream\"`/`\"channel\"`, then the `topic` parameter is also required.\n\nNote that, while `\"private\"` is supported for scheduling direct\nmessages, clients are encouraged to use to the modern convention of\n`\"direct\"` to indicate this message type, because support for\n`\"private\"` may eventually be removed.\n\n**Changes**: In Zulip 9.0 (feature level 248), `\"channel\"` was added as\nan additional value for this parameter to indicate the type of a channel\nmessage.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "type",
+                      "value": "stream"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The scheduled message's tentative target audience.\n\nFor channel messages, the integer ID of the channel.\nFor direct messages, a list containing integer user IDs.\n\nRequired when updating the `type` of the scheduled message.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "to",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The updated content of the scheduled message.\n\nClients should use the `max_message_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum message size.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "content",
+                      "value": "Hello"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The updated topic of the scheduled message.\n\nRequired when updating the `type` of the scheduled message to\n`\"stream\"` or `\"channel\"`. Ignored when the existing or updated\n`type` of the scheduled message is `\"direct\"` (or `\"private\"`).\n\nClients should use the `max_topic_length` returned by the\n[`POST /register`](/api/register-queue) endpoint to determine\nthe maximum topic length.\n\nNote: When `\"(no topic)\"` or the value of `realm_empty_topic_display_name`\nfound in the [POST /register](/api/register-queue) response is used for this\nparameter, it is interpreted as an empty string.\n\nWhen [topics are required](/help/require-topics), this parameter can't\nbe `\"(no topic)\"`, an empty string, or the value of `realm_empty_topic_display_name`.\n\n**Changes**: Before Zulip 10.0 (feature level 370), `\"(no topic)\"`\nwas not interpreted as an empty string.\n\nBefore Zulip 10.0 (feature level 334), empty string\nwas not a valid topic name for channel messages.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "topic",
+                      "value": "Castle"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The UNIX timestamp for when the message will be sent,\nin UTC seconds.\n\nRequired when updating a scheduled message that the server\nhas already tried and failed to send. This state is indicated\nwith `\"failed\": true` in `scheduled_messages` objects; see\nresponse description at\n[`GET /scheduled_messages`](/api/get-scheduled-messages#response).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "scheduled_delivery_timestamp",
+                      "value": "3165826990"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\",\n  \"msg\": \"Scheduled message does not exist\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8e91d2dc-cc60-4595-9301-31450aa24c0f",
+          "name": "Delete a scheduled message",
+          "request": {
+            "name": "Delete a scheduled message",
+            "description": {
+              "content": "Delete, and therefore cancel sending, a previously [scheduled\nmessage](/help/schedule-a-message).\n\n**Changes**: New in Zulip 7.0 (feature level 173).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "scheduled_messages",
+                ":scheduled_message_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "scheduled_message_id",
+                  "description": "(Required) The ID of the scheduled message to delete.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                },
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "dc1420d9-2b04-45e5-98ee-44264eac22ac",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages",
+                    ":scheduled_message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "scheduled_message_id",
+                      "description": "(Required) The ID of the scheduled message to delete.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dba13e6f-b6b1-4223-869d-77449e2972da",
+              "name": "Not Found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "scheduled_messages",
+                    ":scheduled_message_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "scheduled_message_id",
+                      "description": "(Required) The ID of the scheduled message to delete.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"result\": \"error\",\n  \"msg\": \"Scheduled message does not exist\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "800a34a1-dd47-4b39-807e-14c23cad7719",
+    "name": "Zulip REST authentication scheduled_messages API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

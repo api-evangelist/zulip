@@ -1,0 +1,29 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication webhooks API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Outgoing webhooks",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/zulip-outgoing-webhook"
+          },
+          "docs": "Outgoing webhooks allow you to build or set up Zulip integrations which are\nnotified when certain types of messages are sent in Zulip.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

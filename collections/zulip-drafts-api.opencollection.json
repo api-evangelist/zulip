@@ -1,0 +1,182 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication drafts API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "drafts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get drafts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/drafts"
+          },
+          "docs": "Fetch all drafts for the current user.\n"
+        },
+        {
+          "info": {
+            "name": "Create drafts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/drafts",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "drafts",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create one or more drafts on the server. These drafts will be automatically\nsynchronized to other clients via `drafts` events.\n"
+        },
+        {
+          "info": {
+            "name": "Edit a draft",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/drafts/:draft_id",
+            "params": [
+              {
+                "name": "draft_id",
+                "value": "2",
+                "type": "path",
+                "description": "The ID of the draft to be edited.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "draft",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Edit a draft on the server. The edit will be automatically\nsynchronized to other clients via `drafts` events.\n"
+        },
+        {
+          "info": {
+            "name": "Delete a draft",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/drafts/:draft_id",
+            "params": [
+              {
+                "name": "draft_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the draft you want to delete.\n"
+              }
+            ]
+          },
+          "docs": "Delete a single draft from the server. The deletion will be automatically\nsynchronized to other clients via a `drafts` event.\n"
+        },
+        {
+          "info": {
+            "name": "Get all saved snippets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/saved_snippets"
+          },
+          "docs": "Fetch all the saved snippets for the current user.\n\n**Changes**: New in Zulip 10.0 (feature level 297).\n"
+        },
+        {
+          "info": {
+            "name": "Create a saved snippet",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/saved_snippets",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "title",
+                  "value": ""
+                },
+                {
+                  "name": "content",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a new saved snippet for the current user.\n\n**Changes**: New in Zulip 10.0 (feature level 297).\n"
+        },
+        {
+          "info": {
+            "name": "Edit a saved snippet",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/saved_snippets/:saved_snippet_id",
+            "params": [
+              {
+                "name": "saved_snippet_id",
+                "value": "3",
+                "type": "path",
+                "description": "The ID of the saved snippet to edit.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "title",
+                  "value": ""
+                },
+                {
+                  "name": "content",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Edit a saved snippet for the current user.\n\n**Changes**: New in Zulip 10.0 (feature level 368).\n"
+        },
+        {
+          "info": {
+            "name": "Delete a saved snippet",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/saved_snippets/:saved_snippet_id",
+            "params": [
+              {
+                "name": "saved_snippet_id",
+                "value": "2",
+                "type": "path",
+                "description": "The ID of the saved snippet to delete.\n"
+              }
+            ]
+          },
+          "docs": "Delete a saved snippet.\n\n**Changes**: New in Zulip 10.0 (feature level 297).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

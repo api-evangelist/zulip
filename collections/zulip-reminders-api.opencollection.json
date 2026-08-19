@@ -1,0 +1,76 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication reminders API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "reminders",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get reminders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/reminders"
+          },
+          "docs": "Fetch all [reminders](/help/schedule-a-reminder) for the\ncurrent user.\n\nReminders are messages the user has scheduled to be sent in the\nfuture to themself.\n\n**Changes**: New in Zulip 11.0 (feature level 399).\n"
+        },
+        {
+          "info": {
+            "name": "Create a message reminder",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/reminders",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "message_id",
+                  "value": ""
+                },
+                {
+                  "name": "scheduled_delivery_timestamp",
+                  "value": ""
+                },
+                {
+                  "name": "note",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Schedule a reminder to be sent to the current user at the specified time. The reminder will link the relevant message.\n\n**Changes**: New in Zulip 11.0 (feature level 381).\n"
+        },
+        {
+          "info": {
+            "name": "Delete a reminder",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/reminders/:reminder_id",
+            "params": [
+              {
+                "name": "reminder_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the reminder to delete.\n\nThis is different from the unique ID that the message would have\nafter being sent.\n"
+              }
+            ]
+          },
+          "docs": "Delete, and therefore cancel sending, a previously [scheduled\nreminder](/help/schedule-a-reminder).\n\n**Changes**: New in Zulip 11.0 (feature level 399).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

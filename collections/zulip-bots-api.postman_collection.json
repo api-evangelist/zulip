@@ -1,0 +1,553 @@
+{
+  "item": [
+    {
+      "id": "06c9ff8c-c30e-483f-a6c1-85c5f6ef411c",
+      "name": "bots",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "63ec24db-f106-4ad2-93ed-10f4814f4a37",
+          "name": "Get a bot's stored data",
+          "request": {
+            "name": "Get a bot's stored data",
+            "description": {
+              "content": "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nRetrieve [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "bot_storage"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "description": {
+                    "content": "A JSON-encoded list of keys for data in the bot's storage.\n\nIf not provided, then all data that's stored for the bot is\nreturned.\n",
+                    "type": "text/plain"
+                  },
+                  "key": "keys",
+                  "value": ""
+                }
+              ],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b97775d1-2fb0-47f8-a537-d42a4ed44f00",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "bot_storage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "keys",
+                      "value": ""
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"success\",\n  \"msg\": \"\",\n  \"storage\": {\n    \"foo\": \"bar\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5e0af65b-ed8c-4f73-b910-555d9a91c58e",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "bot_storage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "keys",
+                      "value": ""
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"Key does not exist.\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f260c51d-c313-469f-8612-8350e139f989",
+          "name": "Update a bot's stored data",
+          "request": {
+            "name": "Update a bot's stored data",
+            "description": {
+              "content": "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nAdd or update [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\nEach bot has a limited storage set by the server, which normally is a\ndefault of 10,000,000 characters.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "bot_storage"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "key_0",
+                  "value": "<string>",
+                  "description": "(Required) A JSON-encoded dictionary mapping string keys to string values\nthat will be added to the bot's storage.\n\nIf the bot's storage already has a specific key, then the value\nstored for that key will be updated for the new value.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "19d9cd19-3489-4c91-ad37-5b1c528fa878",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "bot_storage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A JSON-encoded dictionary mapping string keys to string values\nthat will be added to the bot's storage.\n\nIf the bot's storage already has a specific key, then the value\nstored for that key will be updated for the new value.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "foo",
+                      "value": "bar"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1a7d1be8-98bb-46f1-a503-bfa9e002130b",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "bot_storage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) A JSON-encoded dictionary mapping string keys to string values\nthat will be added to the bot's storage.\n\nIf the bot's storage already has a specific key, then the value\nstored for that key will be updated for the new value.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "foo",
+                      "value": "bar"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"Request exceeds storage limit by 42 characters. The limit is 10000000 characters.\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "61241676-e44d-46e1-9b78-014979dc02fd",
+          "name": "Remove a bot's stored data",
+          "request": {
+            "name": "Remove a bot's stored data",
+            "description": {
+              "content": "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nDelete [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "bot_storage"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "keys",
+                  "value": "<string>",
+                  "description": "A JSON-encoded list of keys to delete from the bot's storage.\n\nIf not provided, then all data that's stored for the bot is\ndeleted.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "keys",
+                  "value": "<string>",
+                  "description": "A JSON-encoded list of keys to delete from the bot's storage.\n\nIf not provided, then all data that's stored for the bot is\ndeleted.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3a8c4f65-da23-4125-9aa5-f0e7e73b2f1b",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "bot_storage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A JSON-encoded list of keys to delete from the bot's storage.\n\nIf not provided, then all data that's stored for the bot is\ndeleted.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "keys",
+                      "value": "foo"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1cb488e6-9fd2-4370-87bb-81b081ab9991",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "bot_storage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "A JSON-encoded list of keys to delete from the bot's storage.\n\nIf not provided, then all data that's stored for the bot is\ndeleted.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "keys",
+                      "value": "foo"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_REQUEST\",\n  \"msg\": \"Key does not exist.\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "ec8a8a2e-d1e0-4fc7-83b7-a9a49e46aca3",
+    "name": "Zulip REST authentication bots API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication bots API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "bots",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a bot's stored data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/bot_storage",
+            "params": [
+              {
+                "name": "keys",
+                "value": "",
+                "type": "query",
+                "description": "A JSON-encoded list of keys for data in the bot's storage.\n\nIf not provided, then all data that's stored for the bot is\nreturned.\n"
+              }
+            ]
+          },
+          "docs": "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nRetrieve [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+        },
+        {
+          "info": {
+            "name": "Update a bot's stored data",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/bot_storage",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "storage",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nAdd or update [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\nEach bot has a limited storage set by the server, which normally is a\ndefault of 10,000,000 characters.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+        },
+        {
+          "info": {
+            "name": "Remove a bot's stored data",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/bot_storage",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "keys",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nDelete [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

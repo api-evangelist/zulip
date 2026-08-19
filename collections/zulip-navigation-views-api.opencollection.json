@@ -1,0 +1,95 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication navigation_views API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "navigation_views",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get all navigation views",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/navigation_views"
+          },
+          "docs": "Fetch all configured custom navigation views for the current user.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n"
+        },
+        {
+          "info": {
+            "name": "Add a navigation view",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/navigation_views",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            }
+          },
+          "docs": "Adds a new custom left sidebar navigation view configuration\nfor the current user.\n\nThis can be used both to configure built-in navigation views,\nor to add new navigation views.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n"
+        },
+        {
+          "info": {
+            "name": "Update the navigation view",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/navigation_views/:fragment",
+            "params": [
+              {
+                "name": "fragment",
+                "value": "narrow/is/alerted",
+                "type": "path",
+                "description": "The unique URL hash of the navigation view to be updated.\n\nThis also serves as the identifier for the navigation view.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "is_pinned",
+                  "value": ""
+                },
+                {
+                  "name": "name",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update the details of an existing configured navigation view,\nsuch as its name or whether it's pinned.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n"
+        },
+        {
+          "info": {
+            "name": "Remove a navigation view",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/navigation_views/:fragment",
+            "params": [
+              {
+                "name": "fragment",
+                "value": "narrow/is/alerted",
+                "type": "path",
+                "description": "The unique URL hash of the navigation view to be removed.\n\nThis also serves as the identifier for the navigation view.\n"
+              }
+            ]
+          },
+          "docs": "Remove a navigation view.\n\n**Changes**: New in Zulip 11.0 (feature level 390).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

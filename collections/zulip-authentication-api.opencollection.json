@@ -1,0 +1,97 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Fetch an API key (production)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/fetch_api_key",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "username",
+                  "value": ""
+                },
+                {
+                  "name": "password",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "This API endpoint is used by clients such as the Zulip mobile and\nterminal apps to implement password-based authentication. Given the\nuser's Zulip login credentials, it returns a Zulip API key that the client\ncan use to make requests as the user.\n\nThis endpoint is only useful for Zulip servers/organizations with\nEmailAuthBackend or LDAPAuthBackend enabled.\n\nThe Zulip mobile apps also support SSO/social authentication (GitHub\nauth, Google auth, SAML, etc.) that does not use this endpoint. Instead"
+        },
+        {
+          "info": {
+            "name": "Fetch an API key (JWT)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/jwt/fetch_api_key",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "token",
+                  "value": ""
+                },
+                {
+                  "name": "include_profile",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "This API endpoint is used by clients to implement JSON Web Token\n(JWT) authentication. Given a JWT identifying a Zulip user, it\nreturns a Zulip API key that the client can use to make requests\nas the user.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only useful for Zulip servers/organizations\n    with [JSON web token authentication][prod-jwt-auth] enabled.\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to manage API keys manually.\n\n**Changes**: New in Zulip 7.0 (featur"
+        },
+        {
+          "info": {
+            "name": "Fetch an API key (development only)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/dev_fetch_api_key",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "username",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "For easy testing of mobile apps and other clients and against Zulip\ndevelopment servers, we support fetching a Zulip API key for any user\non the development server without authentication (so that they can\nimplement analogues of the one-click login process available for Zulip\ndevelopment servers on the web).\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n"
+        },
+        {
+          "info": {
+            "name": "List users (development only)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/dev_list_users"
+          },
+          "docs": "Get a list of all, non-bot users in a [Zulip development\nserver](https://zulip.readthedocs.io/en/latest/development/overview.html).\nThis endpoint is used by mobile developers to fetch users for the\ndevelopment login flow.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

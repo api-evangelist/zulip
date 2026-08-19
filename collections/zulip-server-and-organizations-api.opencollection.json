@@ -1,0 +1,751 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication server_and_organizations API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "server_and_organizations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Upload custom emoji",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/emoji/:emoji_name",
+            "params": [
+              {
+                "name": "emoji_name",
+                "value": "smile",
+                "type": "path",
+                "description": "The name that should be associated with the uploaded emoji image/gif.\nThe emoji name can only contain letters, numbers, dashes, and spaces.\nUpper and lower case letters are treated the same, and underscores (\\_)\nare treated the same as spaces (consistent with how the Zulip UI\nhandles emoji).\n"
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "filename",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "This endpoint is used to upload a custom emoji for use in the user's\norganization. Access to this endpoint depends on the\n[organization's configuration](https://zulip.com/help/custom-emoji#change-who-can-add-custom-emoji).\n"
+        },
+        {
+          "info": {
+            "name": "Deactivate custom emoji",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/emoji/:emoji_name",
+            "params": [
+              {
+                "name": "emoji_name",
+                "value": "green_tick",
+                "type": "path",
+                "description": "The name of the custom emoji to deactivate.\n"
+              }
+            ]
+          },
+          "docs": "[Deactivate a custom emoji](/help/custom-emoji#deactivate-custom-emoji) from\nthe user's organization.\n\nUsers can only deactivate custom emoji that they added themselves except for\norganization administrators, who can deactivate any custom emoji.\n\nNote that deactivated emoji will still be visible in old messages, reactions,\nuser statuses and channel descriptions.\n\n**Changes**: Before Zulip 8.0 (feature level 190), this endpoint returned an\nHTTP status code of 400 when the emoji did not exist, ins"
+        },
+        {
+          "info": {
+            "name": "Get all custom emoji",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/emoji"
+          },
+          "docs": "Get all the custom emoji in the user's organization.\n"
+        },
+        {
+          "info": {
+            "name": "Get presence of all users",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/presence"
+          },
+          "docs": "Get the presence information of all the users in an organization.\n\nIf the `CAN_ACCESS_ALL_USERS_GROUP_LIMITS_PRESENCE` server-level\nsetting is set to `true`, presence information of only accessible\nusers are returned.\n\nComplete Zulip apps are recommended to fetch presence\ninformation when they post their own state using the [`POST\n/presence`](/api/update-presence) API endpoint.\n"
+        },
+        {
+          "info": {
+            "name": "Get allowed domains",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/domains"
+          },
+          "docs": "Get the set of allowed domains configured in the organization for user\naccount email addresses.\n\nAs each Zulip user account is associated with an email address, organization\nowners can [restrict new account creation (and email\nchanges)](/help/restrict-account-creation) to email addresses with these\ndomains.\n"
+        },
+        {
+          "info": {
+            "name": "Add an allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/domains",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "domain",
+                  "value": ""
+                },
+                {
+                  "name": "allow_subdomains",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Add a domain to the set of allowed domains configured in the organization\nfor [user account email addresses](/help/restrict-account-creation).\n\n**Changes**: Prior to Zulip 6.0 (feature level 143), organization\nadministrators who were not owners could access this endpoint.\n"
+        },
+        {
+          "info": {
+            "name": "Update an allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/domains/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path",
+                "description": "The domain to update.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "allow_subdomains",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update whether subdomains are allowed in [user account email\naddresses](/help/restrict-account-creation) for the specified domain.\n\n**Changes**: Prior to Zulip 6.0 (feature level 143), organization\nadministrators who were not owners could access this endpoint.\n"
+        },
+        {
+          "info": {
+            "name": "Remove an allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/domains/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path",
+                "description": "The domain to remove.\n"
+              }
+            ]
+          },
+          "docs": "Remove the specified domain from the set of allowed domains configured in\nthe organization for [user account email addresses](/help/restrict-account-creation).\n\n**Changes**: Prior to Zulip 6.0 (feature level 143), organization\nadministrators who were not owners could access this endpoint.\n"
+        },
+        {
+          "info": {
+            "name": "Get all custom profile fields",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/profile_fields"
+          },
+          "docs": "Get all the [custom profile fields](/help/custom-profile-fields)\nconfigured for the user's organization.\n"
+        },
+        {
+          "info": {
+            "name": "Create a custom profile field",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/profile_fields",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "name",
+                  "value": ""
+                },
+                {
+                  "name": "hint",
+                  "value": ""
+                },
+                {
+                  "name": "field_type",
+                  "value": ""
+                },
+                {
+                  "name": "field_data",
+                  "value": ""
+                },
+                {
+                  "name": "display_in_profile_summary",
+                  "value": ""
+                },
+                {
+                  "name": "required",
+                  "value": ""
+                },
+                {
+                  "name": "editable_by_user",
+                  "value": ""
+                },
+                {
+                  "name": "use_for_user_matching",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "[Create a custom profile field](/help/custom-profile-fields#add-a-custom-profile-field) in the user's organization.\n"
+        },
+        {
+          "info": {
+            "name": "Reorder custom profile fields",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/profile_fields",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "order",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Reorder the custom profile fields in the user's organization.\n\nCustom profile fields are displayed in Zulip UI widgets in order; this\nendpoint allows administrative settings UI to change the field ordering.\n\nThis endpoint is used to implement the dragging feature described in the\n[custom profile fields documentation](/help/custom-profile-fields).\n"
+        },
+        {
+          "info": {
+            "name": "Update realm-level defaults of user settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/user_settings_defaults",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "starred_message_counts",
+                  "value": ""
+                },
+                {
+                  "name": "receives_typing_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "web_suggest_update_timezone",
+                  "value": ""
+                },
+                {
+                  "name": "fluid_layout_width",
+                  "value": ""
+                },
+                {
+                  "name": "high_contrast_mode",
+                  "value": ""
+                },
+                {
+                  "name": "web_mark_read_on_scroll_policy",
+                  "value": ""
+                },
+                {
+                  "name": "web_channel_default_view",
+                  "value": ""
+                },
+                {
+                  "name": "web_font_size_px",
+                  "value": ""
+                },
+                {
+                  "name": "web_line_height_percent",
+                  "value": ""
+                },
+                {
+                  "name": "color_scheme",
+                  "value": ""
+                },
+                {
+                  "name": "enable_drafts_synchronization",
+                  "value": ""
+                },
+                {
+                  "name": "translate_emoticons",
+                  "value": ""
+                },
+                {
+                  "name": "display_emoji_reaction_users",
+                  "value": ""
+                },
+                {
+                  "name": "web_home_view",
+                  "value": ""
+                },
+                {
+                  "name": "web_escape_navigates_to_home_view",
+                  "value": ""
+                },
+                {
+                  "name": "left_side_userlist",
+                  "value": ""
+                },
+                {
+                  "name": "emojiset",
+                  "value": ""
+                },
+                {
+                  "name": "demote_inactive_streams",
+                  "value": ""
+                },
+                {
+                  "name": "user_list_style",
+                  "value": ""
+                },
+                {
+                  "name": "web_animate_image_previews",
+                  "value": ""
+                },
+                {
+                  "name": "web_stream_unreads_count_display_policy",
+                  "value": ""
+                },
+                {
+                  "name": "hide_ai_features",
+                  "value": ""
+                },
+                {
+                  "name": "web_inbox_show_channel_folders",
+                  "value": ""
+                },
+                {
+                  "name": "web_left_sidebar_show_channel_folders",
+                  "value": ""
+                },
+                {
+                  "name": "web_left_sidebar_unreads_count_summary",
+                  "value": ""
+                },
+                {
+                  "name": "enable_stream_desktop_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_stream_email_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_stream_push_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_stream_audible_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "notification_sound",
+                  "value": ""
+                },
+                {
+                  "name": "enable_desktop_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_sounds",
+                  "value": ""
+                },
+                {
+                  "name": "enable_followed_topic_desktop_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_followed_topic_email_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_followed_topic_push_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_followed_topic_audible_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "email_notifications_batching_period_seconds",
+                  "value": ""
+                },
+                {
+                  "name": "enable_offline_email_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_offline_push_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_online_push_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "enable_digest_emails",
+                  "value": ""
+                },
+                {
+                  "name": "message_content_in_email_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "pm_content_in_desktop_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "wildcard_mentions_notify",
+                  "value": ""
+                },
+                {
+                  "name": "enable_followed_topic_wildcard_mentions_notify",
+                  "value": ""
+                },
+                {
+                  "name": "desktop_icon_count_display",
+                  "value": ""
+                },
+                {
+                  "name": "realm_name_in_email_notifications_policy",
+                  "value": ""
+                },
+                {
+                  "name": "automatically_follow_topics_policy",
+                  "value": ""
+                },
+                {
+                  "name": "automatically_unmute_topics_in_muted_streams_policy",
+                  "value": ""
+                },
+                {
+                  "name": "automatically_follow_topics_where_mentioned",
+                  "value": ""
+                },
+                {
+                  "name": "resolved_topic_notice_auto_read_policy",
+                  "value": ""
+                },
+                {
+                  "name": "presence_enabled",
+                  "value": ""
+                },
+                {
+                  "name": "enter_sends",
+                  "value": ""
+                },
+                {
+                  "name": "twenty_four_hour_time",
+                  "value": ""
+                },
+                {
+                  "name": "send_private_typing_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "send_stream_typing_notifications",
+                  "value": ""
+                },
+                {
+                  "name": "send_read_receipts",
+                  "value": ""
+                },
+                {
+                  "name": "email_address_visibility",
+                  "value": ""
+                },
+                {
+                  "name": "web_navigate_to_sent_message",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Change the [default values of settings][new-user-defaults] for new users\njoining the organization. Essentially all\n[personal preference settings](/api/update-settings) are supported.\n\nThis feature can be invaluable for customizing Zulip's default\nsettings for notifications or UI to be appropriate for how the\norganization is using Zulip. (Note that this only supports\npersonal preference settings, like when to send push\nnotifications or what emoji set to use, not profile or\nidentity settings that "
+        },
+        {
+          "info": {
+            "name": "Get linkifiers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/linkifiers"
+          },
+          "docs": "List all of an organization's configured\n[linkifiers](/help/add-a-custom-linkifier), regular\nexpression patterns that are automatically linkified when they appear\nin messages and topics.\n\n**Changes**: New in Zulip 4.0 (feature level 54). On older versions,\na similar `GET /realm/filters` endpoint was available with each entry in\na `[pattern, url_format, id]` tuple format.\n"
+        },
+        {
+          "info": {
+            "name": "Reorder linkifiers",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/linkifiers",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "ordered_linkifier_ids",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Change the order that the regular expression patterns in the organization's\n[linkifiers](/help/add-a-custom-linkifier) are matched in messages and topics.\nUseful when defining linkifiers with overlapping patterns.\n\n**Changes**: New in Zulip 8.0 (feature level 202). Before this feature level,\nlinkifiers were always processed in order by ID, which meant users would\nneed to delete and recreate them to reorder the list of linkifiers.\n"
+        },
+        {
+          "info": {
+            "name": "Add a linkifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/filters",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "pattern",
+                  "value": ""
+                },
+                {
+                  "name": "url_template",
+                  "value": ""
+                },
+                {
+                  "name": "example_input",
+                  "value": ""
+                },
+                {
+                  "name": "reverse_template",
+                  "value": ""
+                },
+                {
+                  "name": "alternative_url_templates",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Configure [linkifiers](/help/add-a-custom-linkifier),\nregular expression patterns that are automatically linkified when they\nappear in messages and topics.\n"
+        },
+        {
+          "info": {
+            "name": "Update a linkifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/filters/:filter_id",
+            "params": [
+              {
+                "name": "filter_id",
+                "value": "5",
+                "type": "path",
+                "description": "The ID of the linkifier that you want to update.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "pattern",
+                  "value": ""
+                },
+                {
+                  "name": "url_template",
+                  "value": ""
+                },
+                {
+                  "name": "example_input",
+                  "value": ""
+                },
+                {
+                  "name": "reverse_template",
+                  "value": ""
+                },
+                {
+                  "name": "alternative_url_templates",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update a [linkifier](/help/add-a-custom-linkifier), regular\nexpression patterns that are automatically linkified when they appear\nin messages and topics.\n\n**Changes**: New in Zulip 4.0 (feature level 57).\n"
+        },
+        {
+          "info": {
+            "name": "Remove a linkifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/filters/:filter_id",
+            "params": [
+              {
+                "name": "filter_id",
+                "value": "43",
+                "type": "path",
+                "description": "The ID of the linkifier that you want to remove.\n"
+              }
+            ]
+          },
+          "docs": "Remove [linkifiers](/help/add-a-custom-linkifier), regular\nexpression patterns that are automatically linkified when they appear\nin messages and topics.\n"
+        },
+        {
+          "info": {
+            "name": "Add a code playground",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/playgrounds",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "name",
+                  "value": ""
+                },
+                {
+                  "name": "pygments_language",
+                  "value": ""
+                },
+                {
+                  "name": "url_template",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Configure [code playgrounds](/help/code-blocks#code-playgrounds) for the organization.\n\n**Changes**: New in Zulip 4.0 (feature level 49). A parameter encoding bug was\nfixed in Zulip 4.0 (feature level 57).\n"
+        },
+        {
+          "info": {
+            "name": "Remove a code playground",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/playgrounds/:playground_id",
+            "params": [
+              {
+                "name": "playground_id",
+                "value": "1",
+                "type": "path",
+                "description": "The ID of the playground that you want to remove.\n"
+              }
+            ]
+          },
+          "docs": "Remove a [code playground](/help/code-blocks#code-playgrounds) previously\nconfigured for an organization.\n\n**Changes**: New in Zulip 4.0 (feature level 49).\n"
+        },
+        {
+          "info": {
+            "name": "Get all data exports",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/export/realm"
+          },
+          "docs": "Fetch all the public and standard [data exports][export-data]\nof the organization.\n\n**Changes**: Prior to Zulip 10.0 (feature level 304), only\npublic data exports could be fetched using this endpoint.\n\nNew in Zulip 2.1.\n\n[export-data]: /help/export-your-organization#export-data-in-an-importable-format\n"
+        },
+        {
+          "info": {
+            "name": "Create a data export",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/export/realm",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "export_type",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Create a public or a standard [data export][export-data] of the organization.\n\n!!! warn \"\"\n\n    **Note**: If you're the administrator of a self-hosted installation,\n    you may be looking for the documentation on [server data export and\n    import][data-export] or [server backups][backups].\n\n**Changes**: Prior to Zulip 10.0 (feature level 304), only\npublic data exports could be created using this endpoint.\n\nNew in Zulip 2.1.\n\n[export-data]: /help/export-your-organization#export-data-in-an-import"
+        },
+        {
+          "info": {
+            "name": "Get data export consent state",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/export/realm/consents"
+          },
+          "docs": "Fetches which users have [consented](/help/export-your-organization#configure-whether-administrators-can-export-your-private-data)\nfor their private data to be exported by organization administrators.\n\n**Changes**: Changes in Zulip 12.0 (feature level 430). Added an\ninteger field `email_address_visibility` to the objects in the\n`export_consents` array.\n\nNew in Zulip 10.0 (feature level 295).\n"
+        },
+        {
+          "info": {
+            "name": "Test welcome bot custom message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/realm/test_welcome_bot_custom_message",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "welcome_message_custom_text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Sends a test Welcome Bot custom message to the acting administrator.\nThis allows administrators to preview how the custom welcome message will\nappear when received by new users upon joining the organization.\n\n**Changes**: New in Zulip 11.0 (feature level 416).\n"
+        },
+        {
+          "info": {
+            "name": "Get server settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/server_settings"
+          },
+          "docs": "Fetch global settings for a Zulip server.\n\n**Note:** this endpoint does not require any authentication at all, and you can use it to check:\n\n- If this is a Zulip server, and if so, what version of Zulip it's running.\n- What a Zulip client (e.g. a mobile app or\n  [zulip-terminal](https://github.com/zulip/zulip-terminal/)) needs to\n  know in order to display a login prompt for the server (e.g. what\n  authentication methods are available).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

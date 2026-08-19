@@ -1,0 +1,168 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication real_time_events API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "real_time_events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get events from an event queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/events",
+            "params": [
+              {
+                "name": "queue_id",
+                "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8",
+                "type": "query",
+                "description": "The ID of an event queue that was previously registered via\n`POST /api/v1/register` (see [Register a queue](/api/register-queue)).\n"
+              },
+              {
+                "name": "last_event_id",
+                "value": "-1",
+                "type": "query",
+                "description": "The highest event ID in this queue that you've received and\nwish to acknowledge. See the [code for\n`call_on_each_event`](https://github.com/zulip/python-zulip-api/blob/main/zulip/zulip/__init__.py)\nin the [zulip Python\nmodule](https://github.com/zulip/python-zulip-api) for an\nexample implementation of correctly processing each event\nexactly once.\n"
+              },
+              {
+                "name": "dont_block",
+                "value": "true",
+                "type": "query",
+                "description": "Set to `true` if the client is requesting a nonblocking reply. If not\nspecified, the request will block until either a new event is available\nor a few minutes have passed, in which case the server will send the\nclient a heartbeat event.\n"
+              }
+            ]
+          },
+          "docs": "This endpoint allows you to receive new events from\n[a registered event queue](/api/register-queue).\n\nLong-lived clients should use the\n`event_queue_longpoll_timeout_seconds` property returned by\n`POST /register` as the client-side HTTP request timeout for\ncalls to this endpoint. It is guaranteed to be higher than\nheartbeat timeout and should be respected by clients to\navoid breaking when heartbeat timeout increases.\n"
+        },
+        {
+          "info": {
+            "name": "Delete an event queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/events",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "queue_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Delete a previously registered queue.\n"
+        },
+        {
+          "info": {
+            "name": "Register an event queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/register",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "apply_markdown",
+                  "value": ""
+                },
+                {
+                  "name": "client_gravatar",
+                  "value": ""
+                },
+                {
+                  "name": "include_subscribers",
+                  "value": ""
+                },
+                {
+                  "name": "slim_presence",
+                  "value": ""
+                },
+                {
+                  "name": "presence_history_limit_days",
+                  "value": ""
+                },
+                {
+                  "name": "event_types",
+                  "value": ""
+                },
+                {
+                  "name": "all_public_streams",
+                  "value": ""
+                },
+                {
+                  "name": "client_capabilities",
+                  "value": ""
+                },
+                {
+                  "name": "fetch_event_types",
+                  "value": ""
+                },
+                {
+                  "name": "narrow",
+                  "value": ""
+                },
+                {
+                  "name": "idle_queue_timeout",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "This powerful endpoint can be used to register a Zulip \"event queue\"\n(subscribed to certain types of \"events\", or updates to the messages\nand other Zulip data the current user has access to), as well as to\nfetch the current state of that data.\n\n(`register` also powers the `call_on_each_event` Python API, and is\nintended primarily for complex applications for which the more convenient\n`call_on_each_event` API is insufficient).\n\nThis endpoint returns a `queue_id` and a `last_event_id`; these can b"
+        },
+        {
+          "info": {
+            "name": "POST /real-time",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/real-time",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "event_types",
+                  "value": ""
+                },
+                {
+                  "name": "narrow",
+                  "value": ""
+                },
+                {
+                  "name": "all_public_streams",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "(Ignored)\n"
+        },
+        {
+          "info": {
+            "name": "Error handling",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/rest-error-handling"
+          },
+          "docs": "Common error to many endpoints\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

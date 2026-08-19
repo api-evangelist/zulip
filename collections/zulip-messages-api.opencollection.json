@@ -1,0 +1,634 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication messages API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "messages",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Mark all messages as read",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/mark_all_as_read"
+          },
+          "docs": "Marks all of the current user's unread messages as read.\n\nBecause this endpoint marks messages as read in batches, it is possible\nfor the request to time out after only marking some messages as read.\nWhen this happens, the `complete` boolean field in the success response\nwill be `false`. Clients should repeat the request when handling such a\nresponse. If all messages were marked as read, then the success response\nwill return `\"complete\": true`.\n\n**Changes**: Deprecated; clients should use the [u"
+        },
+        {
+          "info": {
+            "name": "Mark messages in a channel as read",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/mark_stream_as_read",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "stream_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Mark all the unread messages in a channel as read.\n\n**Changes**: Deprecated; clients should use the [update personal message\nflags for narrow](/api/update-message-flags-for-narrow) endpoint instead\nas this endpoint will be removed in a future release.\n"
+        },
+        {
+          "info": {
+            "name": "Mark messages in a topic as read",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/mark_topic_as_read",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "stream_id",
+                  "value": ""
+                },
+                {
+                  "name": "topic_name",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Mark all the unread messages in a topic as read.\n\n**Changes**: Deprecated; clients should use the [update personal message\nflags for narrow](/api/update-message-flags-for-narrow) endpoint instead\nas this endpoint will be removed in a future release.\n"
+        },
+        {
+          "info": {
+            "name": "Get messages",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages",
+            "params": [
+              {
+                "name": "anchor",
+                "value": "43",
+                "type": "query",
+                "description": "Integer message ID to anchor fetching of new messages. Supports special\nstring values for when the client wants the server to compute the anchor\nto use:\n\n- `newest`: The most recent message.\n- `oldest`: The oldest message.\n- `first_unread`: The oldest unread message matching the\n  query, if any; otherwise, the most recent message.\n- `date`: The first message on or after the datetime indicated by the\n  [`anchor_date`](#parameter-anchor_date), if any; otherwise, the most\n  recent message.\n\n**Changes**: The `date` value is new in Zulip 12.0 (feature level 445).\n\nString values are new in Zulip 3.0 (feature level 1). The\n`first_unread` functionality was supported in Zulip 2.1.x\nand older by not sending `anchor` and using `use_first_unread_anchor`.\n\nIn Zulip 2.1.x and older, `oldest` can be emulated with\n`\"anchor\": 0`, and `newest` with `\"anchor\": 10000000000000000`\n(that specific large value works around a bug in Zulip\n2.1.x and older in the `found_newest` return value).\n"
+              },
+              {
+                "name": "include_anchor",
+                "value": "false",
+                "type": "query",
+                "description": "Whether a message with the specified ID matching the narrow\nshould be included.\n\n**Changes**: New in Zulip 6.0 (feature level 155).\n"
+              },
+              {
+                "name": "anchor_date",
+                "value": "2005-04-18T12:34:56Z",
+                "type": "query",
+                "description": "The date or datetime to use for finding the anchor message when `anchor` is\n`date`. Accepted formats include ISO 8601 date-only strings\n(e.g. `2005-04-18`) as well as full datetime strings\n(e.g. `2005-04-18T12:34:56Z`). If only a date is provided, the datetime is set to\nmidnight (00:00) on that day in UTC. If no timezone is provided, UTC is\nassumed.\n\n**Changes**: New in Zulip 12.0 (feature level 445).\n"
+              },
+              {
+                "name": "num_before",
+                "value": "4",
+                "type": "query",
+                "description": "The number of messages with IDs less than the anchor to retrieve.\nRequired if `message_ids` is not provided.\n"
+              },
+              {
+                "name": "num_after",
+                "value": "8",
+                "type": "query",
+                "description": "The number of messages with IDs greater than the anchor to retrieve.\nRequired if `message_ids` is not provided.\n"
+              },
+              {
+                "name": "narrow",
+                "value": "",
+                "type": "query",
+                "description": "The narrow where you want to fetch the messages from. See how to\n[construct a narrow](/api/construct-narrow).\n\nNote that many narrows, including all that lack a `channel`, `channels`,\n`stream`, or `streams` operator, search the user's personal message\nhistory. See [searching shared\nhistory](/help/search-for-messages#search-shared-history)\nfor details.\n\nFor example, if you would like to fetch messages from all public channels instead\nof only the user's message history, then a specific narrow for\nmessages sent to all public channels can be used:\n`{\"operator\": \"channels\", \"operand\": \"public\"}`.\n\nNewly created bot users are not usually subscribed to any\nchannels, so bots using this API should either be\nsubscribed to appropriate channels or use a shared history\nsearch narrow with this endpoint.\n\n**Changes**: See [changes section](/api/construct-narrow#changes)\nof search/narrow filter documentation.\n"
+              },
+              {
+                "name": "client_gravatar",
+                "value": "false",
+                "type": "query",
+                "description": "Whether the client supports computing gravatars URLs. If\nenabled, `avatar_url` will be included in the response only\nif there is a Zulip avatar, and will be `null` for users who\nare using gravatar as their avatar. This option\nsignificantly reduces the compressed size of user data,\nsince gravatar URLs are long, random strings and thus do not\ncompress well. The `client_gravatar` field is set to `true` if\nclients can compute their own gravatars.\n\n**Changes**: The default value of this parameter was `false`\nprior to Zulip 5.0 (feature level 92).\n"
+              },
+              {
+                "name": "apply_markdown",
+                "value": "false",
+                "type": "query",
+                "description": "If `true`, message content is returned in the rendered HTML\nformat. If `false`, message content is returned in the raw\nMarkdown-format text that user entered.\n\nSee [Markdown message formatting](/api/message-formatting) for details on Zulip's HTML format.\n"
+              },
+              {
+                "name": "use_first_unread_anchor",
+                "value": "true",
+                "type": "query",
+                "description": "Legacy way to specify `\"anchor\": \"first_unread\"` in Zulip 2.1.x and older.\n\nWhether to use the (computed by the server) first unread message\nmatching the narrow as the `anchor`. Mutually exclusive with `anchor`.\n\n**Changes**: Deprecated in Zulip 3.0 (feature level 1) and replaced by\n`\"anchor\": \"first_unread\"`.\n"
+              },
+              {
+                "name": "message_ids",
+                "value": "",
+                "type": "query",
+                "description": "A list of message IDs to fetch. The server will return messages corresponding to the\nsubset of the requested message IDs that exist and the current user has access to,\npotentially filtered by the narrow (if that parameter is provided).\n\nIt is an error to pass this parameter as well as any of the parameters involved in\nspecifying a range of messages: `anchor`, `include_anchor`, `use_first_unread_anchor`,\n`num_before`, and `num_after`.\n\n**Changes**: New in Zulip 10.0 (feature level 300). Previously, there was\nno way to request a specific set of messages IDs.\n"
+              },
+              {
+                "name": "allow_empty_topic_name",
+                "value": "true",
+                "type": "query",
+                "description": "Whether the client supports processing the empty string as a topic in the\ntopic name fields in the returned data, including in returned edit_history data.\n\nIf `false`, the server will use the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response instead of empty string\nto represent the empty string topic in its response.\n\n**Changes**: New in Zulip 10.0 (feature level 334). Previously, the empty string\nwas not a valid topic.\n"
+              }
+            ]
+          },
+          "docs": "This endpoint is the primary way to fetch a messages. It is used by all official\nZulip clients (e.g. the web, desktop, mobile, and terminal clients) as well as\nmany bots, API clients, backup scripts, etc.\n\nMost queries will specify a [narrow filter](/api/get-messages#parameter-narrow),\nto fetch the messages matching any supported [search\nquery](/help/search-for-messages). If not specified, it will return messages\ncorresponding to the user's [combined feed](/help/combined-feed). There are two\nway"
+        },
+        {
+          "info": {
+            "name": "Send a message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "type",
+                  "value": ""
+                },
+                {
+                  "name": "to",
+                  "value": ""
+                },
+                {
+                  "name": "content",
+                  "value": ""
+                },
+                {
+                  "name": "topic",
+                  "value": ""
+                },
+                {
+                  "name": "queue_id",
+                  "value": ""
+                },
+                {
+                  "name": "local_id",
+                  "value": ""
+                },
+                {
+                  "name": "read_by_sender",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Send a [channel message](/help/introduction-to-topics) or a\n[direct message](/help/direct-messages).\n"
+        },
+        {
+          "info": {
+            "name": "Get a message's edit history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id/history",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              },
+              {
+                "name": "allow_empty_topic_name",
+                "value": "true",
+                "type": "query",
+                "description": "Whether the topic names i.e. `topic` and `prev_topic` fields in\nthe `message_history` objects returned can be empty string.\n\nIf `false`, the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response is\nreturned replacing the empty string as the topic name.\n\n**Changes**: New in Zulip 10.0 (feature level 334).\n"
+              }
+            ]
+          },
+          "docs": "Fetch the message edit history of a previously edited message.\n\nNote that edit history may be disabled in some organizations; see the\n[Zulip help center documentation on editing messages][edit-settings].\n\n[edit-settings]: /help/view-a-messages-edit-history\n"
+        },
+        {
+          "info": {
+            "name": "Update personal message flags",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/flags",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "messages",
+                  "value": ""
+                },
+                {
+                  "name": "op",
+                  "value": ""
+                },
+                {
+                  "name": "flag",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Add or remove personal message flags like `read` and `starred`\non a collection of message IDs.\n\nSee also the endpoint for [updating flags on a range of\nmessages within a narrow](/api/update-message-flags-for-narrow).\n"
+        },
+        {
+          "info": {
+            "name": "Update personal message flags for narrow",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/flags/narrow",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "anchor",
+                  "value": ""
+                },
+                {
+                  "name": "include_anchor",
+                  "value": ""
+                },
+                {
+                  "name": "num_before",
+                  "value": ""
+                },
+                {
+                  "name": "num_after",
+                  "value": ""
+                },
+                {
+                  "name": "narrow",
+                  "value": ""
+                },
+                {
+                  "name": "op",
+                  "value": ""
+                },
+                {
+                  "name": "flag",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Add or remove personal message flags like `read` and `starred`\non a range of messages within a narrow.\n\nSee also [the endpoint for updating flags on specific message\nIDs](/api/update-message-flags).\n\n**Changes**: New in Zulip 6.0 (feature level 155).\n"
+        },
+        {
+          "info": {
+            "name": "Render a message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/render",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "content",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Render a message to HTML.\n"
+        },
+        {
+          "info": {
+            "name": "Add an emoji reaction",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id/reactions",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "emoji_name",
+                  "value": ""
+                },
+                {
+                  "name": "emoji_code",
+                  "value": ""
+                },
+                {
+                  "name": "reaction_type",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Add an [emoji reaction](/help/emoji-reactions) to a message.\n"
+        },
+        {
+          "info": {
+            "name": "Remove an emoji reaction",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id/reactions",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "emoji_name",
+                  "value": ""
+                },
+                {
+                  "name": "emoji_code",
+                  "value": ""
+                },
+                {
+                  "name": "reaction_type",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Remove an [emoji reaction](/help/emoji-reactions) from a message.\n"
+        },
+        {
+          "info": {
+            "name": "Get a message's read receipts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id/read_receipts",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              }
+            ]
+          },
+          "docs": "Returns a list containing the IDs for all users who have\nmarked the message as read (and whose privacy settings allow\nsharing that information).\n\nThe list of users IDs will include any bots who have marked\nthe message as read via the API (providing a way for bots to\nindicate whether they have processed a message successfully in\na way that can be easily inspected in a Zulip client). Bots\nfor which this behavior is not desired may disable the\n`send_read_receipts` setting via the API.\n\nIt will neve"
+        },
+        {
+          "info": {
+            "name": "Check if messages match a narrow",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/matches_narrow",
+            "params": [
+              {
+                "name": "msg_ids",
+                "value": "",
+                "type": "query",
+                "description": "List of IDs for the messages to check."
+              },
+              {
+                "name": "narrow",
+                "value": "",
+                "type": "query",
+                "description": "A structure defining the narrow to check against. See how to\n[construct a narrow](/api/construct-narrow).\n\n**Changes**: See [changes section](/api/construct-narrow#changes)\nof search/narrow filter documentation.\n"
+              }
+            ]
+          },
+          "docs": "Check whether a set of messages match a [narrow](/api/construct-narrow).\n\nFor many common narrows (e.g. a topic), clients can write an efficient\nclient-side check to determine whether a newly arrived message belongs\nin the view.\n\nThis endpoint is designed to allow clients to handle more complex narrows\nfor which the client does not (or in the case of full-text search, cannot)\nimplement this check.\n\nThe format of the `match_subject` and `match_content` objects is designed\nto match those returned "
+        },
+        {
+          "info": {
+            "name": "Fetch a single message",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              },
+              {
+                "name": "apply_markdown",
+                "value": "false",
+                "type": "query",
+                "description": "If `true`, message content is returned in the rendered HTML\nformat. If `false`, message content is returned in the raw\n[Zulip-flavored Markdown format](/help/format-your-message-using-markdown) text that user entered.\n\n**Changes**: New in Zulip 5.0 (feature level 120).\n"
+              },
+              {
+                "name": "allow_empty_topic_name",
+                "value": "true",
+                "type": "query",
+                "description": "Whether the client supports processing the empty string as a topic in the\ntopic name fields in the returned data, including in returned edit_history data.\n\nIf `false`, the server will use the value of `realm_empty_topic_display_name`\nfound in the [`POST /register`](/api/register-queue) response instead of empty string\nto represent the empty string topic in its response.\n\n**Changes**: New in Zulip 10.0 (feature level 334). Previously, the empty string\nwas not a valid topic.\n"
+              }
+            ]
+          },
+          "docs": "Given a message ID, return the message object.\n\nAdditionally, a `raw_content` field is included. This field is\nuseful for clients that primarily work with HTML-rendered\nmessages but might need to occasionally fetch the message's\nraw [Zulip-flavored Markdown](/help/format-your-message-using-markdown) (e.g. for [view\nsource](/help/view-the-markdown-source-of-a-message) or\nprefilling a message edit textarea).\n\n**Changes**: Before Zulip 5.0 (feature level 120), this\nendpoint only returned the `raw_c"
+        },
+        {
+          "info": {
+            "name": "Edit a message",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "topic",
+                  "value": ""
+                },
+                {
+                  "name": "propagate_mode",
+                  "value": ""
+                },
+                {
+                  "name": "send_notification_to_old_thread",
+                  "value": ""
+                },
+                {
+                  "name": "send_notification_to_new_thread",
+                  "value": ""
+                },
+                {
+                  "name": "content",
+                  "value": ""
+                },
+                {
+                  "name": "prev_content_sha256",
+                  "value": ""
+                },
+                {
+                  "name": "stream_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Update the content, topic, or channel of the message with the specified\nID.\n\nYou can [resolve topics](/help/resolve-a-topic) by editing the topic to\n`✔ {original_topic}` with the `propagate_mode` parameter set to\n`\"change_all\"`.\n\nSee [configuring message editing][config-message-editing] for detailed\ndocumentation on when users are allowed to edit message content, and\n[restricting moving messages][restrict-move-messages] for detailed\ndocumentation on when users are allowed to change a message's t"
+        },
+        {
+          "info": {
+            "name": "Delete a message",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              }
+            ]
+          },
+          "docs": "Permanently delete a message.\n\nThis API corresponds to the [delete a message completely][delete-completely]\nfeature documented in the Zulip help center.\n\nA user must be able to access the content of a message in order to delete it.\nSee [channel permissions](/help/channel-permissions) for more information\nabout content access for channel messages. For direct messages, the user\nmust have received or sent the direct message to have content access.\n\nSee [restricting message deletion](/help/restrict-"
+        },
+        {
+          "info": {
+            "name": "Report a message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/messages/:message_id/report",
+            "params": [
+              {
+                "name": "message_id",
+                "value": "43",
+                "type": "path",
+                "description": "The target message's ID.\n"
+              }
+            ],
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "report_type",
+                  "value": ""
+                },
+                {
+                  "name": "description",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Sends a notification to the organization's [moderation request\nchannel](/help/enable-moderation-requests), if it is configured, that\nreports the targeted message for [review and moderation](/help/report-a-message).\n\nClients should check the `moderation_request_channel` realm setting to\ndecide whether to show the option to report messages in the UI.\n\nIf the `report_type` parameter value is `\"other\"`, the `description`\nparameter is required. Clients should also enforce and communicate this\nbehavio"
+        },
+        {
+          "info": {
+            "name": "Upload a file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/user_uploads",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "filename",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "[Upload](/help/share-and-upload-files) a single file and get the corresponding URL.\n\nInitially, only you will be able to access the link. To share the\nuploaded file, you'll need to [send a message][send-message]\ncontaining the resulting link. Users who can already access the link\ncan reshare it with other users by sending additional Zulip messages\ncontaining the link.\n\nThe maximum allowed file size is available in the `max_file_upload_size_mib`\nfield in the [`POST /register`](/api/register-queue"
+        },
+        {
+          "info": {
+            "name": "Check thumbnail status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/thumbnail/status/:realm_id_str/:filename",
+            "params": [
+              {
+                "name": "realm_id_str",
+                "value": "1",
+                "type": "path",
+                "description": "The realm ID component of the file's `path_id`. If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.\n"
+              },
+              {
+                "name": "filename",
+                "value": "4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt",
+                "type": "path",
+                "description": "The file path component of the file's `path_id` (everything\nafter the first `/`). If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`\nwould be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.\n"
+              }
+            ]
+          },
+          "docs": "Check whether a thumbnail exists for a specific file uploaded by a user.\nThis endpoint is intended to be polled by clients to determine when\nthumbnail generation is complete.\n\n**Changes**: New in Zulip 12.0 (feature level 479).\n"
+        },
+        {
+          "info": {
+            "name": "Get public temporary URL for an uploaded file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/user_uploads/:realm_id_str/:filename",
+            "params": [
+              {
+                "name": "realm_id_str",
+                "value": "1",
+                "type": "path",
+                "description": "The realm ID component of the file's `path_id`. If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `realm_id_str` would be `1`.\n"
+              },
+              {
+                "name": "filename",
+                "value": "4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt",
+                "type": "path",
+                "description": "The file path component of the file's `path_id` (everything\nafter the first `/`). If the `path_id` is\n`1/4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`, the `filename`\nwould be `4e/m2A3MSqFnWRLUf9SaPzQ0Up_/zulip.txt`.\n"
+              }
+            ]
+          },
+          "docs": "Get a temporary URL for access to an [uploaded file](/api/upload-file)\nthat doesn't require authentication.\n\nThe `SIGNED_ACCESS_TOKEN_VALIDITY_IN_SECONDS` server setting controls\nthe valid length of time for temporary access, which generally is set\nto a default of 60 seconds. Consumers of this API are expected to\nimmediately request the URL that it returns, and should not store it\nin any way.\n\n**Changes**: New in Zulip 3.0 (feature level 1).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

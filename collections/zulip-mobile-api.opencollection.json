@@ -1,0 +1,165 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Zulip REST authentication mobile API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "mobile",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Send a test notification to mobile device(s)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/mobile_push/test_notification",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "token",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Trigger sending a test push notification to the user's\nselected mobile device or all of their mobile devices.\n\n**Changes**: Deprecated in Zulip 11.0 (feature level 420).\nClients connecting to newer servers and with E2EE push\nnotifications support should use the\n[Send an E2EE test notification to mobile device(s)](/api/e2ee-test-notify)\nendpoint, as this endpoint will be removed in a future release.\n\nStarting with Zulip 8.0 (feature level 234), test\nnotifications sent via this endpoint use `test`"
+        },
+        {
+          "info": {
+            "name": "Send an E2EE test notification to mobile device(s)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/mobile_push/e2ee/test_notification",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "device_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Trigger sending an end-to-end encrypted (E2EE) test push notification\nto the user's selected mobile device or all of their mobile devices.\n\n**Changes**: New in Zulip 11.0 (feature level 420).\n"
+        },
+        {
+          "info": {
+            "name": "Register E2EE push device",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/mobile_push/register",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "device_id",
+                  "value": ""
+                },
+                {
+                  "name": "push_key_id",
+                  "value": ""
+                },
+                {
+                  "name": "push_key",
+                  "value": ""
+                },
+                {
+                  "name": "token_kind",
+                  "value": ""
+                },
+                {
+                  "name": "token_id",
+                  "value": ""
+                },
+                {
+                  "name": "bouncer_public_key",
+                  "value": ""
+                },
+                {
+                  "name": "encrypted_push_registration",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Register a device to receive end-to-end encrypted mobile push notifications,\nor update such a registration.\n\nTo perform an initial registration, clients must provide both the\npush key fields (`push_key` and `push_key_id`) and the token fields\n(`token_kind`, `token_id`, `bouncer_public_key`, and `encrypted_push_registration`).\n\nOnce registered, clients should use this endpoint to rotate `push_key` or\nFCM/APNs provided token:\n\n- **Rotate push key**: Provide only the push key fields.\n- **Rotate tok"
+        },
+        {
+          "info": {
+            "name": "Register E2EE push device to bouncer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/remotes/push/e2ee/register",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "realm_uuid",
+                  "value": ""
+                },
+                {
+                  "name": "token_id",
+                  "value": ""
+                },
+                {
+                  "name": "encrypted_push_registration",
+                  "value": ""
+                },
+                {
+                  "name": "bouncer_public_key",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Register a push device to bouncer to receive end-to-end encrypted\nmobile push notifications.\n\nSelf-hosted servers use this endpoint to asynchronously register\na push device to the bouncer server after receiving a request from\nthe mobile client to [register E2EE push device](/api/register-push-device).\n\nIt is not meant to be used by mobile clients directly.\n\n**Changes**: New in Zulip 11.0 (feature level 406).\n"
+        },
+        {
+          "info": {
+            "name": "Register a logged-in device",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/register_client_device"
+          },
+          "docs": "Logged-in mobile devices use this endpoint as an initial step to\nregister themselves, before registering for E2EE push notifications.\n\nThis endpoint is currently not useful for clients other than mobile.\n\n**Changes**: New in Zulip 12.0 (feature level 468).\n"
+        },
+        {
+          "info": {
+            "name": "Remove a registered device",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.zulipchat.com/api/v1/remove_client_device",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "device_id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Mobile devices use this endpoint to remove their device record\nregistered using [`POST /register_client_device`](/api/register-client-device)\nwhen the user logs out.\n\nThis endpoint is currently not useful for clients other than mobile.\n\n**Changes**: New in Zulip 12.0 (feature level 470).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

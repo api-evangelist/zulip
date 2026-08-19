@@ -1,0 +1,958 @@
+{
+  "item": [
+    {
+      "id": "ac641748-9c35-4477-ad40-a4757f528f91",
+      "name": "real_time_events",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7ccf3983-759d-4011-893e-82f30af552a8",
+          "name": "Get events from an event queue",
+          "request": {
+            "name": "Get events from an event queue",
+            "description": {
+              "content": "This endpoint allows you to receive new events from\n[a registered event queue](/api/register-queue).\n\nLong-lived clients should use the\n`event_queue_longpoll_timeout_seconds` property returned by\n`POST /register` as the client-side HTTP request timeout for\ncalls to this endpoint. It is guaranteed to be higher than\nheartbeat timeout and should be respected by clients to\navoid breaking when heartbeat timeout increases.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "queue_id",
+                  "value": "<string>",
+                  "description": "(Required) The ID of an event queue that was previously registered via\n`POST /api/v1/register` (see [Register a queue](/api/register-queue)).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "last_event_id",
+                  "value": "<integer>",
+                  "description": "The highest event ID in this queue that you've received and\nwish to acknowledge. See the [code for\n`call_on_each_event`](https://github.com/zulip/python-zulip-api/blob/main/zulip/zulip/__init__.py)\nin the [zulip Python\nmodule](https://github.com/zulip/python-zulip-api) for an\nexample implementation of correctly processing each event\nexactly once.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "dont_block",
+                  "value": "false",
+                  "description": "Set to `true` if the client is requesting a nonblocking reply. If not\nspecified, the request will block until either a new event is available\nor a few minutes have passed, in which case the server will send the\nclient a heartbeat event.\n"
+                }
+              ],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "20263636-4124-4b58-867e-577361c39622",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "queue_id",
+                      "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8"
+                    },
+                    {
+                      "key": "last_event_id",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "dont_block",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"ignored_parameters_unsupported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"events\": [\n    {\n      \"type\": \"alert_words\",\n      \"alert_words\": [\n        \"alert_word\"\n      ],\n      \"id\": 0\n    },\n    {\n      \"type\": \"alert_words\",\n      \"alert_words\": [\n        \"alert_word\"\n      ],\n      \"id\": 0\n    }\n  ],\n  \"queue_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e401ca3c-9a8e-4b17-9a01-9a46fd7f2a82",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "queue_id",
+                      "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8"
+                    },
+                    {
+                      "key": "last_event_id",
+                      "value": "-1"
+                    },
+                    {
+                      "key": "dont_block",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_EVENT_QUEUE_ID\",\n  \"msg\": \"Bad event queue ID: fb67bf8a-c031-47cc-84cf-ed80accacda8\",\n  \"queue_id\": \"fb67bf8a-c031-47cc-84cf-ed80accacda8\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a333c07f-dd2b-4861-b3ec-06f4e5bcd1a0",
+          "name": "Delete an event queue",
+          "request": {
+            "name": "Delete an event queue",
+            "description": {
+              "content": "Delete a previously registered queue.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "queue_id",
+                  "value": "<string>",
+                  "description": "(Required) The ID of an event queue that was previously registered via\n`POST /api/v1/register` (see [Register a queue](/api/register-queue)).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "af0f366e-38c2-4e76-9d0a-a09240300bcc",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of an event queue that was previously registered via\n`POST /api/v1/register` (see [Register a queue](/api/register-queue)).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "queue_id",
+                      "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"msg\": \"\",\n  \"result\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6a99274c-9a61-42c9-8086-e1052566ccc1",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The ID of an event queue that was previously registered via\n`POST /api/v1/register` (see [Register a queue](/api/register-queue)).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "queue_id",
+                      "value": "fb67bf8a-c031-47cc-84cf-ed80accacda8"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"BAD_EVENT_QUEUE_ID\",\n  \"msg\": \"Bad event queue ID: fb67bf8a-c031-47cc-84cf-ed80accacda8\",\n  \"queue_id\": \"fb67bf8a-c031-47cc-84cf-ed80accacda8\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0bea2cde-fc75-41ca-9a3e-19d9a910ffd9",
+          "name": "Register an event queue",
+          "request": {
+            "name": "Register an event queue",
+            "description": {
+              "content": "This powerful endpoint can be used to register a Zulip \"event queue\"\n(subscribed to certain types of \"events\", or updates to the messages\nand other Zulip data the current user has access to), as well as to\nfetch the current state of that data.\n\n(`register` also powers the `call_on_each_event` Python API, and is\nintended primarily for complex applications for which the more convenient\n`call_on_each_event` API is insufficient).\n\nThis endpoint returns a `queue_id` and a `last_event_id`; these can be\nused in subsequent calls to the\n[\"events\" endpoint](/api/get-events) to request events from\nthe Zulip server using long-polling.\n\nThe server will queue events for up to `idle_queue_timeout_secs`\nseconds of inactivity. After that timeout, your event queue will be\ngarbage-collected. The server will send `heartbeat` events\nevery minute, which makes it easy to implement a robust client that\ndoes not miss events unless the client loses network connectivity\nwith the Zulip server for longer than the configured timeout.\n\nOnce the server garbage-collects your event queue, the server will\n[return an error](/api/get-events#bad_event_queue_id-errors)\nwith a code of `BAD_EVENT_QUEUE_ID` if you try to fetch events from\nthe event queue. Your software will need to handle that error\ncondition by re-initializing itself (e.g. this is what triggers your\nbrowser reloading the Zulip web app when your laptop comes back online\nafter being offline for more than `idle_queue_timeout_secs` seconds).\n\nWhen prototyping with this API, we recommend first calling `register`\nwith no `event_types` parameter to see all the available data from all\nsupported event types. Before using your client in production, you\nshould set appropriate `event_types` and `fetch_event_types` filters\nso that your client only requests the data it needs. A few minutes\ndoing this often saves 90% of the total bandwidth and other resources\nconsumed by a client using this API.\n\nSee the [events system developer documentation][events-system-docs]\nif you need deeper details about how the Zulip event queue system\nworks, avoids clients needing to worry about large classes of\npotentially messy races, etc.\n\n**Changes**: New in Zulip 12.0 (feature level 481),\nthe `idle_queue_timeout` request parameter and `idle_queue_timeout_secs`\nresponse field were added to allow clients to configure\nhow long the server keeps an event queue alive during inactivity.\n\nRemoved `dense_mode` setting in Zulip 10.0 (feature level 364)\nas we now have `web_font_size_px` and `web_line_height_percent`\nsettings for more control.\n\nBefore Zulip 7.0 (feature level 183), the\n`realm_community_topic_editing_limit_seconds` property\nwas returned by the response. It was removed because it\nhad not been in use since the realm setting\n`move_messages_within_stream_limit_seconds` was introduced\nin feature level 162.\n\nIn Zulip 7.0 (feature level 163), the realm setting\n`email_address_visibility` was removed. It was replaced by a [user\nsetting](/api/update-settings#parameter-email_address_visibility) with\na [realm user default][user-defaults], with the encoding of different\nvalues preserved. Clients can support all versions by supporting the\ncurrent API and treating every user as having the realm's\n`email_address_visibility` value.\n\n[user-defaults]: /api/update-realm-user-settings-defaults#parameter-email_address_visibility\n[events-system-docs]: https://zulip.readthedocs.io/en/latest/subsystems/events-system.html\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "register"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "apply_markdown",
+                  "value": "false",
+                  "description": "Set to `true` if you would like the content to be rendered in HTML\nformat (otherwise the API will return the raw text that the user\nentered)\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "client_gravatar",
+                  "value": "<boolean>",
+                  "description": "Whether the client supports computing gravatars URLs. If\nenabled, `avatar_url` will be included in the response only\nif there is a Zulip avatar, and will be `null` for users who\nare using gravatar as their avatar. This option\nsignificantly reduces the compressed size of user data,\nsince gravatar URLs are long, random strings and thus do not\ncompress well. The `client_gravatar` field is set to `true` if\nclients can compute their own gravatars.\n\nThe default value is `true` for authenticated requests and\n`false` for [unauthenticated\nrequests](/help/public-access-option). Passing `true` in\nan unauthenticated request is an error.\n\n**Changes**: Before Zulip 6.0 (feature level 149), this\nparameter was silently ignored and processed as though it\nwere `false` in unauthenticated requests.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_subscribers",
+                  "value": "false",
+                  "description": "Whether each returned channel object should include a `subscribers`\nfield containing a list of the user IDs of its subscribers.\n\nClient apps supporting organizations with many thousands of users\nshould not pass `true`, because the full subscriber matrix may be\nseveral megabytes of data. The `partial` value, combined with the\n`subscriber_count` and fetching subscribers for individual channels as\nneeded, is recommended to support client app features where channel\nsubscriber data is useful.\n\nIf a client passes `partial` for this parameter, the server may,\nfor some channels, return a subset of the channel's subscribers\nin the `partial_subscribers` field instead of the `subscribers` field,\nwhich always contains the complete set of subscribers.\n\nThe server guarantees that it will always return a `subscribers`\nfield for channels with fewer than 250 total subscribers. When\nreturning a `partial_subscribers` field, the server guarantees\nthat all bot users and users active within the last 14 days will\nbe included. For other cases, the server may use its discretion\nto determine which channels and users to include, balancing between\npayload size and usefulness of the data provided to the client.\n\nPassing `true` in an [unauthenticated\nrequest](/help/public-access-option) is an error.\n\n**Changes**: The `partial` value is new in Zulip 11.0 (feature level 412).\n\nBefore Zulip 6.0 (feature level 149), this parameter was silently\nignored and processed as though it were `false` in unauthenticated\nrequests.\n\nNew in Zulip 2.1.0.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "slim_presence",
+                  "value": "false",
+                  "description": "If `true`, the `presences` object returned in the response will be keyed\nby user ID and the entry for each user's presence data will be in the\nmodern format.\n\n**Changes**: New in Zulip 3.0 (no feature level; API unstable).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "presence_history_limit_days",
+                  "value": "<integer>",
+                  "description": "Limits how far back in time to fetch user presence data. If not specified,\ndefaults to 14 days. A value of N means that the oldest presence data\nfetched will be from at most N days ago.\n\n**Changes**: New in Zulip 10.0 (feature level 288).\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "event_types",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "event_types",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "all_public_streams",
+                  "value": "false"
+                },
+                {
+                  "disabled": false,
+                  "key": "client_capabilities",
+                  "value": "<object>",
+                  "description": "Dictionary containing details on features the client supports that are\nrelevant to the format of responses sent by the server.\n\n- `notification_settings_null`: Boolean for whether the\n  client can handle the current API with `null` values for\n  channel-level notification settings (which means the channel\n  is not customized and should inherit the user's global\n  notification settings for channel messages).\n  <br />\n  **Changes**: New in Zulip 2.1.0. In earlier Zulip releases,\n  channel-level notification settings were simple booleans.\n\n- `bulk_message_deletion`: Boolean for whether the client's\n  handler for the `delete_message` event type has been\n  updated to process the new bulk format (with a\n  `message_ids`, rather than a singleton `message_id`).\n  Otherwise, the server will send `delete_message` events\n  in a loop.\n  <br />\n  **Changes**: New in Zulip 3.0 (feature level 13). This\n  capability is for backwards-compatibility; it will be\n  required in a future server release.\n\n- `user_avatar_url_field_optional`: Boolean for whether the\n  client required avatar URLs for all users, or supports\n  using `GET /avatar/{user_id}` to access user avatars. If the\n  client has this capability, the server may skip sending a\n  `avatar_url` field in the `realm_user` at its sole discretion\n  to optimize network performance. This is an important optimization\n  in organizations with 10,000s of users.\n  <br />\n  **Changes**: New in Zulip 3.0 (feature level 18).\n\n- `stream_typing_notifications`: Boolean for whether the client\n  supports channel typing notifications.\n  <br />\n  **Changes**: New in Zulip 4.0 (feature level 58). This capability is\n  for backwards-compatibility; it will be required in a\n  future server release.\n\n- `user_settings_object`: Has no effect with modern servers. Previously,\n  this was a boolean for whether the client supported the modern\n  [`user_settings` event type](/api/get-events#user_settings-update) and\n  the top-level `user_settings` object in this endpoint's response.\n  <br />\n  **Changes**: Prior to Zulip 12.0 (feature level 439), if false, the\n  server would additionally send the legacy `update_global_notifications`\n  and `update_display_settings` event types, if requested.\n  <br />\n  New in Zulip 5.0 (feature level 89). Because the feature level 89 API\n  changes were merged together, clients could safely make a request with\n  this client capability, and also request all three event types\n  (`user_settings`, `update_display_settings`, and\n  `update_global_notifications`), and then use the `zulip_feature_level`\n  in this endpoint's response or the presence/absence of a `user_settings`\n  key to determine where to look for the data.\n\n- `linkifier_url_template`: Boolean for whether the client accepts\n  [linkifiers][help-linkifiers] that use [RFC 6570][rfc6570] compliant\n  URL templates for linkifying matches. If false or unset, then the\n  `realm_linkifiers` array in the `/register` response will be empty\n  if present, and no `realm_linkifiers` [events][events-linkifiers]\n  will be sent to the client.\n  <br />\n  **Changes**: New in Zulip 7.0 (feature level 176). This capability\n  is for backwards-compatibility.\n\n- `user_list_incomplete`: Boolean for whether the client supports not having an\n  incomplete user database. If true, then the `realm_users` array in the `register`\n  response will not include data for inaccessible users and clients of guest users will\n  not receive `realm_user op:add` events for newly created users that are not accessible\n  to the current user.\n  <br />\n  **Changes**: New in Zulip 8.0 (feature level 232). This\n  capability is for backwards-compatibility.\n\n- `include_deactivated_groups`: Boolean for whether the client can handle\n  deactivated user groups by themselves. If false, then the `realm_user_groups`\n  array in the `/register` response will only include active groups, clients\n  will receive a `remove` event instead of `update` event when a group is\n  deactivated and no `update` event will be sent to the client if a deactivated\n  user group is renamed.\n  <br />\n  **Changes**: New in Zulip 10.0 (feature level 294). This\n  capability is for backwards-compatibility.\n\n- `archived_channels`: Boolean for whether the client supports processing\n  [archived channels](/help/archive-a-channel) in the `stream` and\n  `subscription` event types. If `false`, the server will not include data\n  related to archived channels in the `register` response or in events.\n  <br />\n  **Changes**: New in Zulip 10.0 (feature level 315). This allows clients to\n  access archived channels, without breaking backwards-compatibility for\n  existing clients.\n\n- `empty_topic_name`: Boolean for whether the client supports processing\n  the empty string as a topic name. Clients not declaring this capability\n  will be sent the value of `realm_empty_topic_display_name` found in the\n  [POST /register](/api/register-queue) response instead of the empty string\n  wherever topic names appear in the register response or events involving\n  topic names.\n  <br/>\n  **Changes**: New in Zulip 10.0 (feature level 334). Previously,\n  the empty string was not a valid topic name.\n\n- `simplified_presence_events`: Boolean for whether the client supports\n  receiving the [`presence` event type](/api/get-events#presence) with\n  user presence data in the modern format. If true, the server will\n  send these events with the `presences` field that has the user presence\n  data in the modern format. Otherwise, these event will contain fields\n  with legacy format user presence data.\n  <br />\n  **Changes**: New in Zulip 11.0 (feature level 419).\n\n- `individual_emoji_changes`: Boolean for whether the client supports\n  receiving the [`realm_emoji/add` and `realm_emoji/edit` event\n  types](/api/get-events#realm_emoji-add). If true, the server will\n  send individual `realm_emoji/add` events when a custom emoji is\n  added, and `realm_emoji/edit` events when a custom emoji's\n  properties are changed (e.g., deactivated). Otherwise, the server\n  will send the legacy `realm_emoji/update` event containing all\n  custom emoji for the organization.\n  <br />\n  **Changes**: New in Zulip 12.0 (feature level 491).\n\n[help-linkifiers]: /help/add-a-custom-linkifier\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n[events-linkifiers]: /api/get-events#realm_linkifiers\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "fetch_event_types",
+                  "value": "<string>",
+                  "description": "Same as the `event_types` parameter except that the values in\n`fetch_event_types` are used to fetch initial data. If\n`fetch_event_types` is not provided, `event_types` is used and if\n`event_types` is not provided, this parameter defaults to `null`.\n\nEvent types not supported by the server are ignored, in order to simplify\nthe implementation of client apps that support multiple server versions.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "fetch_event_types",
+                  "value": "<string>",
+                  "description": "Same as the `event_types` parameter except that the values in\n`fetch_event_types` are used to fetch initial data. If\n`fetch_event_types` is not provided, `event_types` is used and if\n`event_types` is not provided, this parameter defaults to `null`.\n\nEvent types not supported by the server are ignored, in order to simplify\nthe implementation of client apps that support multiple server versions.\n"
+                },
+                {
+                  "disabled": false,
+                  "key": "idle_queue_timeout",
+                  "value": "<integer>",
+                  "description": "At least how long (in seconds) the server should keep the event\nqueue alive when the client is not polling. If the client does\nnot poll before this timeout, the queue will eventually be\ngarbage-collected.\n\nAlternatively, the string `\"mobile\"` can be passed to use the\nserver's recommended timeout for mobile clients. This is\ncurrently 12 hours, but may change in the future.\n\nIf not specified, the server uses a default of 10 minutes. The\nmaximum allowed value is 7 days.\n\n**Changes**: New in Zulip 12.0 (feature level 481).\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d554c1f8-16de-41e8-817f-718d5405a00e",
+              "name": "Success.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "register"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Set to `true` if you would like the content to be rendered in HTML\nformat (otherwise the API will return the raw text that the user\nentered)\n",
+                        "type": "text/plain"
+                      },
+                      "key": "apply_markdown",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether the client supports computing gravatars URLs. If\nenabled, `avatar_url` will be included in the response only\nif there is a Zulip avatar, and will be `null` for users who\nare using gravatar as their avatar. This option\nsignificantly reduces the compressed size of user data,\nsince gravatar URLs are long, random strings and thus do not\ncompress well. The `client_gravatar` field is set to `true` if\nclients can compute their own gravatars.\n\nThe default value is `true` for authenticated requests and\n`false` for [unauthenticated\nrequests](/help/public-access-option). Passing `true` in\nan unauthenticated request is an error.\n\n**Changes**: Before Zulip 6.0 (feature level 149), this\nparameter was silently ignored and processed as though it\nwere `false` in unauthenticated requests.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "client_gravatar",
+                      "value": "false"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Whether each returned channel object should include a `subscribers`\nfield containing a list of the user IDs of its subscribers.\n\nClient apps supporting organizations with many thousands of users\nshould not pass `true`, because the full subscriber matrix may be\nseveral megabytes of data. The `partial` value, combined with the\n`subscriber_count` and fetching subscribers for individual channels as\nneeded, is recommended to support client app features where channel\nsubscriber data is useful.\n\nIf a client passes `partial` for this parameter, the server may,\nfor some channels, return a subset of the channel's subscribers\nin the `partial_subscribers` field instead of the `subscribers` field,\nwhich always contains the complete set of subscribers.\n\nThe server guarantees that it will always return a `subscribers`\nfield for channels with fewer than 250 total subscribers. When\nreturning a `partial_subscribers` field, the server guarantees\nthat all bot users and users active within the last 14 days will\nbe included. For other cases, the server may use its discretion\nto determine which channels and users to include, balancing between\npayload size and usefulness of the data provided to the client.\n\nPassing `true` in an [unauthenticated\nrequest](/help/public-access-option) is an error.\n\n**Changes**: The `partial` value is new in Zulip 11.0 (feature level 412).\n\nBefore Zulip 6.0 (feature level 149), this parameter was silently\nignored and processed as though it were `false` in unauthenticated\nrequests.\n\nNew in Zulip 2.1.0.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "include_subscribers",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "If `true`, the `presences` object returned in the response will be keyed\nby user ID and the entry for each user's presence data will be in the\nmodern format.\n\n**Changes**: New in Zulip 3.0 (no feature level; API unstable).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "slim_presence",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Limits how far back in time to fetch user presence data. If not specified,\ndefaults to 14 days. A value of N means that the oldest presence data\nfetched will be from at most N days ago.\n\n**Changes**: New in Zulip 10.0 (feature level 288).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "presence_history_limit_days",
+                      "value": "365"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "event_types",
+                      "value": "message"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "all_public_streams",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Dictionary containing details on features the client supports that are\nrelevant to the format of responses sent by the server.\n\n- `notification_settings_null`: Boolean for whether the\n  client can handle the current API with `null` values for\n  channel-level notification settings (which means the channel\n  is not customized and should inherit the user's global\n  notification settings for channel messages).\n  <br />\n  **Changes**: New in Zulip 2.1.0. In earlier Zulip releases,\n  channel-level notification settings were simple booleans.\n\n- `bulk_message_deletion`: Boolean for whether the client's\n  handler for the `delete_message` event type has been\n  updated to process the new bulk format (with a\n  `message_ids`, rather than a singleton `message_id`).\n  Otherwise, the server will send `delete_message` events\n  in a loop.\n  <br />\n  **Changes**: New in Zulip 3.0 (feature level 13). This\n  capability is for backwards-compatibility; it will be\n  required in a future server release.\n\n- `user_avatar_url_field_optional`: Boolean for whether the\n  client required avatar URLs for all users, or supports\n  using `GET /avatar/{user_id}` to access user avatars. If the\n  client has this capability, the server may skip sending a\n  `avatar_url` field in the `realm_user` at its sole discretion\n  to optimize network performance. This is an important optimization\n  in organizations with 10,000s of users.\n  <br />\n  **Changes**: New in Zulip 3.0 (feature level 18).\n\n- `stream_typing_notifications`: Boolean for whether the client\n  supports channel typing notifications.\n  <br />\n  **Changes**: New in Zulip 4.0 (feature level 58). This capability is\n  for backwards-compatibility; it will be required in a\n  future server release.\n\n- `user_settings_object`: Has no effect with modern servers. Previously,\n  this was a boolean for whether the client supported the modern\n  [`user_settings` event type](/api/get-events#user_settings-update) and\n  the top-level `user_settings` object in this endpoint's response.\n  <br />\n  **Changes**: Prior to Zulip 12.0 (feature level 439), if false, the\n  server would additionally send the legacy `update_global_notifications`\n  and `update_display_settings` event types, if requested.\n  <br />\n  New in Zulip 5.0 (feature level 89). Because the feature level 89 API\n  changes were merged together, clients could safely make a request with\n  this client capability, and also request all three event types\n  (`user_settings`, `update_display_settings`, and\n  `update_global_notifications`), and then use the `zulip_feature_level`\n  in this endpoint's response or the presence/absence of a `user_settings`\n  key to determine where to look for the data.\n\n- `linkifier_url_template`: Boolean for whether the client accepts\n  [linkifiers][help-linkifiers] that use [RFC 6570][rfc6570] compliant\n  URL templates for linkifying matches. If false or unset, then the\n  `realm_linkifiers` array in the `/register` response will be empty\n  if present, and no `realm_linkifiers` [events][events-linkifiers]\n  will be sent to the client.\n  <br />\n  **Changes**: New in Zulip 7.0 (feature level 176). This capability\n  is for backwards-compatibility.\n\n- `user_list_incomplete`: Boolean for whether the client supports not having an\n  incomplete user database. If true, then the `realm_users` array in the `register`\n  response will not include data for inaccessible users and clients of guest users will\n  not receive `realm_user op:add` events for newly created users that are not accessible\n  to the current user.\n  <br />\n  **Changes**: New in Zulip 8.0 (feature level 232). This\n  capability is for backwards-compatibility.\n\n- `include_deactivated_groups`: Boolean for whether the client can handle\n  deactivated user groups by themselves. If false, then the `realm_user_groups`\n  array in the `/register` response will only include active groups, clients\n  will receive a `remove` event instead of `update` event when a group is\n  deactivated and no `update` event will be sent to the client if a deactivated\n  user group is renamed.\n  <br />\n  **Changes**: New in Zulip 10.0 (feature level 294). This\n  capability is for backwards-compatibility.\n\n- `archived_channels`: Boolean for whether the client supports processing\n  [archived channels](/help/archive-a-channel) in the `stream` and\n  `subscription` event types. If `false`, the server will not include data\n  related to archived channels in the `register` response or in events.\n  <br />\n  **Changes**: New in Zulip 10.0 (feature level 315). This allows clients to\n  access archived channels, without breaking backwards-compatibility for\n  existing clients.\n\n- `empty_topic_name`: Boolean for whether the client supports processing\n  the empty string as a topic name. Clients not declaring this capability\n  will be sent the value of `realm_empty_topic_display_name` found in the\n  [POST /register](/api/register-queue) response instead of the empty string\n  wherever topic names appear in the register response or events involving\n  topic names.\n  <br/>\n  **Changes**: New in Zulip 10.0 (feature level 334). Previously,\n  the empty string was not a valid topic name.\n\n- `simplified_presence_events`: Boolean for whether the client supports\n  receiving the [`presence` event type](/api/get-events#presence) with\n  user presence data in the modern format. If true, the server will\n  send these events with the `presences` field that has the user presence\n  data in the modern format. Otherwise, these event will contain fields\n  with legacy format user presence data.\n  <br />\n  **Changes**: New in Zulip 11.0 (feature level 419).\n\n- `individual_emoji_changes`: Boolean for whether the client supports\n  receiving the [`realm_emoji/add` and `realm_emoji/edit` event\n  types](/api/get-events#realm_emoji-add). If true, the server will\n  send individual `realm_emoji/add` events when a custom emoji is\n  added, and `realm_emoji/edit` events when a custom emoji's\n  properties are changed (e.g., deactivated). Otherwise, the server\n  will send the legacy `realm_emoji/update` event containing all\n  custom emoji for the organization.\n  <br />\n  **Changes**: New in Zulip 12.0 (feature level 491).\n\n[help-linkifiers]: /help/add-a-custom-linkifier\n[rfc6570]: https://www.rfc-editor.org/rfc/rfc6570.html\n[events-linkifiers]: /api/get-events#realm_linkifiers\n",
+                        "type": "text/plain"
+                      },
+                      "key": "notification_settings_null",
+                      "value": "true"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Same as the `event_types` parameter except that the values in\n`fetch_event_types` are used to fetch initial data. If\n`fetch_event_types` is not provided, `event_types` is used and if\n`event_types` is not provided, this parameter defaults to `null`.\n\nEvent types not supported by the server are ignored, in order to simplify\nthe implementation of client apps that support multiple server versions.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "fetch_event_types",
+                      "value": "message"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "narrow",
+                      "value": "[\"channel\",\"Denmark\"]"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "At least how long (in seconds) the server should keep the event\nqueue alive when the client is not polling. If the client does\nnot poll before this timeout, the queue will eventually be\ngarbage-collected.\n\nAlternatively, the string `\"mobile\"` can be passed to use the\nserver's recommended timeout for mobile clients. This is\ncurrently 12 hours, but may change in the future.\n\nIf not specified, the server uses a default of 10 minutes. The\nmaximum allowed value is 7 days.\n\n**Changes**: New in Zulip 12.0 (feature level 481).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "idle_queue_timeout",
+                      "value": "<integer>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"last_event_id\": -1,\n  \"msg\": \"\",\n  \"queue_id\": \"fb67bf8a-c031-47cc-84cf-ed80accacda8\",\n  \"idle_queue_timeout_secs\": 600,\n  \"realm_emoji\": {\n    \"1\": {\n      \"author_id\": 5,\n      \"deactivated\": false,\n      \"name\": \"green_tick\",\n      \"source_url\": \"/user_avatars/1/emoji/images/1.png\"\n    },\n    \"2\": {\n      \"author_id\": 3,\n      \"deactivated\": false,\n      \"name\": \"animated_img\",\n      \"source_url\": \"/user_avatars/1/emoji/images/animated_img.gif\",\n      \"still_url\": \"/user_avatars/1/emoji/images/still/animated_img.png\"\n    }\n  },\n  \"result\": \"success\",\n  \"zulip_feature_level\": 2,\n  \"zulip_version\": \"5.0-dev-1650-gc3fd37755f\",\n  \"zulip_merge_base\": \"5.0-dev-1646-gea6b21cd8c\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5bf9aaf4-7fc3-4d00-b4e9-20ad74cd6518",
+          "name": "(Ignored)\n",
+          "request": {
+            "name": "(Ignored)\n",
+            "description": {
+              "content": "(Ignored)\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "real-time"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "event_types",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "event_types",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "all_public_streams",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f38d7707-1c06-4ccb-bd01-77e014ef2b08",
+              "name": "Success",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "real-time"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "key": "event_types",
+                      "value": "message"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "narrow",
+                      "value": "[\"channel\",\"Denmark\"]"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "all_public_streams",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "037104a0-4309-48e5-9f11-c60157b7e03d",
+          "name": "Error handling",
+          "request": {
+            "name": "Error handling",
+            "description": {
+              "content": "Common error to many endpoints\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "rest-error-handling"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "type": "any",
+                  "value": "{{subdomain}}",
+                  "key": "subdomain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3d938f74-5a9c-4b19-ad83-d63d4f708bdf",
+              "name": "Bad request.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "rest-error-handling"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"INVALID_API_KEY\",\n  \"msg\": \"Invalid API key\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7b8ba095-c3a3-4619-aa16-42ea6f4c253d",
+              "name": "Unauthorized.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "rest-error-handling"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"USER_DEACTIVATED\",\n  \"msg\": \"Account is deactivated\",\n  \"result\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a53ca25b-6ce2-464f-a47a-83f468f35e58",
+              "name": "Rate limit exceeded.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "rest-error-handling"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "type": "any",
+                      "value": "{{subdomain}}",
+                      "key": "subdomain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": \"string\",\n  \"msg\": \"string\",\n  \"code\": \"string\",\n  \"retry-after\": 5114\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "example",
+      "key": "subdomain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{subdomain}}.zulipchat.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "20a062dd-58fd-4c74-9d52-02d65a58fb7d",
+    "name": "Zulip REST authentication real_time_events API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Powerful open source group chat\n",
+      "type": "text/plain"
+    }
+  }
+}
