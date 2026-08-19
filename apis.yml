@@ -29,7 +29,7 @@ tags:
 created: '2026-01-02'
 modified: '2026-05-29'
 url: https://raw.githubusercontent.com/api-evangelist/zulip/refs/heads/main/apis.yml
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: zulip:rest-api
   name: Zulip REST API
