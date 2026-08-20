@@ -25,6 +25,11 @@ tags:
   - Collaboration
   - Messaging
   - Team Chat
+  - Webhook
+tags_raw:
+  - Collaboration
+  - Messaging
+  - Team Chat
   - Webhooks
 created: '2026-01-02'
 modified: '2026-05-29'
@@ -60,6 +65,11 @@ apis:
     signals.
   humanURL: https://zulip.com/api/get-events
   tags:
+  - Event
+  - Long Polling
+  - Real-Time
+  - Team Chat
+  tags_raw:
   - Events
   - Long Polling
   - Real Time
@@ -78,6 +88,10 @@ apis:
     webhooks (allowing Zulip to send HTTP POST payloads to external services when messages are sent).
   humanURL: https://zulip.com/api/incoming-webhooks-overview
   tags:
+  - Event
+  - Integration
+  - Webhook
+  tags_raw:
   - Events
   - Integrations
   - Webhooks
@@ -91,6 +105,8 @@ apis:
   description: The authentication API from Zulip — 4 operation(s) for authentication.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Authentication
+  tags_raw:
   - authentication
   properties:
   - type: OpenAPI
@@ -100,6 +116,8 @@ apis:
   description: The bots API from Zulip — 1 operation(s) for bots.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Bots
+  tags_raw:
   - bots
   properties:
   - type: OpenAPI
@@ -109,6 +127,8 @@ apis:
   description: The channels API from Zulip — 23 operation(s) for channels.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Channels
+  tags_raw:
   - channels
   properties:
   - type: OpenAPI
@@ -118,6 +138,8 @@ apis:
   description: The drafts API from Zulip — 4 operation(s) for drafts.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Drafts
+  tags_raw:
   - drafts
   properties:
   - type: OpenAPI
@@ -127,6 +149,8 @@ apis:
   description: The invites API from Zulip — 5 operation(s) for invites.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Invites
+  tags_raw:
   - invites
   properties:
   - type: OpenAPI
@@ -136,6 +160,8 @@ apis:
   description: The messages API from Zulip — 16 operation(s) for messages.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Message
+  tags_raw:
   - messages
   properties:
   - type: OpenAPI
@@ -145,6 +171,8 @@ apis:
   description: The mobile API from Zulip — 6 operation(s) for mobile.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Mobile
+  tags_raw:
   - mobile
   properties:
   - type: OpenAPI
@@ -153,7 +181,8 @@ apis:
   name: Zulip navigation_views API
   description: The navigation_views API from Zulip — 2 operation(s) for navigation_views.
   humanURL: https://zulip.com/api/rest
-  tags:
+  tags: []
+  tags_raw:
   - navigation_views
   properties:
   - type: OpenAPI
@@ -163,6 +192,8 @@ apis:
   description: The real_time_events API from Zulip — 4 operation(s) for real_time_events.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Real-Time Events
+  tags_raw:
   - real_time_events
   properties:
   - type: OpenAPI
@@ -172,6 +203,8 @@ apis:
   description: The reminders API from Zulip — 2 operation(s) for reminders.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Reminders
+  tags_raw:
   - reminders
   properties:
   - type: OpenAPI
@@ -181,6 +214,8 @@ apis:
   description: The scheduled_messages API from Zulip — 2 operation(s) for scheduled_messages.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Scheduled Messages
+  tags_raw:
   - scheduled_messages
   properties:
   - type: OpenAPI
@@ -190,7 +225,8 @@ apis:
   description: >-
     The server_and_organizations API from Zulip — 16 operation(s) for server_and_organizations.
   humanURL: https://zulip.com/api/rest
-  tags:
+  tags: []
+  tags_raw:
   - server_and_organizations
   properties:
   - type: OpenAPI
@@ -200,6 +236,8 @@ apis:
   description: The users API from Zulip — 29 operation(s) for users.
   humanURL: https://zulip.com/api/rest
   tags:
+  - User
+  tags_raw:
   - users
   properties:
   - type: OpenAPI
@@ -209,6 +247,8 @@ apis:
   description: The webhooks API from Zulip — 1 operation(s) for webhooks.
   humanURL: https://zulip.com/api/rest
   tags:
+  - Webhook
+  tags_raw:
   - webhooks
   properties:
   - type: OpenAPI
