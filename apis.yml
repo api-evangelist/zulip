@@ -149,7 +149,7 @@ apis:
   description: The drafts API from Zulip — 4 operation(s) for drafts.
   humanURL: https://zulip.com/api/rest
   tags:
-  - Drafts
+  - drafts
   tags_raw:
   - drafts
   properties:
@@ -202,8 +202,7 @@ apis:
   name: Zulip real_time_events API
   description: The real_time_events API from Zulip — 4 operation(s) for real_time_events.
   humanURL: https://zulip.com/api/rest
-  tags:
-  - Real-Time Events
+  tags: []
   tags_raw:
   - real_time_events
   properties:
@@ -224,8 +223,7 @@ apis:
   name: Zulip scheduled_messages API
   description: The scheduled_messages API from Zulip — 2 operation(s) for scheduled_messages.
   humanURL: https://zulip.com/api/rest
-  tags:
-  - Scheduled Messages
+  tags: []
   tags_raw:
   - scheduled_messages
   properties:
