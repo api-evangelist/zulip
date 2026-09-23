@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication bots API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Bots API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,15 +23,30 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: bots
+- name: Bots
 paths:
   /bot_storage:
     get:
       operationId: get-bot-storage
       summary: Get a bot's stored data
       tags:
-      - bots
-      description: "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nRetrieve [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+      - Bots
+      description: '!!! warn ""
+
+
+        **Note:** This endpoint is only available to bot user
+
+        accounts.
+
+
+        Retrieve data stored
+
+        for a bot user.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 494), users who
+
+        were not bots could access this endpoint.'
       x-curl-examples-parameters:
         oneOf:
         - type: exclude
@@ -127,8 +140,28 @@ paths:
       operationId: update-bot-storage
       summary: Update a bot's stored data
       tags:
-      - bots
-      description: "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nAdd or update [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\nEach bot has a limited storage set by the server, which normally is a\ndefault of 10,000,000 characters.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+      - Bots
+      description: '!!! warn ""
+
+
+        **Note:** This endpoint is only available to bot user
+
+        accounts.
+
+
+        Add or update data stored
+
+        for a bot user.
+
+
+        Each bot has a limited storage set by the server, which normally is a
+
+        default of 10,000,000 characters.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 494), users who
+
+        were not bots could access this endpoint.'
       requestBody:
         required: true
         content:
@@ -190,8 +223,23 @@ paths:
       operationId: remove-bot-storage
       summary: Remove a bot's stored data
       tags:
-      - bots
-      description: "!!! warn \"\"\n\n    **Note:** This endpoint is only available to [bot user](/help/bots-overview)\n    accounts.\n\nDelete [data stored](/help/interactive-bots-api#bot_handlerstorage)\nfor a bot user.\n\n**Changes**: Prior to Zulip 12.0 (feature level 494), users who\nwere not bots could access this endpoint.\n"
+      - Bots
+      description: '!!! warn ""
+
+
+        **Note:** This endpoint is only available to bot user
+
+        accounts.
+
+
+        Delete data stored
+
+        for a bot user.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 494), users who
+
+        were not bots could access this endpoint.'
       requestBody:
         required: false
         content:
@@ -247,6 +295,62 @@ paths:
                       '
 components:
   schemas:
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -276,62 +380,6 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
   responses:
     SimpleSuccess:
       description: Success.

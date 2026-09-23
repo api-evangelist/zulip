@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication scheduled_messages API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Scheduled Messages API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,15 +23,15 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: scheduled_messages
+- name: Scheduled Messages
 paths:
   /scheduled_messages:
     get:
       operationId: get-scheduled-messages
       tags:
-      - scheduled_messages
+      - Scheduled Messages
       summary: Get scheduled messages
-      description: 'Fetch all [scheduled messages](/help/schedule-a-message) for
+      description: 'Fetch all scheduled messages for
 
         the current user.
 
@@ -43,9 +41,7 @@ paths:
         sent in the future via the send later feature.
 
 
-        **Changes**: New in Zulip 7.0 (feature level 173).
-
-        '
+        **Changes**: New in Zulip 7.0 (feature level 173).'
       responses:
         '200':
           description: Success.
@@ -85,23 +81,21 @@ paths:
     post:
       operationId: create-scheduled-message
       tags:
-      - scheduled_messages
+      - Scheduled Messages
       summary: Create a scheduled message
-      description: 'Create a new [scheduled message](/help/schedule-a-message).
+      description: 'Create a new scheduled message.
 
 
         **Changes**: In Zulip 7.0 (feature level 184), moved support for
 
-        [editing a scheduled message](/api/update-scheduled-message) to a
+        editing a scheduled message to a
 
         separate API endpoint, which removed the `scheduled_message_id`
 
         parameter from this endpoint.
 
 
-        New in Zulip 7.0 (feature level 179).
-
-        '
+        New in Zulip 7.0 (feature level 179).'
       requestBody:
         required: true
         content:
@@ -283,14 +277,12 @@ paths:
     patch:
       operationId: update-scheduled-message
       tags:
-      - scheduled_messages
+      - Scheduled Messages
       summary: Edit a scheduled message
-      description: 'Edit an existing [scheduled message](/help/schedule-a-message).
+      description: 'Edit an existing scheduled message.
 
 
-        **Changes**: New in Zulip 7.0 (feature level 184).
-
-        '
+        **Changes**: New in Zulip 7.0 (feature level 184).'
       parameters:
       - name: scheduled_message_id
         in: path
@@ -506,16 +498,14 @@ paths:
     delete:
       operationId: delete-scheduled-message
       tags:
-      - scheduled_messages
+      - Scheduled Messages
       summary: Delete a scheduled message
-      description: 'Delete, and therefore cancel sending, a previously [scheduled
+      description: 'Delete, and therefore cancel sending, a previously scheduled
 
-        message](/help/schedule-a-message).
+        message.
 
 
-        **Changes**: New in Zulip 7.0 (feature level 173).
-
-        '
+        **Changes**: New in Zulip 7.0 (feature level 173).'
       parameters:
       - name: scheduled_message_id
         in: path
@@ -552,53 +542,49 @@ paths:
                     msg: Scheduled message does not exist
 components:
   schemas:
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedErrorBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
       - required:
         - result
         - msg
+        - code
         properties:
           result:
             enum:
-            - success
+            - error
           msg:
             type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    NonExistingChannelIdError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          stream_id:
-            type: integer
-            description: 'The channel ID that could not be found.
+          code:
+            type: string
+            description: 'A string that identifies the error.
 
               '
-        example:
-          code: STREAM_DOES_NOT_EXIST
-          msg: Channel with ID '9' does not exist
-          result: error
-          stream_id: 9
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
     RequiredContent:
       description: 'The content of the message.
 
@@ -612,17 +598,19 @@ components:
         '
       type: string
       example: Hello
-    JsonSuccess:
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
       allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
+      - $ref: '#/components/schemas/CodedErrorBase'
       - additionalProperties: false
         properties:
           result: {}
           msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
+          code: {}
     ScheduledMessageBase:
       type: object
       description: 'Object containing details of the scheduled message.
@@ -724,25 +712,53 @@ components:
       - rendered_content
       - scheduled_delivery_timestamp
       - failed
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    NonExistingChannelIdError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          stream_id:
+            type: integer
+            description: 'The channel ID that could not be found.
 
-        supported by the endpoint.
+              '
+        example:
+          code: STREAM_DOES_NOT_EXIST
+          msg: Channel with ID '9' does not exist
+          result: error
+          stream_id: 9
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
 
 
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+        A typical successful JSON response may look like:
 
-        for details on this and its change history.
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     ScheduledMessage:
       allOf:
       - $ref: '#/components/schemas/ScheduledMessageBase'
@@ -756,32 +772,6 @@ components:
           rendered_content: {}
           scheduled_delivery_timestamp: {}
           failed: {}
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
   responses:
     SimpleSuccess:
       description: Success.

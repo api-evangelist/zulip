@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication invites API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Invites API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,15 +23,15 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: invites
+- name: Invites
 paths:
   /invites:
     get:
       operationId: get-invites
       summary: Get all invitations
       tags:
-      - invites
-      description: 'Fetch all unexpired [invitations](/help/invite-new-users) (i.e. email
+      - Invites
+      description: 'Fetch all unexpired invitations (i.e. email
 
         invitations and reusable invitation links) that can be managed by the user.
 
@@ -45,9 +43,7 @@ paths:
 
         only create email invitations, and therefore the response would never include
 
-        reusable invitation links for these users.
-
-        '
+        reusable invitation links for these users.'
       responses:
         '200':
           description: Success.
@@ -94,8 +90,8 @@ paths:
       operationId: send-invites
       summary: Send invitations
       tags:
-      - invites
-      description: 'Send [invitations](/help/invite-new-users) to specified email addresses.
+      - Invites
+      description: 'Send invitations to specified email addresses.
 
 
         **Changes**: In Zulip 6.0 (feature level 126), the `invite_expires_in_days`
@@ -112,9 +108,7 @@ paths:
 
         In Zulip 5.0 (feature level 96), the `invite_expires_in_days` parameter was
 
-        added which specified the number of days before the invitation would expire.
-
-        '
+        added which specified the number of days before the invitation would expire.'
       requestBody:
         required: true
         content:
@@ -276,8 +270,9 @@ paths:
                     **Changes**: New in Zulip 11.0 (feature level 416).
 
                     '
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   example: Welcome to Zulip! We're excited to have you on board.
               required:
               - invitee_emails
@@ -378,15 +373,15 @@ paths:
       operationId: create-invite-link
       summary: Create a reusable invitation link
       tags:
-      - invites
-      description: 'Create a [reusable invitation link](/help/invite-new-users#create-a-reusable-invitation-link)
+      - Invites
+      description: 'Create a reusable invitation link
 
         which can be used to invite new users to the organization.
 
 
         **Changes**: In Zulip 8.0 (feature level 209), added support for non-admin
 
-        users [with permission](/help/restrict-account-creation#change-who-can-send-invitations)
+        users with permission
 
         to use this endpoint. Previously, it was restricted to administrators only.
 
@@ -405,9 +400,7 @@ paths:
 
         In Zulip 5.0 (feature level 96), the `invite_expires_in_days` parameter was
 
-        added which specified the number of days before the invitation would expire.
-
-        '
+        added which specified the number of days before the invitation would expire.'
       requestBody:
         required: false
         content:
@@ -542,8 +535,9 @@ paths:
                     **Changes**: New in Zulip 11.0 (feature level 416).
 
                     '
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   example: Welcome to Zulip! We're excited to have you on board.
             encoding:
               invite_expires_in_minutes:
@@ -622,15 +616,13 @@ paths:
       operationId: revoke-email-invite
       summary: Revoke an email invitation
       tags:
-      - invites
-      description: 'Revoke an [email invitation](/help/invite-new-users#send-email-invitations).
+      - Invites
+      description: 'Revoke an email invitation.
 
 
-        A user can only revoke [invitations that they can
+        A user can only revoke invitations that they can
 
-        manage](/help/invite-new-users#manage-pending-invitations).
-
-        '
+        manage.'
       parameters:
       - name: invite_id
         in: path
@@ -664,20 +656,18 @@ paths:
       operationId: revoke-invite-link
       summary: Revoke a reusable invitation link
       tags:
-      - invites
-      description: 'Revoke a [reusable invitation link](/help/invite-new-users#create-a-reusable-invitation-link).
+      - Invites
+      description: 'Revoke a reusable invitation link.
 
 
-        A user can only revoke [invitations that they can
+        A user can only revoke invitations that they can
 
-        manage](/help/invite-new-users#manage-pending-invitations).
+        manage.
 
 
         **Changes**: Prior to Zulip 8.0 (feature level 209), only organization
 
-        administrators were able to create and revoke reusable invitation links.
-
-        '
+        administrators were able to create and revoke reusable invitation links.'
       parameters:
       - name: invite_id
         in: path
@@ -722,15 +712,13 @@ paths:
       operationId: resend-email-invite
       summary: Resend an email invitation
       tags:
-      - invites
-      description: 'Resend an [email invitation](/help/invite-new-users#send-email-invitations).
+      - Invites
+      description: 'Resend an email invitation.
 
 
-        A user can only resend [invitations that they can
+        A user can only resend invitations that they can
 
-        manage](/help/invite-new-users#manage-pending-invitations).
-
-        '
+        manage.'
       parameters:
       - name: invite_id
         in: path
@@ -761,35 +749,6 @@ paths:
                       '
 components:
   schemas:
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     InviteRoleParameter:
       description: 'The [organization-level role](/api/roles-and-permissions) of the user that is
 
@@ -843,97 +802,6 @@ components:
         example:
           msg: ''
           result: success
-    InviteExpirationParameter:
-      description: 'The number of minutes before the invitation will expire. If `null`, the
-
-        invitation will never expire. If unspecified, the server will use a default
-
-        value (based on the `INVITATION_LINK_VALIDITY_MINUTES` server setting, which
-
-        defaults to 14400, i.e. 10 days) for when the invitation will expire.
-
-
-        **Changes**: New in Zulip 6.0 (feature level 126). Previously, there was an
-
-        `invite_expires_in_days` parameter, which specified the duration in days instead
-
-        of minutes.
-
-        '
-      type: integer
-      nullable: true
-      example: 14400
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    InvitationFailedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          errors:
-            type: array
-            items:
-              type: array
-              items:
-                oneOf:
-                - type: string
-                - type: boolean
-            description: 'An array of arrays of length 3, where each inner array consists of (a) an email
-
-              address that was skipped while sending invitations, (b) the corresponding error
-
-              message, and (c) a boolean which is `true` when the email address already uses Zulip
-
-              and the corresponding user is deactivated in the organization.
-
-              '
-          sent_invitations:
-            description: 'A boolean specifying whether any invitations were sent.
-
-              '
-            type: boolean
-          daily_limit_reached:
-            type: boolean
-            description: 'A boolean specifying whether the limit on the number of invitations that can
-
-              be sent in the organization in a day has been reached.
-
-              '
-          license_limit_reached:
-            type: boolean
-            description: 'A boolean specifying whether the organization have enough unused Zulip licenses
-
-              to invite specified number of users.
-
-              '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
     CodedErrorBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
@@ -952,6 +820,54 @@ components:
             description: 'A string that identifies the error.
 
               '
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    InviteExpirationParameter:
+      description: 'The number of minutes before the invitation will expire. If `null`, the
+
+        invitation will never expire. If unspecified, the server will use a default
+
+        value (based on the `INVITATION_LINK_VALIDITY_MINUTES` server setting, which
+
+        defaults to 14400, i.e. 10 days) for when the invitation will expire.
+
+
+        **Changes**: New in Zulip 6.0 (feature level 126). Previously, there was an
+
+        `invite_expires_in_days` parameter, which specified the duration in days instead
+
+        of minutes.
+
+        '
+      type:
+      - integer
+      - 'null'
+      example: 14400
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     Invite:
       type: object
       description: 'A dictionary containing details about an [invitation](/help/invite-new-users).
@@ -993,8 +909,9 @@ components:
 
             '
         expiry_date:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: 'The UNIX timestamp for when the invitation will expire, in UTC seconds.
 
             If `null`, the invitation never expires.
@@ -1061,6 +978,79 @@ components:
             reusable invitation link or an email invitation.
 
             '
+    InvitationFailedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          errors:
+            type: array
+            items:
+              type: array
+              items:
+                oneOf:
+                - type: string
+                - type: boolean
+            description: 'An array of arrays of length 3, where each inner array consists of (a) an email
+
+              address that was skipped while sending invitations, (b) the corresponding error
+
+              message, and (c) a boolean which is `true` when the email address already uses Zulip
+
+              and the corresponding user is deactivated in the organization.
+
+              '
+          sent_invitations:
+            description: 'A boolean specifying whether any invitations were sent.
+
+              '
+            type: boolean
+          daily_limit_reached:
+            type: boolean
+            description: 'A boolean specifying whether the limit on the number of invitations that can
+
+              be sent in the organization in a day has been reached.
+
+              '
+          license_limit_reached:
+            type: boolean
+            description: 'A boolean specifying whether the organization have enough unused Zulip licenses
+
+              to invite specified number of users.
+
+              '
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   responses:
     SimpleSuccess:
       description: Success.

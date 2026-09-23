@@ -1,20 +1,7 @@
 {
   "provider": "zulip",
   "sources": [
-    "zulip-authentication-api-openapi.yml",
-    "zulip-bots-api-openapi.yml",
-    "zulip-channels-api-openapi.yml",
-    "zulip-drafts-api-openapi.yml",
-    "zulip-invites-api-openapi.yml",
-    "zulip-messages-api-openapi.yml",
-    "zulip-mobile-api-openapi.yml",
-    "zulip-navigation-views-api-openapi.yml",
-    "zulip-real-time-events-api-openapi.yml",
-    "zulip-reminders-api-openapi.yml",
-    "zulip-scheduled-messages-api-openapi.yml",
-    "zulip-server-and-organizations-api-openapi.yml",
-    "zulip-users-api-openapi.yml",
-    "zulip-webhooks-api-openapi.yml"
+    "_original/zulip-openapi.yml"
   ],
   "outputs": [
     "zulip-authentication-api-openapi.yml",
@@ -35,6 +22,39 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "zulip-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "zulip-openapi.yml: declared missing tag: authentication",
+    "zulip-openapi.yml: declared missing tag: bots",
+    "zulip-openapi.yml: declared missing tag: channels",
+    "zulip-openapi.yml: declared missing tag: drafts",
+    "zulip-openapi.yml: declared missing tag: invites",
+    "zulip-openapi.yml: declared missing tag: messages",
+    "zulip-openapi.yml: declared missing tag: mobile",
+    "zulip-openapi.yml: declared missing tag: navigation_views",
+    "zulip-openapi.yml: declared missing tag: real_time_events",
+    "zulip-openapi.yml: declared missing tag: reminders",
+    "zulip-openapi.yml: declared missing tag: scheduled_messages",
+    "zulip-openapi.yml: declared missing tag: server_and_organizations",
+    "zulip-openapi.yml: declared missing tag: users",
+    "zulip-openapi.yml: declared missing tag: webhooks",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "zulip-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-bots-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-channels-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-drafts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-invites-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-messages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-mobile-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-navigation-views-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-real-time-events-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-reminders-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-scheduled-messages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-server-and-organizations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-users-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "zulip-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

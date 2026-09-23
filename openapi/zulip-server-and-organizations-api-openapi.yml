@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication server_and_organizations API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Server And Organizations API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -37,9 +35,7 @@ paths:
 
         organization. Access to this endpoint depends on the
 
-        [organization''s configuration](https://zulip.com/help/custom-emoji#change-who-can-add-custom-emoji).
-
-        '
+        organization''s configuration.'
       x-parameter-description: 'As described above, the image file to upload must be provided in the
 
         request''s body.
@@ -96,7 +92,7 @@ paths:
       summary: Deactivate custom emoji
       tags:
       - server_and_organizations
-      description: '[Deactivate a custom emoji](/help/custom-emoji#deactivate-custom-emoji) from
+      description: 'Deactivate a custom emoji from
 
         the user''s organization.
 
@@ -113,9 +109,7 @@ paths:
 
         **Changes**: Before Zulip 8.0 (feature level 190), this endpoint returned an
 
-        HTTP status code of 400 when the emoji did not exist, instead of 404.
-
-        '
+        HTTP status code of 400 when the emoji did not exist, instead of 404.'
       parameters:
       - name: emoji_name
         required: true
@@ -149,9 +143,7 @@ paths:
       summary: Get all custom emoji
       tags:
       - server_and_organizations
-      description: 'Get all the custom emoji in the user''s organization.
-
-        '
+      description: Get all the custom emoji in the user's organization.
       responses:
         '200':
           description: Success.
@@ -202,11 +194,9 @@ paths:
 
         Complete Zulip apps are recommended to fetch presence
 
-        information when they post their own state using the [`POST
+        information when they post their own state using the `POST
 
-        /presence`](/api/update-presence) API endpoint.
-
-        '
+        /presence` API endpoint.'
       responses:
         '200':
           description: Success.
@@ -271,13 +261,11 @@ paths:
 
         As each Zulip user account is associated with an email address, organization
 
-        owners can [restrict new account creation (and email
+        owners can restrict new account creation (and email
 
-        changes)](/help/restrict-account-creation) to email addresses with these
+        changes) to email addresses with these
 
-        domains.
-
-        '
+        domains.'
       responses:
         '200':
           description: Success.
@@ -313,14 +301,12 @@ paths:
       - server_and_organizations
       description: 'Add a domain to the set of allowed domains configured in the organization
 
-        for [user account email addresses](/help/restrict-account-creation).
+        for user account email addresses.
 
 
         **Changes**: Prior to Zulip 6.0 (feature level 143), organization
 
-        administrators who were not owners could access this endpoint.
-
-        '
+        administrators who were not owners could access this endpoint.'
       x-requires-owner: true
       requestBody:
         required: true
@@ -385,16 +371,14 @@ paths:
       summary: Update an allowed domain
       tags:
       - server_and_organizations
-      description: 'Update whether subdomains are allowed in [user account email
+      description: 'Update whether subdomains are allowed in user account email
 
-        addresses](/help/restrict-account-creation) for the specified domain.
+        addresses for the specified domain.
 
 
         **Changes**: Prior to Zulip 6.0 (feature level 143), organization
 
-        administrators who were not owners could access this endpoint.
-
-        '
+        administrators who were not owners could access this endpoint.'
       x-requires-owner: true
       parameters:
       - name: domain
@@ -431,14 +415,12 @@ paths:
       - server_and_organizations
       description: 'Remove the specified domain from the set of allowed domains configured in
 
-        the organization for [user account email addresses](/help/restrict-account-creation).
+        the organization for user account email addresses.
 
 
         **Changes**: Prior to Zulip 6.0 (feature level 143), organization
 
-        administrators who were not owners could access this endpoint.
-
-        '
+        administrators who were not owners could access this endpoint.'
       x-requires-owner: true
       parameters:
       - name: domain
@@ -459,11 +441,9 @@ paths:
       summary: Get all custom profile fields
       tags:
       - server_and_organizations
-      description: 'Get all the [custom profile fields](/help/custom-profile-fields)
+      description: 'Get all the custom profile fields
 
-        configured for the user''s organization.
-
-        '
+        configured for the user''s organization.'
       responses:
         '200':
           description: Success.
@@ -579,9 +559,7 @@ paths:
 
         This endpoint is used to implement the dragging feature described in the
 
-        [custom profile fields documentation](/help/custom-profile-fields).
-
-        '
+        custom profile fields documentation.'
       x-requires-administrator: true
       requestBody:
         required: true
@@ -624,9 +602,7 @@ paths:
       summary: Create a custom profile field
       tags:
       - server_and_organizations
-      description: '[Create a custom profile field](/help/custom-profile-fields#add-a-custom-profile-field) in the user''s organization.
-
-        '
+      description: Create a custom profile field in the user's organization.
       x-requires-administrator: true
       requestBody:
         required: true
@@ -832,7 +808,7 @@ paths:
 
         joining the organization. Essentially all
 
-        [personal preference settings](/api/update-settings) are supported.
+        personal preference settings are supported.
 
 
         This feature can be invaluable for customizing Zulip''s default
@@ -871,9 +847,7 @@ paths:
 
         [new-user-defaults]: /help/configure-default-new-user-settings
 
-        [ignored-parameters]: /api/rest-error-handling#ignored-parameters
-
-        '
+        [ignored-parameters]: /api/rest-error-handling#ignored-parameters'
       x-curl-examples-parameters:
         oneOf:
         - type: include
@@ -1795,7 +1769,7 @@ paths:
       - server_and_organizations
       description: 'List all of an organization''s configured
 
-        [linkifiers](/help/add-a-custom-linkifier), regular
+        linkifiers, regular
 
         expression patterns that are automatically linkified when they appear
 
@@ -1806,9 +1780,7 @@ paths:
 
         a similar `GET /realm/filters` endpoint was available with each entry in
 
-        a `[pattern, url_format, id]` tuple format.
-
-        '
+        a `[pattern, url_format, id]` tuple format.'
       responses:
         '200':
           description: Success.
@@ -1867,8 +1839,9 @@ paths:
 
                               '
                           example_input:
-                            type: string
-                            nullable: true
+                            type:
+                            - string
+                            - 'null'
                             description: 'An example input string that matches the linkifier''s pattern.
 
                               This is required for reverse linkifiers.
@@ -1878,8 +1851,9 @@ paths:
 
                               '
                           reverse_template:
-                            type: string
-                            nullable: true
+                            type:
+                            - string
+                            - 'null'
                             description: 'A simple template using `{variable}` for variables that can
 
                               be used to generate the Markdown linkifier syntax, given a
@@ -1930,7 +1904,7 @@ paths:
       - server_and_organizations
       description: 'Change the order that the regular expression patterns in the organization''s
 
-        [linkifiers](/help/add-a-custom-linkifier) are matched in messages and topics.
+        linkifiers are matched in messages and topics.
 
         Useful when defining linkifiers with overlapping patterns.
 
@@ -1939,9 +1913,7 @@ paths:
 
         linkifiers were always processed in order by ID, which meant users would
 
-        need to delete and recreate them to reorder the list of linkifiers.
-
-        '
+        need to delete and recreate them to reorder the list of linkifiers.'
       requestBody:
         required: true
         content:
@@ -1977,13 +1949,11 @@ paths:
       summary: Add a linkifier
       tags:
       - server_and_organizations
-      description: 'Configure [linkifiers](/help/add-a-custom-linkifier),
+      description: 'Configure linkifiers,
 
         regular expression patterns that are automatically linkified when they
 
-        appear in messages and topics.
-
-        '
+        appear in messages and topics.'
       requestBody:
         required: true
         content:
@@ -1996,8 +1966,9 @@ paths:
                 url_template:
                   $ref: '#/components/schemas/LinkifierURLTemplate'
                 example_input:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   example: '#1234'
                   description: 'An example input string that matches the linkifier''s pattern.
 
@@ -2008,8 +1979,9 @@ paths:
 
                     '
                 reverse_template:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   example: '#{id}'
                   description: 'A simple template using `{variable}` for variables that can
 
@@ -2086,13 +2058,11 @@ paths:
       summary: Remove a linkifier
       tags:
       - server_and_organizations
-      description: 'Remove [linkifiers](/help/add-a-custom-linkifier), regular
+      description: 'Remove linkifiers, regular
 
         expression patterns that are automatically linkified when they appear
 
-        in messages and topics.
-
-        '
+        in messages and topics.'
       parameters:
       - name: filter_id
         in: path
@@ -2111,16 +2081,14 @@ paths:
       summary: Update a linkifier
       tags:
       - server_and_organizations
-      description: 'Update a [linkifier](/help/add-a-custom-linkifier), regular
+      description: 'Update a linkifier, regular
 
         expression patterns that are automatically linkified when they appear
 
         in messages and topics.
 
 
-        **Changes**: New in Zulip 4.0 (feature level 57).
-
-        '
+        **Changes**: New in Zulip 4.0 (feature level 57).'
       parameters:
       - name: filter_id
         in: path
@@ -2143,8 +2111,9 @@ paths:
                 url_template:
                   $ref: '#/components/schemas/LinkifierURLTemplate'
                 example_input:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   example: '#1234'
                   description: 'An example input string that matches the linkifier''s pattern.
 
@@ -2157,8 +2126,9 @@ paths:
 
                     '
                 reverse_template:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   example: '#{id}'
                   description: 'A simple template using `{variable}` for variables that can
 
@@ -2218,14 +2188,12 @@ paths:
       summary: Add a code playground
       tags:
       - server_and_organizations
-      description: 'Configure [code playgrounds](/help/code-blocks#code-playgrounds) for the organization.
+      description: 'Configure code playgrounds for the organization.
 
 
         **Changes**: New in Zulip 4.0 (feature level 49). A parameter encoding bug was
 
-        fixed in Zulip 4.0 (feature level 57).
-
-        '
+        fixed in Zulip 4.0 (feature level 57).'
       requestBody:
         required: true
         content:
@@ -2302,14 +2270,12 @@ paths:
       summary: Remove a code playground
       tags:
       - server_and_organizations
-      description: 'Remove a [code playground](/help/code-blocks#code-playgrounds) previously
+      description: 'Remove a code playground previously
 
         configured for an organization.
 
 
-        **Changes**: New in Zulip 4.0 (feature level 49).
-
-        '
+        **Changes**: New in Zulip 4.0 (feature level 49).'
       parameters:
       - name: playground_id
         in: path
@@ -2343,9 +2309,7 @@ paths:
         New in Zulip 2.1.
 
 
-        [export-data]: /help/export-your-organization#export-data-in-an-importable-format
-
-        '
+        [export-data]: /help/export-your-organization#export-data-in-an-importable-format'
       responses:
         '200':
           description: Success.
@@ -2386,7 +2350,32 @@ paths:
       tags:
       - server_and_organizations
       x-requires-administrator: true
-      description: "Create a public or a standard [data export][export-data] of the organization.\n\n!!! warn \"\"\n\n    **Note**: If you're the administrator of a self-hosted installation,\n    you may be looking for the documentation on [server data export and\n    import][data-export] or [server backups][backups].\n\n**Changes**: Prior to Zulip 10.0 (feature level 304), only\npublic data exports could be created using this endpoint.\n\nNew in Zulip 2.1.\n\n[export-data]: /help/export-your-organization#export-data-in-an-importable-format\n[data-export]: https://zulip.readthedocs.io/en/stable/production/export-and-import.html#data-export\n[backups]: https://zulip.readthedocs.io/en/stable/production/export-and-import.html#backups\n"
+      description: 'Create a public or a standard [data export][export-data] of the organization.
+
+
+        !!! warn ""
+
+
+        **Note**: If you''re the administrator of a self-hosted installation,
+
+        you may be looking for the documentation on [server data export and
+
+        import][data-export] or [server backups][backups].
+
+
+        **Changes**: Prior to Zulip 10.0 (feature level 304), only
+
+        public data exports could be created using this endpoint.
+
+
+        New in Zulip 2.1.
+
+
+        [export-data]: /help/export-your-organization#export-data-in-an-importable-format
+
+        [data-export]: https://zulip.readthedocs.io/en/stable/production/export-and-import.html#data-export
+
+        [backups]: https://zulip.readthedocs.io/en/stable/production/export-and-import.html#backups'
       requestBody:
         required: false
         content:
@@ -2451,7 +2440,7 @@ paths:
       tags:
       - server_and_organizations
       x-requires-administrator: true
-      description: 'Fetches which users have [consented](/help/export-your-organization#configure-whether-administrators-can-export-your-private-data)
+      description: 'Fetches which users have consented
 
         for their private data to be exported by organization administrators.
 
@@ -2463,9 +2452,7 @@ paths:
         `export_consents` array.
 
 
-        New in Zulip 10.0 (feature level 295).
-
-        '
+        New in Zulip 10.0 (feature level 295).'
       responses:
         '200':
           description: Success.
@@ -2528,9 +2515,7 @@ paths:
         appear when received by new users upon joining the organization.
 
 
-        **Changes**: New in Zulip 11.0 (feature level 416).
-
-        '
+        **Changes**: New in Zulip 11.0 (feature level 416).'
       requestBody:
         required: true
         content:
@@ -2581,7 +2566,21 @@ paths:
       tags:
       - server_and_organizations
       x-response-description: "Please note that not all of these attributes are guaranteed to appear in a\nresponse, for two reasons:\n\n* This endpoint has evolved over time, so responses from older Zulip servers\n  might be missing some keys (in which case a client should assume the\n  appropriate default).\n* If a `/server_settings` request is made to the root domain of a\n  multi-subdomain server, like the root domain of zulip.com, the settings\n  that are realm-specific are not known and thus not provided.\n"
-      description: "Fetch global settings for a Zulip server.\n\n**Note:** this endpoint does not require any authentication at all, and you can use it to check:\n\n- If this is a Zulip server, and if so, what version of Zulip it's running.\n- What a Zulip client (e.g. a mobile app or\n  [zulip-terminal](https://github.com/zulip/zulip-terminal/)) needs to\n  know in order to display a login prompt for the server (e.g. what\n  authentication methods are available).\n"
+      description: 'Fetch global settings for a Zulip server.
+
+
+        **Note:** this endpoint does not require any authentication at all, and you can use it to check:
+
+
+        - If this is a Zulip server, and if so, what version of Zulip it''s running.
+
+        - What a Zulip client (e.g. a mobile app or
+
+        zulip-terminal) needs to
+
+        know in order to display a login prompt for the server (e.g. what
+
+        authentication methods are available).'
       responses:
         '200':
           description: Success.
@@ -2719,8 +2718,9 @@ paths:
 
                               '
                           display_icon:
-                            type: string
-                            nullable: true
+                            type:
+                            - string
+                            - 'null'
                             description: 'URL for an image to be displayed as an icon in all buttons for
 
                               the external authentication method. This URL should be resolved
@@ -2939,6 +2939,128 @@ paths:
                       signup_url: /accounts/register/social/github
 components:
   schemas:
+    LegacyPresenceFormat:
+      type: object
+      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
+
+        presence.
+
+
+        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
+
+        contain two keys, `"website"` and `"aggregated"`, with identical data. The
+
+        server no longer stores which client submitted presence updates.
+
+
+        Previously, the `{client_name}` keys for these objects were the names of the
+
+        different clients where the user was logged in, for example `website` or
+
+        `ZulipDesktop`.
+
+        '
+      additionalProperties: false
+      properties:
+        client:
+          type: string
+          description: 'The client''s platform name.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
+
+            always be `"website"` as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+        status:
+          type: string
+          enum:
+          - idle
+          - active
+          description: 'The status of the user on this client. Will be either `"idle"`
+
+            or `"active"`.
+
+            '
+        timestamp:
+          type: integer
+          description: 'The UNIX timestamp of when this client sent the user''s presence
+
+            to the server with the precision of a second.
+
+            '
+        pushable:
+          type: boolean
+          description: 'Whether the client is capable of showing mobile/push notifications
+
+            to the user.
+
+
+            Not present in objects with the `"aggregated"` key.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), always
+
+            `false` when present as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    IgnoredParametersSuccess:
+      allOf:
+      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
+
+        array was added as a possible return value for all REST API endpoint
+
+        JSON success responses in Zulip 7.0 (feature level 167).
+
+
+        Previously, it was added to
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
+
+        in Zulip 5.0 (feature level 111) and to
+
+        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
+
+        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
+
+        (feature level 78) as a return value for the
+
+        [`PATCH /settings`](/api/update-settings) endpoint.
+
+
+        A typical successful JSON response with ignored parameters may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      example:
+        ignored_parameters_unsupported:
+        - invalid_param_1
+        - invalid_param_2
+        msg: ''
+        result: success
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -2968,6 +3090,38 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     CustomProfileField:
       type: object
       additionalProperties: false
@@ -3154,8 +3308,9 @@ components:
 
             '
         deleted_timestamp:
-          type: number
-          nullable: true
+          type:
+          - number
+          - 'null'
           description: 'The UNIX timestamp of when the data export was deleted.
 
 
@@ -3163,8 +3318,9 @@ components:
 
             '
         failed_timestamp:
-          type: number
-          nullable: true
+          type:
+          - number
+          - 'null'
           description: 'The UNIX timestamp of when the data export failed.
 
 
@@ -3174,8 +3330,9 @@ components:
 
             '
         export_url:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: 'The URL to download the generated data export.
 
 
@@ -3207,6 +3364,52 @@ components:
           - full_with_consent
           - full_without_consent
           description: "Whether the data export is public, full with consent, or full without consent.\n\n- `public` = Public data export.\n- `full_with_consent` = Public and private data export (with consent), which includes private data\n  for users who have granted consent.\n- `full_without_consent` = All public and private data, which includes private data for all users.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nthe export type was not included in these objects because only\npublic data exports could be created or listed via the API or UI.\n"
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    LinkifierURLTemplate:
+      description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
+
+        compliant URL template used for the link.
+
+        If you used named groups in `pattern`, you can insert their
+
+        content here with `{name_of_group}`.
+
+
+        **Changes**: New in Zulip 7.0 (feature level 176). This replaced
+
+        the `url_format_string` parameter, which was a format string in which
+
+        named groups'' content could be inserted with `%(name_of_group)s`.
+
+        '
+      type: string
+      example: https://github.com/zulip/zulip/issues/{id}
+    IgnoredParametersBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     EmailAddressVisibility:
       type: integer
       description: 'The [policy][permission-level] for [which other users][help-email-visibility]
@@ -3235,110 +3438,6 @@ components:
         [help-email-visibility]: /help/configure-email-visibility
 
         '
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    IgnoredParametersSuccess:
-      allOf:
-      - $ref: '#/components/schemas/IgnoredParametersBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
-
-        array was added as a possible return value for all REST API endpoint
-
-        JSON success responses in Zulip 7.0 (feature level 167).
-
-
-        Previously, it was added to
-
-        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
-
-        in Zulip 5.0 (feature level 111) and to
-
-        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
-
-        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
-
-        (feature level 78) as a return value for the
-
-        [`PATCH /settings`](/api/update-settings) endpoint.
-
-
-        A typical successful JSON response with ignored parameters may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      example:
-        ignored_parameters_unsupported:
-        - invalid_param_1
-        - invalid_param_2
-        msg: ''
-        result: success
-    IgnoredParametersBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     RealmDomain:
       type: object
       additionalProperties: false
@@ -3366,33 +3465,6 @@ components:
         '
       type: string
       example: '#(?P<id>[0-9]+)'
-    LinkifierURLTemplate:
-      description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
-
-        compliant URL template used for the link.
-
-        If you used named groups in `pattern`, you can insert their
-
-        content here with `{name_of_group}`.
-
-
-        **Changes**: New in Zulip 7.0 (feature level 176). This replaced
-
-        the `url_format_string` parameter, which was a format string in which
-
-        named groups'' content could be inserted with `%(name_of_group)s`.
-
-        '
-      type: string
-      example: https://github.com/zulip/zulip/issues/{id}
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
     RealmEmoji:
       type: object
       additionalProperties: false
@@ -3422,8 +3494,9 @@ components:
 
             '
         still_url:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: 'Only non-null when the emoji''s image is animated.
 
 
@@ -3454,8 +3527,9 @@ components:
 
             '
         author_id:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: 'The user ID of the user who uploaded the custom emoji.
 
             Will be `null` if the uploader is unknown.
@@ -3464,75 +3538,6 @@ components:
             **Changes**: New in Zulip 3.0 (feature level 7). Previously
 
             was accessible via an `author` object with an `id` field.
-
-            '
-    LegacyPresenceFormat:
-      type: object
-      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
-
-        presence.
-
-
-        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
-
-        contain two keys, `"website"` and `"aggregated"`, with identical data. The
-
-        server no longer stores which client submitted presence updates.
-
-
-        Previously, the `{client_name}` keys for these objects were the names of the
-
-        different clients where the user was logged in, for example `website` or
-
-        `ZulipDesktop`.
-
-        '
-      additionalProperties: false
-      properties:
-        client:
-          type: string
-          description: 'The client''s platform name.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
-
-            always be `"website"` as the server no longer stores which client
-
-            submitted presence data.
-
-            '
-        status:
-          type: string
-          enum:
-          - idle
-          - active
-          description: 'The status of the user on this client. Will be either `"idle"`
-
-            or `"active"`.
-
-            '
-        timestamp:
-          type: integer
-          description: 'The UNIX timestamp of when this client sent the user''s presence
-
-            to the server with the precision of a second.
-
-            '
-        pushable:
-          type: boolean
-          description: 'Whether the client is capable of showing mobile/push notifications
-
-            to the user.
-
-
-            Not present in objects with the `"aggregated"` key.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), always
-
-            `false` when present as the server no longer stores which client
-
-            submitted presence data.
 
             '
   responses:

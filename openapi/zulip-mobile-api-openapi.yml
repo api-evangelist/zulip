@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication mobile API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Mobile API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,7 +23,7 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: mobile
+- name: Mobile
 paths:
   /mobile_push/test_notification:
     post:
@@ -33,7 +31,7 @@ paths:
       operationId: test-notify
       summary: Send a test notification to mobile device(s)
       tags:
-      - mobile
+      - Mobile
       description: 'Trigger sending a test push notification to the user''s
 
         selected mobile device or all of their mobile devices.
@@ -45,7 +43,7 @@ paths:
 
         notifications support should use the
 
-        [Send an E2EE test notification to mobile device(s)](/api/e2ee-test-notify)
+        Send an E2EE test notification to mobile device(s)
 
         endpoint, as this endpoint will be removed in a future release.
 
@@ -61,9 +59,7 @@ paths:
         `realm_name` field.
 
 
-        New in Zulip 8.0 (feature level 217).
-
-        '
+        New in Zulip 8.0 (feature level 217).'
       requestBody:
         required: false
         content:
@@ -109,15 +105,13 @@ paths:
       operationId: e2ee-test-notify
       summary: Send an E2EE test notification to mobile device(s)
       tags:
-      - mobile
+      - Mobile
       description: 'Trigger sending an end-to-end encrypted (E2EE) test push notification
 
         to the user''s selected mobile device or all of their mobile devices.
 
 
-        **Changes**: New in Zulip 11.0 (feature level 420).
-
-        '
+        **Changes**: New in Zulip 11.0 (feature level 420).'
       requestBody:
         required: false
         content:
@@ -192,7 +186,7 @@ paths:
       operationId: register-push-device
       summary: Register E2EE push device
       tags:
-      - mobile
+      - Mobile
       description: 'Register a device to receive end-to-end encrypted mobile push notifications,
 
         or update such a registration.
@@ -246,9 +240,7 @@ paths:
         redesigned to support rotation of `push_key` and token provided by FCM/APNs.
 
 
-        New in Zulip 11.0 (feature level 406).
-
-        '
+        New in Zulip 11.0 (feature level 406).'
       requestBody:
         required: true
         content:
@@ -365,7 +357,7 @@ paths:
       operationId: register-remote-push-device
       summary: Register E2EE push device to bouncer
       tags:
-      - mobile
+      - Mobile
       description: 'Register a push device to bouncer to receive end-to-end encrypted
 
         mobile push notifications.
@@ -375,15 +367,13 @@ paths:
 
         a push device to the bouncer server after receiving a request from
 
-        the mobile client to [register E2EE push device](/api/register-push-device).
+        the mobile client to register E2EE push device.
 
 
         It is not meant to be used by mobile clients directly.
 
 
-        **Changes**: New in Zulip 11.0 (feature level 406).
-
-        '
+        **Changes**: New in Zulip 11.0 (feature level 406).'
       requestBody:
         required: true
         content:
@@ -494,7 +484,7 @@ paths:
       operationId: register-client-device
       summary: Register a logged-in device
       tags:
-      - mobile
+      - Mobile
       description: 'Logged-in mobile devices use this endpoint as an initial step to
 
         register themselves, before registering for E2EE push notifications.
@@ -503,9 +493,7 @@ paths:
         This endpoint is currently not useful for clients other than mobile.
 
 
-        **Changes**: New in Zulip 12.0 (feature level 468).
-
-        '
+        **Changes**: New in Zulip 12.0 (feature level 468).'
       responses:
         '200':
           description: Success.
@@ -535,10 +523,10 @@ paths:
       operationId: remove-client-device
       summary: Remove a registered device
       tags:
-      - mobile
+      - Mobile
       description: 'Mobile devices use this endpoint to remove their device record
 
-        registered using [`POST /register_client_device`](/api/register-client-device)
+        registered using `POST /register_client_device`
 
         when the user logs out.
 
@@ -546,9 +534,7 @@ paths:
         This endpoint is currently not useful for clients other than mobile.
 
 
-        **Changes**: New in Zulip 12.0 (feature level 470).
-
-        '
+        **Changes**: New in Zulip 12.0 (feature level 470).'
       requestBody:
         required: true
         content:
@@ -569,6 +555,137 @@ paths:
           $ref: '#/components/responses/SimpleSuccess'
 components:
   schemas:
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    PushNotificationAdminActionRequiredError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: ADMIN_ACTION_REQUIRED
+          msg: Push notification configuration issue on server, contact the server administrator or retry later.
+          result: error
+        description: '## Admin action required
+
+
+          A typical failed JSON response for when there is a push notification
+
+          configuration issue on the server, such as invalid credentials,
+
+          an expired plan, or an unregistered organization. Admin action is required.
+
+          '
+    FailedToConnectBouncerError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: FAILED_TO_CONNECT_BOUNCER
+          msg: Network error while connecting to Zulip push notification service.
+          result: error
+        description: '## Failed to connect bouncer
+
+
+          A typical failed JSON response for when a network error occurs
+
+          while the server attempts to connect to the bouncer server.
+
+          '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    NoActivePushDeviceError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: NO_ACTIVE_PUSH_DEVICE
+          msg: No active registered push device
+          result: error
+        description: '## No active push device
+
+
+          A typical failed JSON response for when no registered device is available
+
+          for the user (and `push_account_id`) to receive a push notification.
+
+          '
+    InvalidPushDeviceTokenError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: INVALID_PUSH_DEVICE_TOKEN
+          msg: Device not recognized
+          result: error
+        description: '## Invalid push device token
+
+
+          A typical failed JSON response for when the push device token is not
+
+          recognized by the Zulip server:
+
+          '
+    InternalBouncerServerError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: INTERNAL_SERVER_ERROR_ON_BOUNCER
+          msg: Internal server error on Zulip push notification service, retry later.
+          result: error
+        description: '## Internal bouncer server error
+
+
+          A typical failed JSON response for when a 5xx error occurs on the bouncer server.
+
+          '
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -598,47 +715,6 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    PushNotificationAdminActionRequiredError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: ADMIN_ACTION_REQUIRED
-          msg: Push notification configuration issue on server, contact the server administrator or retry later.
-          result: error
-        description: '## Admin action required
-
-
-          A typical failed JSON response for when there is a push notification
-
-          configuration issue on the server, such as invalid credentials,
-
-          an expired plan, or an unregistered organization. Admin action is required.
-
-          '
-    InternalBouncerServerError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: INTERNAL_SERVER_ERROR_ON_BOUNCER
-          msg: Internal server error on Zulip push notification service, retry later.
-          result: error
-        description: '## Internal bouncer server error
-
-
-          A typical failed JSON response for when a 5xx error occurs on the bouncer server.
-
-          '
     InvalidRemotePushDeviceTokenError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
@@ -654,96 +730,6 @@ components:
           by the push notification bouncer:
 
           '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    InvalidPushDeviceTokenError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: INVALID_PUSH_DEVICE_TOKEN
-          msg: Device not recognized
-          result: error
-        description: '## Invalid push device token
-
-
-          A typical failed JSON response for when the push device token is not
-
-          recognized by the Zulip server:
-
-          '
-    FailedToConnectBouncerError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: FAILED_TO_CONNECT_BOUNCER
-          msg: Network error while connecting to Zulip push notification service.
-          result: error
-        description: '## Failed to connect bouncer
-
-
-          A typical failed JSON response for when a network error occurs
-
-          while the server attempts to connect to the bouncer server.
-
-          '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    NoActivePushDeviceError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: NO_ACTIVE_PUSH_DEVICE
-          msg: No active registered push device
-          result: error
-        description: '## No active push device
-
-
-          A typical failed JSON response for when no registered device is available
-
-          for the user (and `push_account_id`) to receive a push notification.
-
-          '
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
   responses:
     SimpleSuccess:
       description: Success.

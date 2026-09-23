@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Authentication API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,15 +23,55 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: authentication
+- name: Authentication
 paths:
   /fetch_api_key:
     post:
       operationId: fetch-api-key
       summary: Fetch an API key (production)
       tags:
-      - authentication
-      description: "This API endpoint is used by clients such as the Zulip mobile and\nterminal apps to implement password-based authentication. Given the\nuser's Zulip login credentials, it returns a Zulip API key that the client\ncan use to make requests as the user.\n\nThis endpoint is only useful for Zulip servers/organizations with\nEmailAuthBackend or LDAPAuthBackend enabled.\n\nThe Zulip mobile apps also support SSO/social authentication (GitHub\nauth, Google auth, SAML, etc.) that does not use this endpoint. Instead,\nthe mobile apps reuse the web login flow passing the `mobile_flow_otp` in\na webview, and the credentials are returned to the app (encrypted) via a redirect\nto a `zulip://` URL.\n\n!!! warn \"\"\n\n    **Note:** If you signed up using passwordless authentication and\n    never had a password, you can [reset your password](/help/change-your-password).\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to download an API key manually.\n\nIn a [Zulip development environment](https://zulip.readthedocs.io/en/latest/development/overview.html),\nsee also [the unauthenticated variant](/api/dev-fetch-api-key).\n"
+      - Authentication
+      description: 'This API endpoint is used by clients such as the Zulip mobile and
+
+        terminal apps to implement password-based authentication. Given the
+
+        user''s Zulip login credentials, it returns a Zulip API key that the client
+
+        can use to make requests as the user.
+
+
+        This endpoint is only useful for Zulip servers/organizations with
+
+        EmailAuthBackend or LDAPAuthBackend enabled.
+
+
+        The Zulip mobile apps also support SSO/social authentication (GitHub
+
+        auth, Google auth, SAML, etc.) that does not use this endpoint. Instead,
+
+        the mobile apps reuse the web login flow passing the `mobile_flow_otp` in
+
+        a webview, and the credentials are returned to the app (encrypted) via a redirect
+
+        to a `zulip://` URL.
+
+
+        !!! warn ""
+
+
+        **Note:** If you signed up using passwordless authentication and
+
+        never had a password, you can reset your password.
+
+
+        See the API keys documentation for more details
+
+        on how to download an API key manually.
+
+
+        In a Zulip development environment,
+
+        see also the unauthenticated variant.'
       requestBody:
         required: true
         content:
@@ -78,8 +116,33 @@ paths:
       operationId: jwt-fetch-api-key
       summary: Fetch an API key (JWT)
       tags:
-      - authentication
-      description: "This API endpoint is used by clients to implement JSON Web Token\n(JWT) authentication. Given a JWT identifying a Zulip user, it\nreturns a Zulip API key that the client can use to make requests\nas the user.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only useful for Zulip servers/organizations\n    with [JSON web token authentication][prod-jwt-auth] enabled.\n\nSee the [API keys](/api/api-keys) documentation for more details\non how to manage API keys manually.\n\n**Changes**: New in Zulip 7.0 (feature level 160).\n\n[prod-jwt-auth]: https://zulip.readthedocs.io/en/latest/production/authentication-methods.html#json-web-tokens-jwt\n"
+      - Authentication
+      description: 'This API endpoint is used by clients to implement JSON Web Token
+
+        (JWT) authentication. Given a JWT identifying a Zulip user, it
+
+        returns a Zulip API key that the client can use to make requests
+
+        as the user.
+
+
+        !!! warn ""
+
+
+        **Note:** This endpoint is only useful for Zulip servers/organizations
+
+        with [JSON web token authentication][prod-jwt-auth] enabled.
+
+
+        See the API keys documentation for more details
+
+        on how to manage API keys manually.
+
+
+        **Changes**: New in Zulip 7.0 (feature level 160).
+
+
+        [prod-jwt-auth]: https://zulip.readthedocs.io/en/latest/production/authentication-methods.html#json-web-tokens-jwt'
       requestBody:
         required: true
         content:
@@ -148,8 +211,7 @@ paths:
                       - additionalProperties: false
                         properties:
                           user_id: {}
-                          delivery_email:
-                            nullable: true
+                          delivery_email: {}
                           email: {}
                           full_name: {}
                           date_joined: {}
@@ -158,14 +220,11 @@ paths:
                           is_admin: {}
                           is_guest: {}
                           is_bot: {}
-                          bot_type:
-                            nullable: true
-                          bot_owner_id:
-                            nullable: true
+                          bot_type: {}
+                          bot_owner_id: {}
                           role: {}
                           timezone: {}
-                          avatar_url:
-                            nullable: true
+                          avatar_url: {}
                           avatar_version: {}
                           is_imported_stub: {}
                   example:
@@ -178,8 +237,26 @@ paths:
       operationId: dev-fetch-api-key
       summary: Fetch an API key (development only)
       tags:
-      - authentication
-      description: "For easy testing of mobile apps and other clients and against Zulip\ndevelopment servers, we support fetching a Zulip API key for any user\non the development server without authentication (so that they can\nimplement analogues of the one-click login process available for Zulip\ndevelopment servers on the web).\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n"
+      - Authentication
+      description: 'For easy testing of mobile apps and other clients and against Zulip
+
+        development servers, we support fetching a Zulip API key for any user
+
+        on the development server without authentication (so that they can
+
+        implement analogues of the one-click login process available for Zulip
+
+        development servers on the web).
+
+
+        !!! warn ""
+
+
+        **Note:** This endpoint is only available on Zulip development
+
+        servers; for obvious security reasons it will always return an error
+
+        in a Zulip production server.'
       requestBody:
         required: true
         content:
@@ -208,8 +285,24 @@ paths:
       operationId: dev-list-users
       summary: List users (development only)
       tags:
-      - authentication
-      description: "Get a list of all, non-bot users in a [Zulip development\nserver](https://zulip.readthedocs.io/en/latest/development/overview.html).\nThis endpoint is used by mobile developers to fetch users for the\ndevelopment login flow.\n\n!!! warn \"\"\n\n    **Note:** This endpoint is only available on Zulip development\n    servers; for obvious security reasons it will always return an error\n    in a Zulip production server.\n"
+      - Authentication
+      description: 'Get a list of all, non-bot users in a Zulip development
+
+        server.
+
+        This endpoint is used by mobile developers to fetch users for the
+
+        development login flow.
+
+
+        !!! warn ""
+
+
+        **Note:** This endpoint is only available on Zulip development
+
+        servers; for obvious security reasons it will always return an error
+
+        in a Zulip production server.'
       security: []
       responses:
         '200':
@@ -274,35 +367,6 @@ paths:
                       realm_url: http://localhost:9991
 components:
   schemas:
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     IgnoredParametersUnsupported:
       type: array
       items:
@@ -317,6 +381,41 @@ components:
         for details on this and its change history.
 
         '
+    ApiKeyResponse:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - required:
+        - api_key
+        - email
+        additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+          api_key:
+            type: string
+            description: 'The API key that can be used to authenticate as the requested user.
+
+              '
+          email:
+            type: string
+            description: 'The email address of the user who owns the API key.
+
+              '
+          user_id:
+            type: integer
+            description: 'The unique ID of the user who owns the API key.
+
+
+              **Changes**: New in Zulip 7.0 (feature level 171).
+
+              '
+        example:
+          api_key: gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv
+          email: iago@zulip.com
+          msg: ''
+          result: success
+          user_id: 5
     JsonResponseBase:
       type: object
       properties:
@@ -339,8 +438,9 @@ components:
 
             '
         delivery_email:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: 'The user''s real email address. This value will be `null` if you cannot
 
             access user''s real email address. For bot users, this field is always
@@ -436,8 +536,9 @@ components:
 
             '
         bot_type:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: 'An integer describing the type of bot:
 
 
@@ -453,8 +554,9 @@ components:
 
             '
         bot_owner_id:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: 'If the user is a bot (i.e. `is_bot` is true), then `bot_owner_id`
 
             is the user ID of the bot''s owner (usually, whoever created the bot).
@@ -505,8 +607,9 @@ components:
 
             '
         avatar_url:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: 'URL for the user''s avatar.
 
 
@@ -574,41 +677,35 @@ components:
             **Changes**: New in Zulip 12.0 (feature level 490).
 
             '
-    ApiKeyResponse:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
       allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
+      - $ref: '#/components/schemas/JsonResponseBase'
       - required:
-        - api_key
-        - email
-        additionalProperties: false
+        - result
+        - msg
         properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-          api_key:
+          result:
+            enum:
+            - success
+          msg:
             type: string
-            description: 'The API key that can be used to authenticate as the requested user.
-
-              '
-          email:
-            type: string
-            description: 'The email address of the user who owns the API key.
-
-              '
-          user_id:
-            type: integer
-            description: 'The unique ID of the user who owns the API key.
-
-
-              **Changes**: New in Zulip 7.0 (feature level 171).
-
-              '
-        example:
-          api_key: gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv
-          email: iago@zulip.com
-          msg: ''
-          result: success
-          user_id: 5
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   securitySchemes:
     BasicAuth:
       type: http

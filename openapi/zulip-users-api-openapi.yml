@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication users API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Users API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,17 +23,15 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: users
+- name: Users
 paths:
   /attachments:
     get:
       operationId: get-attachments
       summary: Get attachments
       tags:
-      - users
-      description: 'Fetch metadata on files uploaded by the requesting user.
-
-        '
+      - Users
+      description: Fetch metadata on files uploaded by the requesting user.
       responses:
         '200':
           description: Success.
@@ -83,7 +79,7 @@ paths:
       operationId: remove-attachment
       summary: Delete an attachment
       tags:
-      - users
+      - Users
       description: 'Delete an uploaded file given its attachment ID.
 
 
@@ -93,7 +89,7 @@ paths:
 
         containing a link to them is deleted (whether directly or via
 
-        a [message retention policy](/help/message-retention-policy)).
+        a message retention policy).
 
 
         Uploaded files that are never used in a message are
@@ -101,9 +97,7 @@ paths:
         automatically deleted a few weeks after being uploaded.
 
 
-        Attachment IDs can be contained from [GET /attachments](/api/get-attachments).
-
-        '
+        Attachment IDs can be contained from GET /attachments.'
       parameters:
       - name: attachment_id
         in: path
@@ -151,7 +145,7 @@ paths:
       operationId: get-users
       summary: Get users
       tags:
-      - users
+      - Users
       description: 'Retrieve details on users in the organization.
 
 
@@ -162,10 +156,10 @@ paths:
         results to a specific set of user IDs.
 
 
-        Optionally includes values of [custom profile fields](/help/custom-profile-fields).
+        Optionally includes values of custom profile fields.
 
 
-        You can also [fetch details on a single user](/api/get-user).
+        You can also fetch details on a single user.
 
 
         **Changes**: In Zulip 12.0 (feature level 437), fixed a bug
@@ -181,13 +175,11 @@ paths:
 
         This endpoint did not support unauthenticated
 
-        access in organizations using the [public access
+        access in organizations using the public access
 
-        option](/help/public-access-option) prior to Zulip 11.0
+        option prior to Zulip 11.0
 
-        (feature level 387).
-
-        '
+        (feature level 387).'
       x-curl-examples-parameters:
         oneOf:
         - type: include
@@ -336,8 +328,38 @@ paths:
       operationId: create-user
       summary: Create a user
       tags:
-      - users
-      description: "Create a new user account via the API.\n\n!!! warn \"\"\n\n    **Note**: On Zulip Cloud, this feature is available only for\n    organizations on a [Zulip Cloud Standard](https://zulip.com/plans/)\n    or [Zulip Cloud Plus](https://zulip.com/plans/) plan. Administrators\n    can request the required `can_create_users` permission for a bot or\n    user by contacting [Zulip Cloud support][support] with an\n    explanation for why it is needed. Self-hosted installations can\n    toggle `can_create_users` on an account using the `manage.py\n    change_user_role` [management command][management-commands].\n\n**Changes**: Before Zulip 4.0 (feature level 36), this endpoint was\navailable to all organization administrators.\n\n[support]: /help/contact-support\n[management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html\n"
+      - Users
+      description: 'Create a new user account via the API.
+
+
+        !!! warn ""
+
+
+        **Note**: On Zulip Cloud, this feature is available only for
+
+        organizations on a Zulip Cloud Standard
+
+        or Zulip Cloud Plus plan. Administrators
+
+        can request the required `can_create_users` permission for a bot or
+
+        user by contacting [Zulip Cloud support][support] with an
+
+        explanation for why it is needed. Self-hosted installations can
+
+        toggle `can_create_users` on an account using the `manage.py
+
+        change_user_role` [management command][management-commands].
+
+
+        **Changes**: Before Zulip 4.0 (feature level 36), this endpoint was
+
+        available to all organization administrators.
+
+
+        [support]: /help/contact-support
+
+        [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html'
       x-requires-administrator: true
       requestBody:
         required: true
@@ -414,15 +436,13 @@ paths:
       operationId: reactivate-user
       summary: Reactivate a user
       tags:
-      - users
+      - Users
       x-requires-administrator: true
-      description: '[Reactivates a
+      description: 'Reactivates a
 
-        user](https://zulip.com/help/deactivate-or-reactivate-a-user)
+        user
 
-        given their user ID.
-
-        '
+        given their user ID.'
       parameters:
       - $ref: '#/components/parameters/UserId'
       responses:
@@ -433,10 +453,10 @@ paths:
       operationId: update-status-for-user
       summary: Update user status
       tags:
-      - users
+      - Users
       parameters:
       - $ref: '#/components/parameters/UserId'
-      description: 'Administrator endpoint for changing the [status](/help/status-and-availability) of
+      description: 'Administrator endpoint for changing the status of
 
         another user.
 
@@ -448,9 +468,7 @@ paths:
         role of the bot.
 
 
-        New in Zulip 11.0 (feature level 407).
-
-        '
+        New in Zulip 11.0 (feature level 407).'
       x-requires-administrator: true
       requestBody:
         required: false
@@ -576,19 +594,17 @@ paths:
       operationId: get-user-status
       summary: Get a user's status
       tags:
-      - users
-      description: 'Get the [status](/help/status-and-availability) currently set by a
+      - Users
+      description: 'Get the status currently set by a
 
         user in the organization.
 
 
         **Changes**: New in Zulip 9.0 (feature level 262). Previously,
 
-        user statuses could only be fetched via the [`POST
+        user statuses could only be fetched via the `POST
 
-        /register`](/api/register-queue) endpoint.
-
-        '
+        /register` endpoint.'
       parameters:
       - $ref: '#/components/parameters/UserId'
       responses:
@@ -641,7 +657,7 @@ paths:
       operationId: get-user-presence
       summary: Get a user's presence
       tags:
-      - users
+      - Users
       description: 'Get the presence status for a specific user.
 
 
@@ -649,13 +665,11 @@ paths:
 
         presence status in other sites (e.g. an employee directory). Full
 
-        Zulip clients like mobile/desktop apps will want to use the [main
+        Zulip clients like mobile/desktop apps will want to use the main
 
-        presence endpoint](/api/get-presence), which returns data for all
+        presence endpoint, which returns data for all
 
-        active users in the organization, instead.
-
-        '
+        active users in the organization, instead.'
       parameters:
       - name: user_id_or_email
         in: path
@@ -834,15 +848,13 @@ paths:
       operationId: get-own-user
       summary: Get own user
       tags:
-      - users
+      - Users
       description: 'Get basic data about the user/bot that requests this endpoint.
 
 
         **Changes**: Removed `is_billing_admin` field in Zulip 10.0 (feature level 363), as it was
 
-        replaced by the `can_manage_billing_group` realm setting.
-
-        '
+        replaced by the `can_manage_billing_group` realm setting.'
       responses:
         '200':
           description: Success
@@ -1102,15 +1114,13 @@ paths:
       operationId: deactivate-own-user
       summary: Deactivate own user
       tags:
-      - users
+      - Users
       description: 'Deactivates the current user''s account. See also the administrative endpoint for
 
-        [deactivating another user](/api/deactivate-user).
+        deactivating another user.
 
 
-        This endpoint is primarily useful to Zulip clients providing a user settings UI.
-
-        '
+        This endpoint is primarily useful to Zulip clients providing a user settings UI.'
       responses:
         '200':
           $ref: '#/components/responses/SimpleSuccess'
@@ -1176,8 +1186,33 @@ paths:
       operationId: regenerate-api-key
       summary: Regenerate your API key
       tags:
-      - users
-      description: "!!! warn \"\"\n\n     **Note**: Users should treat their Zulip API key as\n     [carefully as they would their password](/help/protect-your-account).\n\nGenerate a new API key for the user making the request.\n\nChanging a user's API key will immediately log them out of Zulip\non devices registered for [mobile push notifications][mobile-push].\n\n**Changes**: Before Zulip 12.0 (feature level 492),\nregenerating a user's API key didn't remove all of the user's\n[E2EE push device registrations](/api/register-push-device),\nso E2EE push notifications could still be sent.\n\n[mobile-push]: https://zulip.readthedocs.io/en/latest/production/mobile-push-notifications.html\n"
+      - Users
+      description: '!!! warn ""
+
+
+        **Note**: Users should treat their Zulip API key as
+
+        carefully as they would their password.
+
+
+        Generate a new API key for the user making the request.
+
+
+        Changing a user''s API key will immediately log them out of Zulip
+
+        on devices registered for [mobile push notifications][mobile-push].
+
+
+        **Changes**: Before Zulip 12.0 (feature level 492),
+
+        regenerating a user''s API key didn''t remove all of the user''s
+
+        E2EE push device registrations,
+
+        so E2EE push notifications could still be sent.
+
+
+        [mobile-push]: https://zulip.readthedocs.io/en/latest/production/mobile-push-notifications.html'
       responses:
         '200':
           description: Success.
@@ -1205,13 +1240,11 @@ paths:
       operationId: get-alert-words
       summary: Get all alert words
       tags:
-      - users
+      - Users
       description: 'Get all of the user''s configured [alert words][alert-words].
 
 
-        [alert-words]: /help/dm-mention-alert-notifications#alert-words
-
-        '
+        [alert-words]: /help/dm-mention-alert-notifications#alert-words'
       responses:
         '200':
           description: Success.
@@ -1244,13 +1277,11 @@ paths:
       operationId: add-alert-words
       summary: Add alert words
       tags:
-      - users
+      - Users
       description: 'Add words (or phrases) to the user''s set of configured [alert words][alert-words].
 
 
-        [alert-words]: /help/dm-mention-alert-notifications#alert-words
-
-        '
+        [alert-words]: /help/dm-mention-alert-notifications#alert-words'
       requestBody:
         required: true
         content:
@@ -1330,16 +1361,14 @@ paths:
       operationId: remove-alert-words
       summary: Remove alert words
       tags:
-      - users
+      - Users
       description: 'Remove words (or phrases) from the user''s set of configured [alert words][alert-words].
 
 
         Alert words are case insensitive.
 
 
-        [alert-words]: /help/dm-mention-alert-notifications#alert-words
-
-        '
+        [alert-words]: /help/dm-mention-alert-notifications#alert-words'
       requestBody:
         required: true
         content:
@@ -1399,8 +1428,68 @@ paths:
       operationId: update-presence
       summary: Update your presence
       tags:
-      - users
-      description: "Update the current user's [presence][availability] and fetch presence data\nof other users in the organization.\n\nThis endpoint is meant to be used by clients for both:\n\n- Reporting the current user's presence status (`\"active\"` or `\"idle\"`)\n  to the server.\n\n- Obtaining the presence data of all other users in the organization via\n  regular polling.\n\nAccurate user presence is one of the most expensive parts of any\nchat application (in terms of bandwidth and other resources). Therefore,\nit is important that clients implementing Zulip's user presence system\nuse the modern [`last_update_id`](#parameter-last_update_id) protocol to\nminimize fetching duplicate user presence data.\n\nClient apps implementing presence are recommended to also consume [`presence`\nevents](/api/get-events#presence)), in order to learn about newly online users\nimmediately.\n\nThe Zulip server is responsible for implementing [invisible mode][invisible],\nwhich disables sharing a user's presence data. Nonetheless, clients\nshould check the `presence_enabled` field in user objects in order to\ndisplay the current user as online or offline based on whether they are\nsharing their presence information.\n\n**Changes**: As of Zulip 8.0 (feature level 228), if the\n`CAN_ACCESS_ALL_USERS_GROUP_LIMITS_PRESENCE` server-level setting is\n`true`, then user presence data in the response is [limited to users\nthe current user can see/access][limit-visibility].\n\n[limit-visibility]: /help/guest-users#configure-whether-guests-can-see-all-other-users\n[invisible]: /help/status-and-availability#invisible-mode\n[availability]: /help/status-and-availability#availability\n"
+      - Users
+      description: 'Update the current user''s [presence][availability] and fetch presence data
+
+        of other users in the organization.
+
+
+        This endpoint is meant to be used by clients for both:
+
+
+        - Reporting the current user''s presence status (`"active"` or `"idle"`)
+
+        to the server.
+
+
+        - Obtaining the presence data of all other users in the organization via
+
+        regular polling.
+
+
+        Accurate user presence is one of the most expensive parts of any
+
+        chat application (in terms of bandwidth and other resources). Therefore,
+
+        it is important that clients implementing Zulip''s user presence system
+
+        use the modern `last_update_id` protocol to
+
+        minimize fetching duplicate user presence data.
+
+
+        Client apps implementing presence are recommended to also consume `presence`
+
+        events), in order to learn about newly online users
+
+        immediately.
+
+
+        The Zulip server is responsible for implementing [invisible mode][invisible],
+
+        which disables sharing a user''s presence data. Nonetheless, clients
+
+        should check the `presence_enabled` field in user objects in order to
+
+        display the current user as online or offline based on whether they are
+
+        sharing their presence information.
+
+
+        **Changes**: As of Zulip 8.0 (feature level 228), if the
+
+        `CAN_ACCESS_ALL_USERS_GROUP_LIMITS_PRESENCE` server-level setting is
+
+        `true`, then user presence data in the response is [limited to users
+
+        the current user can see/access][limit-visibility].
+
+
+        [limit-visibility]: /help/guest-users#configure-whether-guests-can-see-all-other-users
+
+        [invisible]: /help/status-and-availability#invisible-mode
+
+        [availability]: /help/status-and-availability#availability'
       requestBody:
         required: true
         content:
@@ -1739,14 +1828,12 @@ paths:
       operationId: update-profile-data
       summary: Update your profile data
       tags:
-      - users
-      description: 'Update the current user''s [profile data](/help/edit-your-profile) for
+      - Users
+      description: 'Update the current user''s profile data for
 
-        one or more of the [custom profile fields](/help/custom-profile-fields)
+        one or more of the custom profile fields
 
-        configured in the organization.
-
-        '
+        configured in the organization.'
       requestBody:
         required: true
         content:
@@ -1809,14 +1896,12 @@ paths:
       operationId: remove-profile-data
       summary: Remove your profile data
       tags:
-      - users
-      description: 'Remove the current user''s [profile data](/help/edit-your-profile) for
+      - Users
+      description: 'Remove the current user''s profile data for
 
-        one or more of the [custom profile fields](/help/custom-profile-fields)
+        one or more of the custom profile fields
 
-        configured in the organization.
-
-        '
+        configured in the organization.'
       requestBody:
         required: true
         content:
@@ -1877,8 +1962,8 @@ paths:
       operationId: update-status
       summary: Update your status
       tags:
-      - users
-      description: 'Change your [status](/help/status-and-availability).
+      - Users
+      description: 'Change your status.
 
 
         A request to this endpoint will only change the parameters passed.
@@ -1895,9 +1980,7 @@ paths:
 
         **Changes**: In Zulip 5.0 (feature level 86), added support for
 
-        `emoji_name`, `emoji_code`, and `reaction_type` parameters.
-
-        '
+        `emoji_name`, `emoji_code`, and `reaction_type` parameters.'
       requestBody:
         required: false
         content:
@@ -2033,8 +2116,63 @@ paths:
       operationId: mute-user
       summary: Mute a user
       tags:
-      - users
-      description: "[Mute a user](/help/mute-a-user) from the perspective of the requesting\nuser. Messages sent by muted users will be automatically marked as read\nand hidden for the user who muted them.\n\nMuted users should be implemented by clients as follows:\n\n- The server will immediately mark all messages sent by the muted\n  user as read. This will automatically clear any existing mobile\n  push notifications related to the muted user.\n- The server will mark any new messages sent by the muted user as read\n  for the requesting user's account, which prevents all email and mobile\n  push notifications.\n- Clients should exclude muted users from presence lists or other UI\n  for viewing or composing one-on-one direct messages. One-on-one direct\n  messages sent by muted users should be hidden everywhere in the Zulip UI.\n- Channel messages and group direct messages sent by the muted\n  user should avoid displaying the content and name/avatar,\n  but should display that N messages by a muted user were\n  hidden (so that it is possible to interpret the messages by\n  other users who are talking with the muted user).\n- Group direct message conversations including the muted user\n  should display muted users as \"Muted user\", rather than\n  showing their name, in lists of such conversations, along with using\n  a blank grey avatar where avatars are displayed.\n- Administrative/settings UI elements for showing \"All users that exist\n  on this channel or realm\", e.g. for organization\n  administration or showing channel subscribers, should display\n  the user's name as normal.\n\n**Changes**: New in Zulip 4.0 (feature level 48).\n"
+      - Users
+      description: 'Mute a user from the perspective of the requesting
+
+        user. Messages sent by muted users will be automatically marked as read
+
+        and hidden for the user who muted them.
+
+
+        Muted users should be implemented by clients as follows:
+
+
+        - The server will immediately mark all messages sent by the muted
+
+        user as read. This will automatically clear any existing mobile
+
+        push notifications related to the muted user.
+
+        - The server will mark any new messages sent by the muted user as read
+
+        for the requesting user''s account, which prevents all email and mobile
+
+        push notifications.
+
+        - Clients should exclude muted users from presence lists or other UI
+
+        for viewing or composing one-on-one direct messages. One-on-one direct
+
+        messages sent by muted users should be hidden everywhere in the Zulip UI.
+
+        - Channel messages and group direct messages sent by the muted
+
+        user should avoid displaying the content and name/avatar,
+
+        but should display that N messages by a muted user were
+
+        hidden (so that it is possible to interpret the messages by
+
+        other users who are talking with the muted user).
+
+        - Group direct message conversations including the muted user
+
+        should display muted users as "Muted user", rather than
+
+        showing their name, in lists of such conversations, along with using
+
+        a blank grey avatar where avatars are displayed.
+
+        - Administrative/settings UI elements for showing "All users that exist
+
+        on this channel or realm", e.g. for organization
+
+        administration or showing channel subscribers, should display
+
+        the user''s name as normal.
+
+
+        **Changes**: New in Zulip 4.0 (feature level 48).'
       parameters:
       - $ref: '#/components/parameters/MutedUserId'
       responses:
@@ -2079,15 +2217,13 @@ paths:
       operationId: unmute-user
       summary: Unmute a user
       tags:
-      - users
-      description: '[Unmute a user](/help/mute-a-user#see-your-list-of-muted-users)
+      - Users
+      description: 'Unmute a user
 
         from the perspective of the requesting user.
 
 
-        **Changes**: New in Zulip 4.0 (feature level 48).
-
-        '
+        **Changes**: New in Zulip 4.0 (feature level 48).'
       parameters:
       - $ref: '#/components/parameters/MutedUserId'
       responses:
@@ -2123,7 +2259,7 @@ paths:
       operationId: add-apns-token
       summary: Add an APNs device token
       tags:
-      - users
+      - Users
       description: 'This endpoint adds an APNs device token to register for iOS push notifications.
 
 
@@ -2131,11 +2267,9 @@ paths:
 
         to newer servers and with E2EE push notifications support should use the
 
-        [Register E2EE push device](/api/register-push-device) endpoint, as this
+        Register E2EE push device endpoint, as this
 
-        endpoint will be removed in a future release.
-
-        '
+        endpoint will be removed in a future release.'
       requestBody:
         required: true
         content:
@@ -2201,7 +2335,7 @@ paths:
       operationId: remove-apns-token
       summary: Remove an APNs device token
       tags:
-      - users
+      - Users
       description: 'This endpoint removes an APNs device token for iOS push notifications.
 
 
@@ -2213,11 +2347,9 @@ paths:
 
         in their local accounts table that corresponds to the `push_account_id`
 
-        supplied when registering via the [Register E2EE push device](/api/register-push-device)
+        supplied when registering via the Register E2EE push device
 
-        endpoint, to stop displaying notifications for that registration.
-
-        '
+        endpoint, to stop displaying notifications for that registration.'
       requestBody:
         required: true
         content:
@@ -2268,7 +2400,7 @@ paths:
       operationId: add-fcm-token
       summary: Add an FCM registration token
       tags:
-      - users
+      - Users
       description: 'This endpoint adds an FCM registration token for push notifications.
 
 
@@ -2276,11 +2408,9 @@ paths:
 
         to newer servers and with E2EE push notifications support should use the
 
-        [Register E2EE push device](/api/register-push-device) endpoint, as this
+        Register E2EE push device endpoint, as this
 
-        endpoint will be removed in a future release.
-
-        '
+        endpoint will be removed in a future release.'
       requestBody:
         required: true
         content:
@@ -2320,7 +2450,7 @@ paths:
       operationId: remove-fcm-token
       summary: Remove an FCM registration token
       tags:
-      - users
+      - Users
       description: 'This endpoint removes an FCM registration token for push notifications.
 
 
@@ -2332,11 +2462,9 @@ paths:
 
         in their local accounts table that corresponds to the `push_account_id`
 
-        supplied when registering via the [Register E2EE push device](/api/register-push-device)
+        supplied when registering via the Register E2EE push device
 
-        endpoint, to stop displaying notifications for that registration.
-
-        '
+        endpoint, to stop displaying notifications for that registration.'
       requestBody:
         required: true
         content:
@@ -2386,22 +2514,22 @@ paths:
       operationId: get-user-by-email
       summary: Get a user by email
       tags:
-      - users
+      - Users
       description: 'Fetch details for a single user in the organization given a Zulip
 
         API email address.
 
 
-        You can also fetch details on [all users in the organization](/api/get-users)
+        You can also fetch details on all users in the organization
 
-        or [by user ID](/api/get-user).
+        or by user ID.
 
 
         Fetching by user ID is generally recommended when possible,
 
-        as a user might [change their email address](/help/change-your-email-address)
+        as a user might change their email address
 
-        or change their [email address visibility](/help/configure-email-visibility),
+        or change their email address visibility,
 
         either of which could change the client''s ability to look them up by that
 
@@ -2432,9 +2560,7 @@ paths:
         will now work for **all** users, via identifying them by the embedded user ID.
 
 
-        New in Zulip Server 4.0 (feature level 39).
-
-        '
+        New in Zulip Server 4.0 (feature level 39).'
       x-curl-examples-parameters:
         oneOf:
         - type: include
@@ -2528,11 +2654,11 @@ paths:
       operationId: update-user-by-email
       summary: Update a user by email
       tags:
-      - users
+      - Users
       x-requires-administrator: true
       description: 'Administrative endpoint to update the details of another user in the organization by their email address.
 
-        Works the same way as [`PATCH /users/{user_id}`](/api/update-user) but fetching the target user by their
+        Works the same way as `PATCH /users/{user_id}` but fetching the target user by their
 
         real email address.
 
@@ -2544,9 +2670,7 @@ paths:
         `user{id}@{realm.host}` needs be used. This follows the same rules as `GET /users/{email}`.
 
 
-        **Changes**: New in Zulip 10.0 (feature level 313).
-
-        '
+        **Changes**: New in Zulip 10.0 (feature level 313).'
       parameters:
       - name: email
         in: path
@@ -2583,13 +2707,13 @@ paths:
       operationId: get-user
       summary: Get a user
       tags:
-      - users
+      - Users
       description: 'Fetch details for a single user in the organization.
 
 
-        You can also fetch details on [all users in the organization](/api/get-users)
+        You can also fetch details on all users in the organization
 
-        or [by a user''s Zulip API email](/api/get-user-by-email).
+        or by a user''s Zulip API email.
 
 
         **Changes**: In Zulip 12.0 (feature level 437), fixed a bug
@@ -2603,9 +2727,7 @@ paths:
         `user_list_incomplete` client capability.
 
 
-        New in Zulip 3.0 (feature level 1).
-
-        '
+        New in Zulip 3.0 (feature level 1).'
       x-curl-examples-parameters:
         oneOf:
         - type: include
@@ -2693,7 +2815,7 @@ paths:
       operationId: update-user
       summary: Update a user
       tags:
-      - users
+      - Users
       x-requires-administrator: true
       description: 'Administrative endpoint to update the details of another user in the organization.
 
@@ -2702,11 +2824,9 @@ paths:
 
         user''s account, including editing full name,
 
-        [role](/help/user-roles), and [custom profile
+        role, and custom profile
 
-        fields](/help/custom-profile-fields).
-
-        '
+        fields.'
       parameters:
       - $ref: '#/components/parameters/UserId'
       requestBody:
@@ -2732,11 +2852,11 @@ paths:
       operationId: deactivate-user
       summary: Deactivate a user
       tags:
-      - users
+      - Users
       x-requires-administrator: true
-      description: '[Deactivates a
+      description: 'Deactivates a
 
-        user](https://zulip.com/help/deactivate-or-reactivate-a-user)
+        user
 
         given their user ID.
 
@@ -2747,9 +2867,7 @@ paths:
 
         expected to prompt the user to adjust the bot''s owners before
 
-        making this API request.
-
-        '
+        making this API request.'
       parameters:
       - $ref: '#/components/parameters/UserId'
       - name: actions
@@ -2843,7 +2961,7 @@ paths:
       operationId: update-settings
       summary: Update settings
       tags:
-      - users
+      - Users
       description: 'This endpoint is used to edit the current user''s settings.
 
 
@@ -2915,9 +3033,7 @@ paths:
         (or were unchanged) were silently ignored.
 
 
-        [ignored-parameters]: /api/rest-error-handling#ignored-parameters
-
-        '
+        [ignored-parameters]: /api/rest-error-handling#ignored-parameters'
       x-curl-examples-parameters:
         oneOf:
         - type: include
@@ -4148,8 +4264,107 @@ paths:
       operationId: set-typing-status
       summary: Set "typing" status
       tags:
-      - users
-      description: "Notify other users whether the current user is\n[typing a message][help-typing].\n\nClients implementing Zulip's typing notifications\nprotocol should work as follows:\n\n- Send a request to this endpoint with `\"op\": \"start\"` when a user\n  starts composing a message.\n- While the user continues to actively type or otherwise interact with\n  the compose UI (e.g. interacting with the compose box emoji picker),\n  send regular `\"op\": \"start\"` requests to this endpoint, using\n  `server_typing_started_wait_period_milliseconds` in the\n  [`POST /register`][api-register] response as the time interval\n  between each request.\n- Send a request to this endpoint with `\"op\": \"stop\"` when a user\n  has stopped using the compose UI for the time period indicated by\n  `server_typing_stopped_wait_period_milliseconds` in the\n  [`POST /register`][api-register] response or when a user\n  cancels the compose action (if it had previously sent a \"start\"\n  notification for that compose action).\n- Start displaying a visual typing indicator for a given conversation\n  when a [`typing op:start`][start-typing] event is received\n  from the server.\n- Continue displaying a visual typing indicator for the conversation\n  until a [`typing op:stop`][stop-typing] event is received\n  from the server or the time period indicated by\n  `server_typing_started_expiry_period_milliseconds` in the\n  [`POST /register`][api-register] response has passed without\n  a new `typing \"op\": \"start\"` event for the conversation.\n\nThis protocol is designed to allow the server-side typing notifications\nimplementation to be stateless while being resilient as network failures\nwill not result in a user being incorrectly displayed as perpetually\ntyping.\n\nSee the subsystems documentation on [typing indicators][typing-protocol-docs]\nfor additional design details on Zulip's typing notifications protocol.\n\n**Changes**: Clients shouldn't care about the APIs prior to Zulip 8.0 (feature level 215)\nfor channel typing notifications, as no client actually implemented\nthe previous API for those.\n\nSupport for displaying channel typing notifications was new\nin Zulip 4.0 (feature level 58). Clients should indicate they support\nprocessing channel typing notifications via the `stream_typing_notifications`\nvalue in the `client_capabilities` parameter of the\n[`POST /register`][client-capabilities] endpoint.\n\n[help-typing]: /help/typing-notifications\n[api-register]: /api/register-queue\n[start-typing]: /api/get-events#typing-start\n[stop-typing]: /api/get-events#typing-stop\n[client-capabilities]: /api/register-queue#parameter-client_capabilities\n[typing-protocol-docs]: https://zulip.readthedocs.io/en/latest/subsystems/typing-indicators.html\n"
+      - Users
+      description: 'Notify other users whether the current user is
+
+        [typing a message][help-typing].
+
+
+        Clients implementing Zulip''s typing notifications
+
+        protocol should work as follows:
+
+
+        - Send a request to this endpoint with `"op": "start"` when a user
+
+        starts composing a message.
+
+        - While the user continues to actively type or otherwise interact with
+
+        the compose UI (e.g. interacting with the compose box emoji picker),
+
+        send regular `"op": "start"` requests to this endpoint, using
+
+        `server_typing_started_wait_period_milliseconds` in the
+
+        [`POST /register`][api-register] response as the time interval
+
+        between each request.
+
+        - Send a request to this endpoint with `"op": "stop"` when a user
+
+        has stopped using the compose UI for the time period indicated by
+
+        `server_typing_stopped_wait_period_milliseconds` in the
+
+        [`POST /register`][api-register] response or when a user
+
+        cancels the compose action (if it had previously sent a "start"
+
+        notification for that compose action).
+
+        - Start displaying a visual typing indicator for a given conversation
+
+        when a [`typing op:start`][start-typing] event is received
+
+        from the server.
+
+        - Continue displaying a visual typing indicator for the conversation
+
+        until a [`typing op:stop`][stop-typing] event is received
+
+        from the server or the time period indicated by
+
+        `server_typing_started_expiry_period_milliseconds` in the
+
+        [`POST /register`][api-register] response has passed without
+
+        a new `typing "op": "start"` event for the conversation.
+
+
+        This protocol is designed to allow the server-side typing notifications
+
+        implementation to be stateless while being resilient as network failures
+
+        will not result in a user being incorrectly displayed as perpetually
+
+        typing.
+
+
+        See the subsystems documentation on [typing indicators][typing-protocol-docs]
+
+        for additional design details on Zulip''s typing notifications protocol.
+
+
+        **Changes**: Clients shouldn''t care about the APIs prior to Zulip 8.0 (feature level 215)
+
+        for channel typing notifications, as no client actually implemented
+
+        the previous API for those.
+
+
+        Support for displaying channel typing notifications was new
+
+        in Zulip 4.0 (feature level 58). Clients should indicate they support
+
+        processing channel typing notifications via the `stream_typing_notifications`
+
+        value in the `client_capabilities` parameter of the
+
+        [`POST /register`][client-capabilities] endpoint.
+
+
+        [help-typing]: /help/typing-notifications
+
+        [api-register]: /api/register-queue
+
+        [start-typing]: /api/get-events#typing-start
+
+        [stop-typing]: /api/get-events#typing-stop
+
+        [client-capabilities]: /api/register-queue#parameter-client_capabilities
+
+        [typing-protocol-docs]: https://zulip.readthedocs.io/en/latest/subsystems/typing-indicators.html'
       x-curl-examples-parameters:
         oneOf:
         - type: exclude
@@ -4326,13 +4541,13 @@ paths:
       operationId: set-typing-status-for-message-edit
       summary: Set "typing" status for message editing
       tags:
-      - users
+      - Users
       description: 'Notify other users whether the current user is editing a message.
 
 
         Typing notifications for editing messages follow the same protocol as
 
-        [set-typing-status](/api/set-typing-status), see that endpoint for
+        set-typing-status, see that endpoint for
 
         details.
 
@@ -4348,9 +4563,7 @@ paths:
 
         New in Zulip 10.0 (feature level 351). Previously, typing notifications were
 
-        not available when editing messages.
-
-        '
+        not available when editing messages.'
       parameters:
       - name: message_id
         in: path
@@ -4387,15 +4600,13 @@ paths:
       operationId: create-user-group
       summary: Create a user group
       tags:
-      - users
-      description: 'Create a new [user group](/help/user-groups).
+      - Users
+      description: 'Create a new user group.
 
 
         **Changes**: Prior to Zulip 12.0 (feature level 496), bot
 
-        users were not permitted to call this endpoint.
-
-        '
+        users were not permitted to call this endpoint.'
       requestBody:
         required: true
         content:
@@ -4653,8 +4864,8 @@ paths:
       operationId: update-user-group-members
       summary: Update user group members
       tags:
-      - users
-      description: 'Update the members of a [user group](/help/user-groups). The
+      - Users
+      description: 'Update the members of a user group. The
 
         user IDs must correspond to non-deactivated users.
 
@@ -4671,9 +4882,7 @@ paths:
 
         **Changes**: Prior to Zulip 10.0 (feature level 303), group memberships of
 
-        deactivated users were visible to the API and could be edited via this endpoint.
-
-        '
+        deactivated users were visible to the API and could be edited via this endpoint.'
       x-curl-examples-parameters:
         oneOf:
         - type: exclude
@@ -4748,8 +4957,8 @@ paths:
       operationId: get-user-group-members
       summary: Get user group members
       tags:
-      - users
-      description: 'Get the members of a [user group](/help/user-groups).
+      - Users
+      description: 'Get the members of a user group.
 
 
         **Changes**: Prior to Zulip 12.0 (feature level 496), bot
@@ -4757,9 +4966,7 @@ paths:
         users were not permitted to call this endpoint.
 
 
-        New in Zulip 6.0 (feature level 127).
-
-        '
+        New in Zulip 6.0 (feature level 127).'
       parameters:
       - $ref: '#/components/parameters/UserGroupId'
       - $ref: '#/components/parameters/DirectMemberOnly'
@@ -4794,10 +5001,10 @@ paths:
       operationId: update-user-group
       summary: Update a user group
       tags:
-      - users
+      - Users
       description: 'Update the name, description or any of the permission settings
 
-        of a [user group](/help/user-groups).
+        of a user group.
 
 
         This endpoint is also used to reactivate a user group.
@@ -4826,9 +5033,7 @@ paths:
 
         Prior to Zulip 10.0 (feature level 340), only the name field
 
-        of deactivated groups could be modified.
-
-        '
+        of deactivated groups could be modified.'
       parameters:
       - $ref: '#/components/parameters/UserGroupId'
       requestBody:
@@ -5094,8 +5299,21 @@ paths:
       operationId: get-user-groups
       summary: Get user groups
       tags:
-      - users
-      description: "Fetches all of the user groups in the organization.\n\n!!! warn \"\"\n\n    **Note**: This endpoint is not available to\n    [guest users](/help/user-roles).\n\n**Changes**: Prior to Zulip 12.0 (feature level 496), bot\nusers were not permitted to call this endpoint.\n"
+      - Users
+      description: 'Fetches all of the user groups in the organization.
+
+
+        !!! warn ""
+
+
+        **Note**: This endpoint is not available to
+
+        guest users.
+
+
+        **Changes**: Prior to Zulip 12.0 (feature level 496), bot
+
+        users were not permitted to call this endpoint.'
       requestBody:
         required: false
         content:
@@ -5155,8 +5373,9 @@ paths:
 
                               '
                           date_created:
-                            type: integer
-                            nullable: true
+                            type:
+                            - integer
+                            - 'null'
                             description: 'The UNIX timestamp for when the user group was created, in UTC seconds.
 
 
@@ -5176,8 +5395,9 @@ paths:
 
                               '
                           creator_id:
-                            type: integer
-                            nullable: true
+                            type:
+                            - integer
+                            - 'null'
                             description: 'The ID of the user who created this user group.
 
 
@@ -5438,8 +5658,8 @@ paths:
       operationId: update-user-group-subgroups
       summary: Update subgroups of a user group
       tags:
-      - users
-      description: 'Update the subgroups of a [user group](/help/user-groups).
+      - Users
+      description: 'Update the subgroups of a user group.
 
 
         **Changes**: Prior to Zulip 12.0 (feature level 496), bot
@@ -5452,9 +5672,7 @@ paths:
         could not be added or removed from a deactivated group.
 
 
-        New in Zulip 6.0 (feature level 127).
-
-        '
+        New in Zulip 6.0 (feature level 127).'
       x-curl-examples-parameters:
         oneOf:
         - type: exclude
@@ -5500,8 +5718,8 @@ paths:
       operationId: get-user-group-subgroups
       summary: Get subgroups of a user group
       tags:
-      - users
-      description: 'Get the subgroups of a [user group](/help/user-groups).
+      - Users
+      description: 'Get the subgroups of a user group.
 
 
         **Changes**: Prior to Zulip 12.0 (feature level 496), bot
@@ -5509,9 +5727,7 @@ paths:
         users were not permitted to call this endpoint.
 
 
-        New in Zulip 6.0 (feature level 127).
-
-        '
+        New in Zulip 6.0 (feature level 127).'
       parameters:
       - $ref: '#/components/parameters/UserGroupId'
       - name: direct_subgroup_only
@@ -5557,7 +5773,7 @@ paths:
       operationId: get-is-user-group-member
       summary: Get user group membership status
       tags:
-      - users
+      - Users
       description: 'Check whether a user is member of user group.
 
 
@@ -5578,9 +5794,7 @@ paths:
         who was a member of the user group before being deactivated.
 
 
-        New in Zulip 6.0 (feature level 127).
-
-        '
+        New in Zulip 6.0 (feature level 127).'
       parameters:
       - $ref: '#/components/parameters/UserGroupId'
       - $ref: '#/components/parameters/UserId'
@@ -5612,7 +5826,7 @@ paths:
       operationId: deactivate-user-group
       summary: Deactivate a user group
       tags:
-      - users
+      - Users
       description: 'Deactivate a user group. Deactivated user groups cannot be
 
         used for mentions, permissions, or any other purpose, but can
@@ -5629,9 +5843,7 @@ paths:
         maintained.
 
 
-        **Changes**: New in Zulip 10.0 (feature level 290).
-
-        '
+        **Changes**: New in Zulip 10.0 (feature level 290).'
       parameters:
       - $ref: '#/components/parameters/UserGroupId'
       responses:
@@ -5677,15 +5889,13 @@ paths:
       operationId: get-bot-api-key
       summary: Get a bot's API key
       tags:
-      - users
+      - Users
       description: 'Fetch the API key for a bot user. Only the bot''s owner and
 
         organization administrators have access to a bot''s API key.
 
 
-        **Changes**: New in Zulip 12.0 (feature level 463).
-
-        '
+        **Changes**: New in Zulip 12.0 (feature level 463).'
       parameters:
       - $ref: '#/components/parameters/BotId'
       responses:
@@ -5729,12 +5939,10 @@ paths:
       operationId: regenerate-bot-api-key
       summary: Regenerate a bot's API key
       tags:
-      - users
+      - Users
       description: 'Generate a new API key for a bot user. Only the bot''s owner and
 
-        organization administrators have access to a bot''s API key.
-
-        '
+        organization administrators have access to a bot''s API key.'
       parameters:
       - $ref: '#/components/parameters/BotId'
       responses:
@@ -5775,6 +5983,93 @@ paths:
                     '
 components:
   schemas:
+    LegacyPresenceFormat:
+      type: object
+      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
+
+        presence.
+
+
+        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
+
+        contain two keys, `"website"` and `"aggregated"`, with identical data. The
+
+        server no longer stores which client submitted presence updates.
+
+
+        Previously, the `{client_name}` keys for these objects were the names of the
+
+        different clients where the user was logged in, for example `website` or
+
+        `ZulipDesktop`.
+
+        '
+      additionalProperties: false
+      properties:
+        client:
+          type: string
+          description: 'The client''s platform name.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
+
+            always be `"website"` as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+        status:
+          type: string
+          enum:
+          - idle
+          - active
+          description: 'The status of the user on this client. Will be either `"idle"`
+
+            or `"active"`.
+
+            '
+        timestamp:
+          type: integer
+          description: 'The UNIX timestamp of when this client sent the user''s presence
+
+            to the server with the precision of a second.
+
+            '
+        pushable:
+          type: boolean
+          description: 'Whether the client is capable of showing mobile/push notifications
+
+            to the user.
+
+
+            Not present in objects with the `"aggregated"` key.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), always
+
+            `false` when present as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     IgnoredParametersSuccess:
       allOf:
       - $ref: '#/components/schemas/IgnoredParametersBase'
@@ -5817,28 +6112,46 @@ components:
         - invalid_param_2
         msg: ''
         result: success
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    ProfileDataUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The ID of the custom profile field to update.
 
-        supported by the endpoint.
+            '
+        value:
+          description: 'The new value for the user of the specified custom profile field.
 
 
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+            If null, then any value already set for the specified custom
 
-        for details on this and its change history.
+            profile field will be removed.
 
-        '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
+            '
+          oneOf:
+          - type:
+            - string
+            - 'null'
+            description: 'A string value that matches the [type of the custom profile
+
+              field](/help/custom-profile-fields#profile-field-types), e.g., if the
+
+              profile field type is a link then the string must be a URL.
+
+              '
+          - type: array
+            items:
+              type: integer
+            description: 'An array of integer user IDs, which is for the **Users** type of
+
+              [custom profile field](/help/custom-profile-fields#profile-field-types).
+
+              '
+      required:
+      - id
+      - value
     UserStatus:
       type: object
       additionalProperties: false
@@ -5888,6 +6201,37 @@ components:
           - realm_emoji
           - zulip_extra_emoji
           description: "If present, a string indicating the type of emoji. Each emoji\n`reaction_type` has an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: New in Zulip 5.0 (feature level 86).\n"
+    GroupSettingValue:
+      oneOf:
+      - type: integer
+        description: 'The ID of the [user group](/help/user-groups) with this permission.
+
+          '
+      - type: object
+        additionalProperties: false
+        properties:
+          direct_members:
+            description: 'The list of IDs of individual users in the collection of users with this permission.
+
+
+              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+
+              deactivated users who had the permission before being deactivated.
+
+              '
+            type: array
+            items:
+              type: integer
+          direct_subgroups:
+            description: 'The list of IDs of the groups in the collection of users with this permission.
+
+              '
+            type: array
+            items:
+              type: integer
+        description: 'An object with these fields:
+
+          '
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -5899,6 +6243,153 @@ components:
         example:
           msg: ''
           result: success
+    ModernPresenceFormat:
+      type: object
+      description: '`{user_id}`: Presence data (modern format) for the user with
+
+        the specified ID.
+
+        '
+      additionalProperties: false
+      properties:
+        active_timestamp:
+          type: integer
+          description: 'The UNIX timestamp of the last time a client connected
+
+            to Zulip reported that the user was actually present
+
+            (e.g. via focusing a browser window or interacting
+
+            with a computer running the desktop app).
+
+
+            Clients should display users with a current
+
+            `active_timestamp` as fully present.
+
+            '
+        idle_timestamp:
+          type: integer
+          description: 'The UNIX timestamp of the last time the user had a
+
+            client connected to Zulip, including idle clients
+
+            where the user hasn''t interacted with the system
+
+            recently.
+
+
+            The Zulip server has no way of distinguishing whether
+
+            an idle web app user is at their computer, but hasn''t
+
+            interacted with the Zulip tab recently, or simply left
+
+            their desktop computer on when they left.
+
+
+            Thus, clients should display users with a current
+
+            `idle_timestamp` but no current `active_timestamp` as
+
+            potentially present.
+
+            '
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    ProfileData:
+      type: object
+      description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
+
+
+        A dictionary containing custom profile field data for the user. Each entry
+
+        maps the integer ID of a custom profile field in the organization to a
+
+        dictionary containing the user''s data for that field. Generally the data
+
+        includes just a single `value` key; for those custom profile fields
+
+        supporting Markdown, a `rendered_value` key will also be present.
+
+        '
+      additionalProperties:
+        type: object
+        additionalProperties: false
+        description: '`{id}`: Object with data about what value the user filled in the custom
+
+          profile field with that ID.
+
+          '
+        properties:
+          value:
+            type: string
+            description: 'User''s personal value for this custom profile field.
+
+              '
+          rendered_value:
+            type: string
+            description: 'The `value` rendered in HTML. Will only be present for
+
+              custom profile field types that support Markdown rendering.
+
+
+              This user-generated HTML content should be rendered
+
+              using the same CSS and client-side security protections
+
+              as are used for message content.
+
+
+              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+              '
     Attachment:
       type: object
       description: 'Dictionary containing details of a file uploaded by a user.
@@ -5967,57 +6458,31 @@ components:
             '
           items:
             type: integer
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
+    User:
       allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
+      - $ref: '#/components/schemas/UserBase'
+      - additionalProperties: false
         properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    GroupSettingValueUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        new:
-          allOf:
-          - description: 'The new [group-setting value](/api/group-setting-values) for who would
-
-              have this permission.
-
-              '
-          - $ref: '#/components/schemas/GroupSettingValue'
-        old:
-          allOf:
-          - description: 'The expected current [group-setting value](/api/group-setting-values)
-
-              for who has this permission.
-
-              '
-          - $ref: '#/components/schemas/GroupSettingValue'
-      required:
-      - new
+          user_id: {}
+          delivery_email: {}
+          email: {}
+          full_name: {}
+          date_joined: {}
+          is_active: {}
+          is_owner: {}
+          is_admin: {}
+          is_guest: {}
+          is_bot: {}
+          bot_type: {}
+          bot_owner_id: {}
+          role: {}
+          timezone: {}
+          avatar_url: {}
+          avatar_version: {}
+          is_imported_stub: {}
+          is_deleted: {}
+          profile_data:
+            $ref: '#/components/schemas/ProfileData'
     IgnoredParametersBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
@@ -6032,227 +6497,6 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    User:
-      allOf:
-      - $ref: '#/components/schemas/UserBase'
-      - additionalProperties: false
-        properties:
-          user_id: {}
-          delivery_email:
-            nullable: true
-          email: {}
-          full_name: {}
-          date_joined: {}
-          is_active: {}
-          is_owner: {}
-          is_admin: {}
-          is_guest: {}
-          is_bot: {}
-          bot_type:
-            nullable: true
-          bot_owner_id:
-            nullable: true
-          role: {}
-          timezone: {}
-          avatar_url:
-            nullable: true
-          avatar_version: {}
-          is_imported_stub: {}
-          is_deleted: {}
-          profile_data:
-            $ref: '#/components/schemas/ProfileData'
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    GroupSettingValue:
-      oneOf:
-      - type: integer
-        description: 'The ID of the [user group](/help/user-groups) with this permission.
-
-          '
-      - type: object
-        additionalProperties: false
-        properties:
-          direct_members:
-            description: 'The list of IDs of individual users in the collection of users with this permission.
-
-
-              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
-
-              deactivated users who had the permission before being deactivated.
-
-              '
-            type: array
-            items:
-              type: integer
-          direct_subgroups:
-            description: 'The list of IDs of the groups in the collection of users with this permission.
-
-              '
-            type: array
-            items:
-              type: integer
-        description: 'An object with these fields:
-
-          '
-    ProfileData:
-      type: object
-      description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
-
-
-        A dictionary containing custom profile field data for the user. Each entry
-
-        maps the integer ID of a custom profile field in the organization to a
-
-        dictionary containing the user''s data for that field. Generally the data
-
-        includes just a single `value` key; for those custom profile fields
-
-        supporting Markdown, a `rendered_value` key will also be present.
-
-        '
-      additionalProperties:
-        type: object
-        additionalProperties: false
-        description: '`{id}`: Object with data about what value the user filled in the custom
-
-          profile field with that ID.
-
-          '
-        properties:
-          value:
-            type: string
-            description: 'User''s personal value for this custom profile field.
-
-              '
-          rendered_value:
-            type: string
-            description: 'The `value` rendered in HTML. Will only be present for
-
-              custom profile field types that support Markdown rendering.
-
-
-              This user-generated HTML content should be rendered
-
-              using the same CSS and client-side security protections
-
-              as are used for message content.
-
-
-              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
-
-              '
-    ProfileDataUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The ID of the custom profile field to update.
-
-            '
-        value:
-          description: 'The new value for the user of the specified custom profile field.
-
-
-            If null, then any value already set for the specified custom
-
-            profile field will be removed.
-
-            '
-          oneOf:
-          - type: string
-            nullable: true
-            description: 'A string value that matches the [type of the custom profile
-
-              field](/help/custom-profile-fields#profile-field-types), e.g., if the
-
-              profile field type is a link then the string must be a URL.
-
-              '
-          - type: array
-            items:
-              type: integer
-            description: 'An array of integer user IDs, which is for the **Users** type of
-
-              [custom profile field](/help/custom-profile-fields#profile-field-types).
-
-              '
-      required:
-      - id
-      - value
-    ModernPresenceFormat:
-      type: object
-      description: '`{user_id}`: Presence data (modern format) for the user with
-
-        the specified ID.
-
-        '
-      additionalProperties: false
-      properties:
-        active_timestamp:
-          type: integer
-          description: 'The UNIX timestamp of the last time a client connected
-
-            to Zulip reported that the user was actually present
-
-            (e.g. via focusing a browser window or interacting
-
-            with a computer running the desktop app).
-
-
-            Clients should display users with a current
-
-            `active_timestamp` as fully present.
-
-            '
-        idle_timestamp:
-          type: integer
-          description: 'The UNIX timestamp of the last time the user had a
-
-            client connected to Zulip, including idle clients
-
-            where the user hasn''t interacted with the system
-
-            recently.
-
-
-            The Zulip server has no way of distinguishing whether
-
-            an idle web app user is at their computer, but hasn''t
-
-            interacted with the Zulip tab recently, or simply left
-
-            their desktop computer on when they left.
-
-
-            Thus, clients should display users with a current
-
-            `idle_timestamp` but no current `active_timestamp` as
-
-            potentially present.
-
-            '
     UserBase:
       type: object
       description: 'A dictionary containing basic data on a given Zulip user.
@@ -6270,8 +6514,9 @@ components:
 
             '
         delivery_email:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: 'The user''s real email address. This value will be `null` if you cannot
 
             access user''s real email address. For bot users, this field is always
@@ -6367,8 +6612,9 @@ components:
 
             '
         bot_type:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: 'An integer describing the type of bot:
 
 
@@ -6384,8 +6630,9 @@ components:
 
             '
         bot_owner_id:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: 'If the user is a bot (i.e. `is_bot` is true), then `bot_owner_id`
 
             is the user ID of the bot''s owner (usually, whoever created the bot).
@@ -6436,8 +6683,9 @@ components:
 
             '
         avatar_url:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: 'URL for the user''s avatar.
 
 
@@ -6505,88 +6753,37 @@ components:
             **Changes**: New in Zulip 12.0 (feature level 490).
 
             '
-    LegacyPresenceFormat:
+    GroupSettingValueUpdate:
       type: object
-      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
-
-        presence.
-
-
-        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
-
-        contain two keys, `"website"` and `"aggregated"`, with identical data. The
-
-        server no longer stores which client submitted presence updates.
-
-
-        Previously, the `{client_name}` keys for these objects were the names of the
-
-        different clients where the user was logged in, for example `website` or
-
-        `ZulipDesktop`.
-
-        '
       additionalProperties: false
       properties:
-        client:
-          type: string
-          description: 'The client''s platform name.
+        new:
+          allOf:
+          - description: 'The new [group-setting value](/api/group-setting-values) for who would
 
+              have this permission.
 
-            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+        old:
+          allOf:
+          - description: 'The expected current [group-setting value](/api/group-setting-values)
 
-            always be `"website"` as the server no longer stores which client
+              for who has this permission.
 
-            submitted presence data.
-
-            '
-        status:
-          type: string
-          enum:
-          - idle
-          - active
-          description: 'The status of the user on this client. Will be either `"idle"`
-
-            or `"active"`.
-
-            '
-        timestamp:
-          type: integer
-          description: 'The UNIX timestamp of when this client sent the user''s presence
-
-            to the server with the precision of a second.
-
-            '
-        pushable:
-          type: boolean
-          description: 'Whether the client is capable of showing mobile/push notifications
-
-            to the user.
-
-
-            Not present in objects with the `"aggregated"` key.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), always
-
-            `false` when present as the server no longer stores which client
-
-            submitted presence data.
-
-            '
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+      required:
+      - new
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
   parameters:
-    DirectMemberOnly:
-      name: direct_member_only
-      in: query
-      description: 'Whether to consider only the direct members of user group and not members
-
-        of its subgroups. Default is `false`.
-
-        '
-      schema:
-        type: boolean
-      example: false
-      required: false
     UserGroupId:
       name: user_group_id
       in: path
@@ -6597,20 +6794,25 @@ components:
         type: integer
       example: 38
       required: true
-    MutedUserId:
-      name: muted_user_id
+    BotId:
+      name: bot_id
       in: path
-      description: 'The ID of the user to mute/unmute.
-
-
-        **Changes**: Before Zulip 8.0 (feature level 188), bot users could not
-
-        be muted/unmuted, and specifying a bot user''s ID returned an error response.
+      description: 'The user ID of the target bot.
 
         '
       schema:
         type: integer
-      example: 10
+      example: 17
+      required: true
+    UserId:
+      name: user_id
+      in: path
+      description: 'The target user''s ID.
+
+        '
+      schema:
+        type: integer
+      example: 12
       required: true
     IncludeCustomProfileFields:
       name: include_custom_profile_fields
@@ -6629,26 +6831,33 @@ components:
         type: boolean
         default: false
       example: true
-    UserId:
-      name: user_id
+    MutedUserId:
+      name: muted_user_id
       in: path
-      description: 'The target user''s ID.
+      description: 'The ID of the user to mute/unmute.
+
+
+        **Changes**: Before Zulip 8.0 (feature level 188), bot users could not
+
+        be muted/unmuted, and specifying a bot user''s ID returned an error response.
 
         '
       schema:
         type: integer
-      example: 12
+      example: 10
       required: true
-    BotId:
-      name: bot_id
-      in: path
-      description: 'The user ID of the target bot.
+    DirectMemberOnly:
+      name: direct_member_only
+      in: query
+      description: 'Whether to consider only the direct members of user group and not members
+
+        of its subgroups. Default is `false`.
 
         '
       schema:
-        type: integer
-      example: 17
-      required: true
+        type: boolean
+      example: false
+      required: false
     ClientGravatar:
       name: client_gravatar
       in: query
@@ -6678,20 +6887,6 @@ components:
         type: boolean
         default: true
       example: false
-  responses:
-    SuccessIgnoredParameters:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/IgnoredParametersSuccess'
-    SimpleSuccess:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JsonSuccess'
   requestBodies:
     UpdateUser:
       required: false
@@ -6773,6 +6968,20 @@ components:
               contentType: application/json
             profile_data:
               contentType: application/json
+  responses:
+    SuccessIgnoredParameters:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/IgnoredParametersSuccess'
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
   securitySchemes:
     BasicAuth:
       type: http

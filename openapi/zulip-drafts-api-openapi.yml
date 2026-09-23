@@ -1,10 +1,8 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   version: 1.0.0
-  title: Zulip REST authentication drafts API
-  description: 'Powerful open source group chat
-
-    '
+  title: Zulip REST Drafts API
+  description: Powerful open source group chat
   contact:
     url: https://zulip.com
   license:
@@ -25,17 +23,15 @@ servers:
 security:
 - basicAuth: []
 tags:
-- name: drafts
+- name: Drafts
 paths:
   /drafts:
     get:
       operationId: get-drafts
       tags:
-      - drafts
+      - Drafts
       summary: Get drafts
-      description: 'Fetch all drafts for the current user.
-
-        '
+      description: Fetch all drafts for the current user.
       responses:
         '200':
           description: Success.
@@ -96,13 +92,11 @@ paths:
     post:
       operationId: create-drafts
       tags:
-      - drafts
+      - Drafts
       summary: Create drafts
       description: 'Create one or more drafts on the server. These drafts will be automatically
 
-        synchronized to other clients via `drafts` events.
-
-        '
+        synchronized to other clients via `drafts` events.'
       requestBody:
         required: false
         content:
@@ -176,13 +170,11 @@ paths:
     patch:
       operationId: edit-draft
       tags:
-      - drafts
+      - Drafts
       summary: Edit a draft
       description: 'Edit a draft on the server. The edit will be automatically
 
-        synchronized to other clients via `drafts` events.
-
-        '
+        synchronized to other clients via `drafts` events.'
       parameters:
       - name: draft_id
         in: path
@@ -240,13 +232,11 @@ paths:
     delete:
       operationId: delete-draft
       tags:
-      - drafts
+      - Drafts
       summary: Delete a draft
       description: 'Delete a single draft from the server. The deletion will be automatically
 
-        synchronized to other clients via a `drafts` event.
-
-        '
+        synchronized to other clients via a `drafts` event.'
       parameters:
       - name: draft_id
         in: path
@@ -280,14 +270,12 @@ paths:
     get:
       operationId: get-saved-snippets
       tags:
-      - drafts
+      - Drafts
       summary: Get all saved snippets
       description: 'Fetch all the saved snippets for the current user.
 
 
-        **Changes**: New in Zulip 10.0 (feature level 297).
-
-        '
+        **Changes**: New in Zulip 10.0 (feature level 297).'
       responses:
         '200':
           description: Success.
@@ -321,14 +309,12 @@ paths:
     post:
       operationId: create-saved-snippet
       tags:
-      - drafts
+      - Drafts
       summary: Create a saved snippet
       description: 'Create a new saved snippet for the current user.
 
 
-        **Changes**: New in Zulip 10.0 (feature level 297).
-
-        '
+        **Changes**: New in Zulip 10.0 (feature level 297).'
       requestBody:
         required: true
         content:
@@ -398,14 +384,12 @@ paths:
     patch:
       operationId: edit-saved-snippet
       tags:
-      - drafts
+      - Drafts
       summary: Edit a saved snippet
       description: 'Edit a saved snippet for the current user.
 
 
-        **Changes**: New in Zulip 10.0 (feature level 368).
-
-        '
+        **Changes**: New in Zulip 10.0 (feature level 368).'
       parameters:
       - name: saved_snippet_id
         in: path
@@ -461,14 +445,12 @@ paths:
     delete:
       operationId: delete-saved-snippet
       tags:
-      - drafts
+      - Drafts
       summary: Delete a saved snippet
       description: 'Delete a saved snippet.
 
 
-        **Changes**: New in Zulip 10.0 (feature level 297).
-
-        '
+        **Changes**: New in Zulip 10.0 (feature level 297).'
       parameters:
       - name: saved_snippet_id
         in: path
@@ -500,69 +482,6 @@ paths:
                     msg: Saved snippet does not exist.
 components:
   schemas:
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    SavedSnippet:
-      type: object
-      description: 'Object containing the details of the saved snippet.
-
-        '
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID of the saved snippet.
-
-            '
-        title:
-          type: string
-          description: 'The title of the saved snippet.
-
-            '
-        content:
-          type: string
-          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
-
-
-            Clients should insert this content into a message when using
-
-            a saved snippet.
-
-            '
-        date_created:
-          type: integer
-          description: 'The UNIX timestamp for when the saved snippet was created, in
-
-            UTC seconds.
-
-            '
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -574,6 +493,24 @@ components:
         example:
           msg: ''
           result: success
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     IgnoredParametersUnsupported:
       type: array
       items:
@@ -588,11 +525,6 @@ components:
         for details on this and its change history.
 
         '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     Draft:
       type: object
       description: 'A dictionary for representing a message draft.
@@ -661,6 +593,11 @@ components:
       - to
       - topic
       - content
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
     CodedError:
       allOf:
       - $ref: '#/components/schemas/CodedErrorBase'
@@ -669,24 +606,69 @@ components:
           result: {}
           msg: {}
           code: {}
-    CodedErrorBase:
+    SavedSnippet:
+      type: object
+      description: 'Object containing the details of the saved snippet.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the saved snippet.
+
+            '
+        title:
+          type: string
+          description: 'The title of the saved snippet.
+
+            '
+        content:
+          type: string
+          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+            Clients should insert this content into a message when using
+
+            a saved snippet.
+
+            '
+        date_created:
+          type: integer
+          description: 'The UNIX timestamp for when the saved snippet was created, in
+
+            UTC seconds.
+
+            '
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
       - required:
         - result
         - msg
-        - code
         properties:
           result:
             enum:
-            - error
+            - success
           msg:
             type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   responses:
     SimpleSuccess:
       description: Success.
