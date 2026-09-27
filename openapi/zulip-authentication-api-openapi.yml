@@ -367,55 +367,35 @@ paths:
                       realm_url: http://localhost:9991
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
-        supported by the endpoint.
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
 
 
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+        A typical successful JSON response may look like:
 
-        for details on this and its change history.
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
-    ApiKeyResponse:
       allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
+      - $ref: '#/components/schemas/JsonResponseBase'
       - required:
-        - api_key
-        - email
-        additionalProperties: false
+        - result
+        - msg
         properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-          api_key:
+          result:
+            enum:
+            - success
+          msg:
             type: string
-            description: 'The API key that can be used to authenticate as the requested user.
-
-              '
-          email:
-            type: string
-            description: 'The email address of the user who owns the API key.
-
-              '
-          user_id:
-            type: integer
-            description: 'The unique ID of the user who owns the API key.
-
-
-              **Changes**: New in Zulip 7.0 (feature level 171).
-
-              '
-        example:
-          api_key: gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv
-          email: iago@zulip.com
-          msg: ''
-          result: success
-          user_id: 5
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     JsonResponseBase:
       type: object
       properties:
@@ -677,35 +657,55 @@ components:
             **Changes**: New in Zulip 12.0 (feature level 490).
 
             '
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+    ApiKeyResponse:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - required:
+        - api_key
+        - email
+        additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+          api_key:
+            type: string
+            description: 'The API key that can be used to authenticate as the requested user.
 
-        parameters sent in the request are not supported by this
+              '
+          email:
+            type: string
+            description: 'The email address of the user who owns the API key.
 
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
+              '
+          user_id:
+            type: integer
+            description: 'The unique ID of the user who owns the API key.
 
 
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
+              **Changes**: New in Zulip 7.0 (feature level 171).
+
+              '
+        example:
+          api_key: gjA04ZYcqXKalvYMA8OeXSfzUOLrtbZv
+          email: iago@zulip.com
+          msg: ''
+          result: success
+          user_id: 5
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
 
         '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   securitySchemes:
     BasicAuth:
       type: http

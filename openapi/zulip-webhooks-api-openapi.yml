@@ -154,24 +154,6 @@ paths:
                   bot_full_name: Outgoing webhook test
 components:
   schemas:
-    EmojiReaction:
-      allOf:
-      - $ref: '#/components/schemas/EmojiBase'
-      - additionalProperties: false
-        properties:
-          emoji_code: {}
-          emoji_name: {}
-          reaction_type: {}
-          user_id:
-            type: integer
-            description: 'The ID of the user who added the reaction.
-
-
-              **Changes**: New in Zulip 3.0 (feature level 2), which
-
-              deprecated the `user` object.
-
-              '
     MessagesBase:
       type: object
       description: 'Object containing details of the message.
@@ -677,6 +659,24 @@ components:
           description: 'The type of the message: `"stream"` or `"private"`.
 
             '
+    EmojiReaction:
+      allOf:
+      - $ref: '#/components/schemas/EmojiBase'
+      - additionalProperties: false
+        properties:
+          emoji_code: {}
+          emoji_name: {}
+          reaction_type: {}
+          user_id:
+            type: integer
+            description: 'The ID of the user who added the reaction.
+
+
+              **Changes**: New in Zulip 3.0 (feature level 2), which
+
+              deprecated the `user` object.
+
+              '
     EmojiBase:
       type: object
       properties:
