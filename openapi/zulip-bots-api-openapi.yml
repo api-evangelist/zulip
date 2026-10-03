@@ -295,6 +295,62 @@ paths:
                       '
 components:
   schemas:
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -324,62 +380,6 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
   responses:
     SimpleSuccess:
       description: Success.

@@ -154,6 +154,28 @@ paths:
                   bot_full_name: Outgoing webhook test
 components:
   schemas:
+    EmojiBase:
+      type: object
+      properties:
+        emoji_name:
+          type: string
+          description: 'Name of the emoji.
+
+            '
+        emoji_code:
+          type: string
+          description: 'A unique identifier, defining the specific emoji codepoint requested,
+
+            within the namespace of the `reaction_type`.
+
+            '
+        reaction_type:
+          type: string
+          enum:
+          - unicode_emoji
+          - realm_emoji
+          - zulip_extra_emoji
+          description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
     MessagesBase:
       type: object
       description: 'Object containing details of the message.
@@ -677,28 +699,6 @@ components:
               deprecated the `user` object.
 
               '
-    EmojiBase:
-      type: object
-      properties:
-        emoji_name:
-          type: string
-          description: 'Name of the emoji.
-
-            '
-        emoji_code:
-          type: string
-          description: 'A unique identifier, defining the specific emoji codepoint requested,
-
-            within the namespace of the `reaction_type`.
-
-            '
-        reaction_type:
-          type: string
-          enum:
-          - unicode_emoji
-          - realm_emoji
-          - zulip_extra_emoji
-          description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
   securitySchemes:
     BasicAuth:
       type: http

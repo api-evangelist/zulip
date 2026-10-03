@@ -5983,175 +5983,62 @@ paths:
                     '
 components:
   schemas:
-    GroupSettingValue:
-      oneOf:
-      - type: integer
-        description: 'The ID of the [user group](/help/user-groups) with this permission.
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
 
-          '
-      - type: object
-        additionalProperties: false
-        properties:
-          direct_members:
-            description: 'The list of IDs of individual users in the collection of users with this permission.
+        supported by the endpoint.
 
 
-              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
 
-              deactivated users who had the permission before being deactivated.
-
-              '
-            type: array
-            items:
-              type: integer
-          direct_subgroups:
-            description: 'The list of IDs of the groups in the collection of users with this permission.
-
-              '
-            type: array
-            items:
-              type: integer
-        description: 'An object with these fields:
-
-          '
-    Attachment:
-      type: object
-      description: 'Dictionary containing details of a file uploaded by a user.
+        for details on this and its change history.
 
         '
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID for the attachment.
-
-            '
-        name:
-          type: string
-          description: 'Name of the uploaded file.
-
-            '
-        path_id:
-          type: string
-          description: 'A representation of the path of the file within the
-
-            repository of user-uploaded files. If the `path_id` of a
-
-            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
-
-            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
-
-            '
-        size:
-          type: integer
-          description: 'Size of the file in bytes.
-
-            '
-        create_time:
-          type: integer
-          description: 'Time when the attachment was uploaded as a UNIX timestamp.
-
-
-            **Changes**: Before Zulip 12.0 (feature level 443), this value
-
-            was milliseconds since the epoch, not seconds.
-
-
-            Changed in Zulip 3.0 (feature level 22). This field was
-
-            previously a floating point number.
-
-            '
-        message_ids:
-          type: array
-          description: 'Array containing the IDs of messages that reference this
-
-            [uploaded file](/api/upload-file). This includes messages
-
-            sent by any user in the Zulip organization who sent a
-
-            message containing a link to the uploaded file.
-
-
-            **Changes**: In Zulip 12.0 (feature level 472), this
-
-            replaced the previous `messages` field, which was an array
-
-            of objects containing both `id` and `date_sent` properties.
-
-            '
-          items:
-            type: integer
-    ProfileData:
-      type: object
-      description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
-
-
-        A dictionary containing custom profile field data for the user. Each entry
-
-        maps the integer ID of a custom profile field in the organization to a
-
-        dictionary containing the user''s data for that field. Generally the data
-
-        includes just a single `value` key; for those custom profile fields
-
-        supporting Markdown, a `rendered_value` key will also be present.
-
-        '
-      additionalProperties:
-        type: object
-        additionalProperties: false
-        description: '`{id}`: Object with data about what value the user filled in the custom
-
-          profile field with that ID.
-
-          '
-        properties:
-          value:
-            type: string
-            description: 'User''s personal value for this custom profile field.
-
-              '
-          rendered_value:
-            type: string
-            description: 'The `value` rendered in HTML. Will only be present for
-
-              custom profile field types that support Markdown rendering.
-
-
-              This user-generated HTML content should be rendered
-
-              using the same CSS and client-side security protections
-
-              as are used for message content.
-
-
-              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
-
-              '
-    CodedErrorBase:
+    IgnoredParametersSuccess:
       allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
+      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - additionalProperties: false
         properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
 
-              '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
+        array was added as a possible return value for all REST API endpoint
+
+        JSON success responses in Zulip 7.0 (feature level 167).
+
+
+        Previously, it was added to
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
+
+        in Zulip 5.0 (feature level 111) and to
+
+        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
+
+        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
+
+        (feature level 78) as a return value for the
+
+        [`PATCH /settings`](/api/update-settings) endpoint.
+
+
+        A typical successful JSON response with ignored parameters may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      example:
+        ignored_parameters_unsupported:
+        - invalid_param_1
+        - invalid_param_2
+        msg: ''
+        result: success
     LegacyPresenceFormat:
       type: object
       description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
@@ -6246,6 +6133,86 @@ components:
           is_deleted: {}
           profile_data:
             $ref: '#/components/schemas/ProfileData'
+    UserStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        away:
+          type: boolean
+          deprecated: true
+          description: 'If present, the user has marked themself "away".
+
+
+            **Changes**: Deprecated in Zulip 6.0 (feature level 148);
+
+            starting with that feature level, `away` is a legacy way to
+
+            access the user''s `presence_enabled` setting, with
+
+            `away = !presence_enabled`. To be removed in a future release.
+
+            '
+        status_text:
+          type: string
+          description: 'If present, the text content of the user''s status message.
+
+            '
+        emoji_name:
+          type: string
+          description: 'If present, the name for the emoji to associate with the user''s status.
+
+
+            **Changes**: New in Zulip 5.0 (feature level 86).
+
+            '
+        emoji_code:
+          type: string
+          description: 'If present, a unique identifier, defining the specific emoji codepoint
+
+            requested, within the namespace of the `reaction_type`.
+
+
+            **Changes**: New in Zulip 5.0 (feature level 86).
+
+            '
+        reaction_type:
+          type: string
+          enum:
+          - unicode_emoji
+          - realm_emoji
+          - zulip_extra_emoji
+          description: "If present, a string indicating the type of emoji. Each emoji\n`reaction_type` has an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: New in Zulip 5.0 (feature level 86).\n"
+    GroupSettingValue:
+      oneOf:
+      - type: integer
+        description: 'The ID of the [user group](/help/user-groups) with this permission.
+
+          '
+      - type: object
+        additionalProperties: false
+        properties:
+          direct_members:
+            description: 'The list of IDs of individual users in the collection of users with this permission.
+
+
+              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+
+              deactivated users who had the permission before being deactivated.
+
+              '
+            type: array
+            items:
+              type: integer
+          direct_subgroups:
+            description: 'The list of IDs of the groups in the collection of users with this permission.
+
+              '
+            type: array
+            items:
+              type: integer
+        description: 'An object with these fields:
+
+          '
     ProfileDataUpdate:
       type: object
       additionalProperties: false
@@ -6286,14 +6253,6 @@ components:
       required:
       - id
       - value
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -6323,70 +6282,104 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    GroupSettingValueUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        new:
-          allOf:
-          - description: 'The new [group-setting value](/api/group-setting-values) for who would
-
-              have this permission.
-
-              '
-          - $ref: '#/components/schemas/GroupSettingValue'
-        old:
-          allOf:
-          - description: 'The expected current [group-setting value](/api/group-setting-values)
-
-              for who has this permission.
-
-              '
-          - $ref: '#/components/schemas/GroupSettingValue'
-      required:
-      - new
-    IgnoredParametersSuccess:
+    JsonSuccess:
       allOf:
-      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - $ref: '#/components/schemas/JsonSuccessBase'
       - additionalProperties: false
         properties:
           result: {}
           msg: {}
           ignored_parameters_unsupported: {}
-      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
+        example:
+          msg: ''
+          result: success
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
 
-        array was added as a possible return value for all REST API endpoint
-
-        JSON success responses in Zulip 7.0 (feature level 167).
-
-
-        Previously, it was added to
-
-        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
-
-        in Zulip 5.0 (feature level 111) and to
-
-        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
-
-        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
-
-        (feature level 78) as a return value for the
-
-        [`PATCH /settings`](/api/update-settings) endpoint.
-
-
-        A typical successful JSON response with ignored parameters may look like:
+              '
+    IgnoredParametersBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    ProfileData:
+      type: object
+      description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
 
 
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
+        A dictionary containing custom profile field data for the user. Each entry
+
+        maps the integer ID of a custom profile field in the organization to a
+
+        dictionary containing the user''s data for that field. Generally the data
+
+        includes just a single `value` key; for those custom profile fields
+
+        supporting Markdown, a `rendered_value` key will also be present.
 
         '
-      example:
-        ignored_parameters_unsupported:
-        - invalid_param_1
-        - invalid_param_2
-        msg: ''
-        result: success
+      additionalProperties:
+        type: object
+        additionalProperties: false
+        description: '`{id}`: Object with data about what value the user filled in the custom
+
+          profile field with that ID.
+
+          '
+        properties:
+          value:
+            type: string
+            description: 'User''s personal value for this custom profile field.
+
+              '
+          rendered_value:
+            type: string
+            description: 'The `value` rendered in HTML. Will only be present for
+
+              custom profile field types that support Markdown rendering.
+
+
+              This user-generated HTML content should be rendered
+
+              using the same CSS and client-side security protections
+
+              as are used for message content.
+
+
+              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+              '
     UserBase:
       type: object
       description: 'A dictionary containing basic data on a given Zulip user.
@@ -6643,66 +6636,33 @@ components:
             **Changes**: New in Zulip 12.0 (feature level 490).
 
             '
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    UserStatus:
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    GroupSettingValueUpdate:
       type: object
       additionalProperties: false
       properties:
-        away:
-          type: boolean
-          deprecated: true
-          description: 'If present, the user has marked themself "away".
+        new:
+          allOf:
+          - description: 'The new [group-setting value](/api/group-setting-values) for who would
 
+              have this permission.
 
-            **Changes**: Deprecated in Zulip 6.0 (feature level 148);
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+        old:
+          allOf:
+          - description: 'The expected current [group-setting value](/api/group-setting-values)
 
-            starting with that feature level, `away` is a legacy way to
+              for who has this permission.
 
-            access the user''s `presence_enabled` setting, with
-
-            `away = !presence_enabled`. To be removed in a future release.
-
-            '
-        status_text:
-          type: string
-          description: 'If present, the text content of the user''s status message.
-
-            '
-        emoji_name:
-          type: string
-          description: 'If present, the name for the emoji to associate with the user''s status.
-
-
-            **Changes**: New in Zulip 5.0 (feature level 86).
-
-            '
-        emoji_code:
-          type: string
-          description: 'If present, a unique identifier, defining the specific emoji codepoint
-
-            requested, within the namespace of the `reaction_type`.
-
-
-            **Changes**: New in Zulip 5.0 (feature level 86).
-
-            '
-        reaction_type:
-          type: string
-          enum:
-          - unicode_emoji
-          - realm_emoji
-          - zulip_extra_emoji
-          description: "If present, a string indicating the type of emoji. Each emoji\n`reaction_type` has an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: New in Zulip 5.0 (feature level 86).\n"
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+      required:
+      - new
     ModernPresenceFormat:
       type: object
       description: '`{user_id}`: Presence data (modern format) for the user with
@@ -6755,49 +6715,104 @@ components:
             potentially present.
 
             '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
+    Attachment:
+      type: object
+      description: 'Dictionary containing details of a file uploaded by a user.
 
         '
-    IgnoredParametersBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-  responses:
-    SimpleSuccess:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JsonSuccess'
-    SuccessIgnoredParameters:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/IgnoredParametersSuccess'
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID for the attachment.
+
+            '
+        name:
+          type: string
+          description: 'Name of the uploaded file.
+
+            '
+        path_id:
+          type: string
+          description: 'A representation of the path of the file within the
+
+            repository of user-uploaded files. If the `path_id` of a
+
+            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
+
+            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
+
+            '
+        size:
+          type: integer
+          description: 'Size of the file in bytes.
+
+            '
+        create_time:
+          type: integer
+          description: 'Time when the attachment was uploaded as a UNIX timestamp.
+
+
+            **Changes**: Before Zulip 12.0 (feature level 443), this value
+
+            was milliseconds since the epoch, not seconds.
+
+
+            Changed in Zulip 3.0 (feature level 22). This field was
+
+            previously a floating point number.
+
+            '
+        message_ids:
+          type: array
+          description: 'Array containing the IDs of messages that reference this
+
+            [uploaded file](/api/upload-file). This includes messages
+
+            sent by any user in the Zulip organization who sent a
+
+            message containing a link to the uploaded file.
+
+
+            **Changes**: In Zulip 12.0 (feature level 472), this
+
+            replaced the previous `messages` field, which was an array
+
+            of objects containing both `id` and `date_sent` properties.
+
+            '
+          items:
+            type: integer
   parameters:
+    ClientGravatar:
+      name: client_gravatar
+      in: query
+      description: 'Whether the client supports computing gravatars URLs. If
+
+        enabled, `avatar_url` will be included in the response only
+
+        if there is a Zulip avatar, and will be `null` for users who
+
+        are using gravatar as their avatar. This option
+
+        significantly reduces the compressed size of user data,
+
+        since gravatar URLs are long, random strings and thus do not
+
+        compress well. The `client_gravatar` field is set to `true` if
+
+        clients can compute their own gravatars.
+
+
+        **Changes**: The default value of this parameter was `false`
+
+        prior to Zulip 5.0 (feature level 92).
+
+        '
+      schema:
+        type: boolean
+        default: true
+      example: false
     DirectMemberOnly:
       name: direct_member_only
       in: query
@@ -6830,16 +6845,6 @@ components:
         type: integer
       example: 12
       required: true
-    UserGroupId:
-      name: user_group_id
-      in: path
-      description: 'The ID of the target user group.
-
-        '
-      schema:
-        type: integer
-      example: 38
-      required: true
     MutedUserId:
       name: muted_user_id
       in: path
@@ -6855,35 +6860,16 @@ components:
         type: integer
       example: 10
       required: true
-    ClientGravatar:
-      name: client_gravatar
-      in: query
-      description: 'Whether the client supports computing gravatars URLs. If
-
-        enabled, `avatar_url` will be included in the response only
-
-        if there is a Zulip avatar, and will be `null` for users who
-
-        are using gravatar as their avatar. This option
-
-        significantly reduces the compressed size of user data,
-
-        since gravatar URLs are long, random strings and thus do not
-
-        compress well. The `client_gravatar` field is set to `true` if
-
-        clients can compute their own gravatars.
-
-
-        **Changes**: The default value of this parameter was `false`
-
-        prior to Zulip 5.0 (feature level 92).
+    UserGroupId:
+      name: user_group_id
+      in: path
+      description: 'The ID of the target user group.
 
         '
       schema:
-        type: boolean
-        default: true
-      example: false
+        type: integer
+      example: 38
+      required: true
     IncludeCustomProfileFields:
       name: include_custom_profile_fields
       in: query
@@ -6901,6 +6887,20 @@ components:
         type: boolean
         default: false
       example: true
+  responses:
+    SuccessIgnoredParameters:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/IgnoredParametersSuccess'
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
   requestBodies:
     UpdateUser:
       required: false

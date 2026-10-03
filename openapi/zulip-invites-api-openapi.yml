@@ -749,35 +749,125 @@ paths:
                       '
 components:
   schemas:
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
 
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
+        supported by the endpoint.
 
 
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
 
         '
+    JsonSuccess:
       allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
         properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    InvitationFailedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          errors:
+            type: array
+            items:
+              type: array
+              items:
+                oneOf:
+                - type: string
+                - type: boolean
+            description: 'An array of arrays of length 3, where each inner array consists of (a) an email
+
+              address that was skipped while sending invitations, (b) the corresponding error
+
+              message, and (c) a boolean which is `true` when the email address already uses Zulip
+
+              and the corresponding user is deactivated in the organization.
+
+              '
+          sent_invitations:
+            description: 'A boolean specifying whether any invitations were sent.
+
+              '
+            type: boolean
+          daily_limit_reached:
+            type: boolean
+            description: 'A boolean specifying whether the limit on the number of invitations that can
+
+              be sent in the organization in a day has been reached.
+
+              '
+          license_limit_reached:
+            type: boolean
+            description: 'A boolean specifying whether the organization have enough unused Zulip licenses
+
+              to invite specified number of users.
+
+              '
+    InviteRoleParameter:
+      description: 'The [organization-level role](/api/roles-and-permissions) of the user that is
+
+        created when the invitation is accepted.
+
+        Possible values are:
+
+
+        - 100 = Organization owner
+
+        - 200 = Organization administrator
+
+        - 300 = Organization moderator
+
+        - 400 = Member
+
+        - 600 = Guest
+
+
+        Users can only create invitation links for
+
+        [roles with equal or stricter restrictions](/api/roles-and-permissions#permission-levels)
+
+        as their own. For example, a moderator cannot invite someone to be an owner
+
+        or administrator, but they can invite them to be a moderator or member.
+
+
+        **Changes**: In Zulip 4.0 (feature level 61), added support for inviting
+
+        users as moderators.
+
+        '
+      type: integer
+      enum:
+      - 100
+      - 200
+      - 300
+      - 400
+      - 600
+      default: 400
+      example: 600
     Invite:
       type: object
       description: 'A dictionary containing details about an [invitation](/help/invite-new-users).
@@ -888,11 +978,6 @@ components:
             reusable invitation link or an email invitation.
 
             '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     InviteExpirationParameter:
       description: 'The number of minutes before the invitation will expire. If `null`, the
 
@@ -914,111 +999,11 @@ components:
       - integer
       - 'null'
       example: 14400
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    InviteRoleParameter:
-      description: 'The [organization-level role](/api/roles-and-permissions) of the user that is
-
-        created when the invitation is accepted.
-
-        Possible values are:
-
-
-        - 100 = Organization owner
-
-        - 200 = Organization administrator
-
-        - 300 = Organization moderator
-
-        - 400 = Member
-
-        - 600 = Guest
-
-
-        Users can only create invitation links for
-
-        [roles with equal or stricter restrictions](/api/roles-and-permissions#permission-levels)
-
-        as their own. For example, a moderator cannot invite someone to be an owner
-
-        or administrator, but they can invite them to be a moderator or member.
-
-
-        **Changes**: In Zulip 4.0 (feature level 61), added support for inviting
-
-        users as moderators.
-
-        '
-      type: integer
-      enum:
-      - 100
-      - 200
-      - 300
-      - 400
-      - 600
-      default: 400
-      example: 600
-    InvitationFailedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          errors:
-            type: array
-            items:
-              type: array
-              items:
-                oneOf:
-                - type: string
-                - type: boolean
-            description: 'An array of arrays of length 3, where each inner array consists of (a) an email
-
-              address that was skipped while sending invitations, (b) the corresponding error
-
-              message, and (c) a boolean which is `true` when the email address already uses Zulip
-
-              and the corresponding user is deactivated in the organization.
-
-              '
-          sent_invitations:
-            description: 'A boolean specifying whether any invitations were sent.
-
-              '
-            type: boolean
-          daily_limit_reached:
-            type: boolean
-            description: 'A boolean specifying whether the limit on the number of invitations that can
-
-              be sent in the organization in a day has been reached.
-
-              '
-          license_limit_reached:
-            type: boolean
-            description: 'A boolean specifying whether the organization have enough unused Zulip licenses
-
-              to invite specified number of users.
-
-              '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
     CodedErrorBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
@@ -1037,20 +1022,35 @@ components:
             description: 'A string that identifies the error.
 
               '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
-        supported by the endpoint.
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
 
 
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+        A typical successful JSON response may look like:
 
-        for details on this and its change history.
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   responses:
     SimpleSuccess:
       description: Success.

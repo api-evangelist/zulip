@@ -3287,266 +3287,20 @@ paths:
                     url: /user_uploads/temporary/322F32632F39765378464E4C63306D3961396F4970705A4D74424565432F7A756C69702E7478743A316A5053616A3A3938625F44393446466D37357254315F4F414C425A4553464F6A55
 components:
   schemas:
-    Attachment:
-      type: object
-      description: 'Dictionary containing details of a file uploaded by a user.
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
 
         '
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID for the attachment.
-
-            '
-        name:
-          type: string
-          description: 'Name of the uploaded file.
-
-            '
-        path_id:
-          type: string
-          description: 'A representation of the path of the file within the
-
-            repository of user-uploaded files. If the `path_id` of a
-
-            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
-
-            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
-
-            '
-        size:
-          type: integer
-          description: 'Size of the file in bytes.
-
-            '
-        create_time:
-          type: integer
-          description: 'Time when the attachment was uploaded as a UNIX timestamp.
-
-
-            **Changes**: Before Zulip 12.0 (feature level 443), this value
-
-            was milliseconds since the epoch, not seconds.
-
-
-            Changed in Zulip 3.0 (feature level 22). This field was
-
-            previously a floating point number.
-
-            '
-        message_ids:
-          type: array
-          description: 'Array containing the IDs of messages that reference this
-
-            [uploaded file](/api/upload-file). This includes messages
-
-            sent by any user in the Zulip organization who sent a
-
-            message containing a link to the uploaded file.
-
-
-            **Changes**: In Zulip 12.0 (feature level 472), this
-
-            replaced the previous `messages` field, which was an array
-
-            of objects containing both `id` and `date_sent` properties.
-
-            '
-          items:
-            type: integer
-    EmojiCode:
-      description: 'A unique identifier, defining the specific emoji codepoint requested,
-
-        within the namespace of the `reaction_type`.
-
-
-        For most API clients, you won''t need this, but it''s important
-
-        for Zulip apps to handle rare corner cases when
-
-        adding/removing votes on an emoji reaction added previously by
-
-        another user.
-
-
-        If the existing reaction was added when the Zulip server was
-
-        using a previous version of the emoji data mapping between
-
-        Unicode codepoints and human-readable names, sending the
-
-        `emoji_code` in the data for the original reaction allows the
-
-        Zulip server to correctly interpret your upvote as an upvote
-
-        rather than a reaction with a "different" emoji.
-
-        '
-      type: string
-      example: 1f419
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    RequiredContent:
-      description: 'The content of the message.
-
-
-        Clients should use the `max_message_length` returned by the
-
-        [`POST /register`](/api/register-queue) endpoint to determine
-
-        the maximum message size.
-
-        '
-      type: string
-      example: Hello
-    NonExistingChannelNameError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          stream:
-            type: string
-            description: 'The name of the channel that could not be found.
-
-              '
-        example:
-          code: STREAM_DOES_NOT_EXIST
-          msg: Channel 'nonexistent' does not exist
-          result: error
-          stream: nonexistent
-    EmojiBase:
-      type: object
-      properties:
-        emoji_name:
-          type: string
-          description: 'Name of the emoji.
-
-            '
-        emoji_code:
-          type: string
-          description: 'A unique identifier, defining the specific emoji codepoint requested,
-
-            within the namespace of the `reaction_type`.
-
-            '
-        reaction_type:
-          type: string
-          enum:
-          - unicode_emoji
-          - realm_emoji
-          - zulip_extra_emoji
-          description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    ReactionType:
-      description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nIf an API client is adding/removing a vote on an existing reaction,\nit should pass this parameter using the value the server provided\nfor the existing reaction for specificity. Supported values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: In Zulip 3.0 (feature level 2), this parameter became\noptional for [custom emoji](/help/custom-emoji);\npreviously, this endpoint assumed `unicode_emoji` if this\nparameter was not specified.\n"
-      type: string
-      example: unicode_emoji
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    Anchor:
-      type: string
-    InvalidMessageError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-        example:
-          msg: Invalid message(s)
-          code: BAD_REQUEST
-          result: error
-    OptionalContent:
-      description: 'The updated content of the target message.
-
-
-        Clients should use the `max_message_length` returned by the
-
-        [`POST /register`](/api/register-queue) endpoint to determine
-
-        the maximum message size.
-
-
-        Note that a message''s content and channel cannot be changed at the
-
-        same time, so sending both `content` and `stream_id` parameters will
-
-        throw an error.
-
-        '
-      type: string
-      example: Hello
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
     MessagesBase:
       type: object
       description: 'Object containing details of the message.
@@ -4052,6 +3806,78 @@ components:
           description: 'The type of the message: `"stream"` or `"private"`.
 
             '
+    EmojiBase:
+      type: object
+      properties:
+        emoji_name:
+          type: string
+          description: 'Name of the emoji.
+
+            '
+        emoji_code:
+          type: string
+          description: 'A unique identifier, defining the specific emoji codepoint requested,
+
+            within the namespace of the `reaction_type`.
+
+            '
+        reaction_type:
+          type: string
+          enum:
+          - unicode_emoji
+          - realm_emoji
+          - zulip_extra_emoji
+          description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
+    Anchor:
+      type: string
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     EmojiReaction:
       allOf:
       - $ref: '#/components/schemas/EmojiBase'
@@ -4070,27 +3896,194 @@ components:
               deprecated the `user` object.
 
               '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
 
-        supported by the endpoint.
+              '
+    InvalidMessageError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+        example:
+          msg: Invalid message(s)
+          code: BAD_REQUEST
+          result: error
+    ReactionType:
+      description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nIf an API client is adding/removing a vote on an existing reaction,\nit should pass this parameter using the value the server provided\nfor the existing reaction for specificity. Supported values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: In Zulip 3.0 (feature level 2), this parameter became\noptional for [custom emoji](/help/custom-emoji);\npreviously, this endpoint assumed `unicode_emoji` if this\nparameter was not specified.\n"
+      type: string
+      example: unicode_emoji
+    NonExistingChannelNameError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          stream:
+            type: string
+            description: 'The name of the channel that could not be found.
+
+              '
+        example:
+          code: STREAM_DOES_NOT_EXIST
+          msg: Channel 'nonexistent' does not exist
+          result: error
+          stream: nonexistent
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    OptionalContent:
+      description: 'The updated content of the target message.
 
 
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+        Clients should use the `max_message_length` returned by the
 
-        for details on this and its change history.
+        [`POST /register`](/api/register-queue) endpoint to determine
+
+        the maximum message size.
+
+
+        Note that a message''s content and channel cannot be changed at the
+
+        same time, so sending both `content` and `stream_id` parameters will
+
+        throw an error.
 
         '
-  responses:
-    SimpleSuccess:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JsonSuccess'
+      type: string
+      example: Hello
+    EmojiCode:
+      description: 'A unique identifier, defining the specific emoji codepoint requested,
+
+        within the namespace of the `reaction_type`.
+
+
+        For most API clients, you won''t need this, but it''s important
+
+        for Zulip apps to handle rare corner cases when
+
+        adding/removing votes on an emoji reaction added previously by
+
+        another user.
+
+
+        If the existing reaction was added when the Zulip server was
+
+        using a previous version of the emoji data mapping between
+
+        Unicode codepoints and human-readable names, sending the
+
+        `emoji_code` in the data for the original reaction allows the
+
+        Zulip server to correctly interpret your upvote as an upvote
+
+        rather than a reaction with a "different" emoji.
+
+        '
+      type: string
+      example: 1f419
+    RequiredContent:
+      description: 'The content of the message.
+
+
+        Clients should use the `max_message_length` returned by the
+
+        [`POST /register`](/api/register-queue) endpoint to determine
+
+        the maximum message size.
+
+        '
+      type: string
+      example: Hello
+    Attachment:
+      type: object
+      description: 'Dictionary containing details of a file uploaded by a user.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID for the attachment.
+
+            '
+        name:
+          type: string
+          description: 'Name of the uploaded file.
+
+            '
+        path_id:
+          type: string
+          description: 'A representation of the path of the file within the
+
+            repository of user-uploaded files. If the `path_id` of a
+
+            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
+
+            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
+
+            '
+        size:
+          type: integer
+          description: 'Size of the file in bytes.
+
+            '
+        create_time:
+          type: integer
+          description: 'Time when the attachment was uploaded as a UNIX timestamp.
+
+
+            **Changes**: Before Zulip 12.0 (feature level 443), this value
+
+            was milliseconds since the epoch, not seconds.
+
+
+            Changed in Zulip 3.0 (feature level 22). This field was
+
+            previously a floating point number.
+
+            '
+        message_ids:
+          type: array
+          description: 'Array containing the IDs of messages that reference this
+
+            [uploaded file](/api/upload-file). This includes messages
+
+            sent by any user in the Zulip organization who sent a
+
+            message containing a link to the uploaded file.
+
+
+            **Changes**: In Zulip 12.0 (feature level 472), this
+
+            replaced the previous `messages` field, which was an array
+
+            of objects containing both `id` and `date_sent` properties.
+
+            '
+          items:
+            type: integer
   parameters:
     ClientGravatar:
       name: client_gravatar
@@ -4131,6 +4124,13 @@ components:
         type: integer
       example: 43
       required: true
+  responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
   securitySchemes:
     BasicAuth:
       type: http
