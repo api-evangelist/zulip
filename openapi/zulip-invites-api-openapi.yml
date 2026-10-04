@@ -749,20 +749,48 @@ paths:
                       '
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    InviteRoleParameter:
+      description: 'The [organization-level role](/api/roles-and-permissions) of the user that is
 
-        supported by the endpoint.
+        created when the invitation is accepted.
+
+        Possible values are:
 
 
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+        - 100 = Organization owner
 
-        for details on this and its change history.
+        - 200 = Organization administrator
+
+        - 300 = Organization moderator
+
+        - 400 = Member
+
+        - 600 = Guest
+
+
+        Users can only create invitation links for
+
+        [roles with equal or stricter restrictions](/api/roles-and-permissions#permission-levels)
+
+        as their own. For example, a moderator cannot invite someone to be an owner
+
+        or administrator, but they can invite them to be a moderator or member.
+
+
+        **Changes**: In Zulip 4.0 (feature level 61), added support for inviting
+
+        users as moderators.
 
         '
+      type: integer
+      enum:
+      - 100
+      - 200
+      - 300
+      - 400
+      - 600
+      default: 400
+      example: 600
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -774,14 +802,29 @@ components:
         example:
           msg: ''
           result: success
-    CodedError:
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedErrorBase:
       allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
         properties:
-          result: {}
-          msg: {}
-          code: {}
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     InvitationFailedError:
       allOf:
       - $ref: '#/components/schemas/CodedErrorBase'
@@ -826,48 +869,49 @@ components:
               to invite specified number of users.
 
               '
-    InviteRoleParameter:
-      description: 'The [organization-level role](/api/roles-and-permissions) of the user that is
+    InviteExpirationParameter:
+      description: 'The number of minutes before the invitation will expire. If `null`, the
 
-        created when the invitation is accepted.
+        invitation will never expire. If unspecified, the server will use a default
 
-        Possible values are:
+        value (based on the `INVITATION_LINK_VALIDITY_MINUTES` server setting, which
 
-
-        - 100 = Organization owner
-
-        - 200 = Organization administrator
-
-        - 300 = Organization moderator
-
-        - 400 = Member
-
-        - 600 = Guest
+        defaults to 14400, i.e. 10 days) for when the invitation will expire.
 
 
-        Users can only create invitation links for
+        **Changes**: New in Zulip 6.0 (feature level 126). Previously, there was an
 
-        [roles with equal or stricter restrictions](/api/roles-and-permissions#permission-levels)
+        `invite_expires_in_days` parameter, which specified the duration in days instead
 
-        as their own. For example, a moderator cannot invite someone to be an owner
-
-        or administrator, but they can invite them to be a moderator or member.
-
-
-        **Changes**: In Zulip 4.0 (feature level 61), added support for inviting
-
-        users as moderators.
+        of minutes.
 
         '
-      type: integer
-      enum:
-      - 100
-      - 200
-      - 300
-      - 400
-      - 600
-      default: 400
-      example: 600
+      type:
+      - integer
+      - 'null'
+      example: 14400
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     Invite:
       type: object
       description: 'A dictionary containing details about an [invitation](/help/invite-new-users).
@@ -978,50 +1022,6 @@ components:
             reusable invitation link or an email invitation.
 
             '
-    InviteExpirationParameter:
-      description: 'The number of minutes before the invitation will expire. If `null`, the
-
-        invitation will never expire. If unspecified, the server will use a default
-
-        value (based on the `INVITATION_LINK_VALIDITY_MINUTES` server setting, which
-
-        defaults to 14400, i.e. 10 days) for when the invitation will expire.
-
-
-        **Changes**: New in Zulip 6.0 (feature level 126). Previously, there was an
-
-        `invite_expires_in_days` parameter, which specified the duration in days instead
-
-        of minutes.
-
-        '
-      type:
-      - integer
-      - 'null'
-      example: 14400
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 

@@ -295,20 +295,6 @@ paths:
                       '
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -320,19 +306,6 @@ components:
         example:
           msg: ''
           result: success
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     CodedErrorBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
@@ -351,6 +324,33 @@ components:
             description: 'A string that identifies the error.
 
               '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 

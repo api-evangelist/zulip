@@ -542,20 +542,24 @@ paths:
                     msg: Scheduled message does not exist
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    NonExistingChannelIdError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          stream_id:
+            type: integer
+            description: 'The channel ID that could not be found.
 
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
+              '
+        example:
+          code: STREAM_DOES_NOT_EXIST
+          msg: Channel with ID '9' does not exist
+          result: error
+          stream_id: 9
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -567,14 +571,29 @@ components:
         example:
           msg: ''
           result: success
-    CodedError:
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedErrorBase:
       allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
         properties:
-          result: {}
-          msg: {}
-          code: {}
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     ScheduledMessageBase:
       type: object
       description: 'Object containing details of the scheduled message.
@@ -676,11 +695,6 @@ components:
       - rendered_content
       - scheduled_delivery_timestamp
       - failed
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     ScheduledMessage:
       allOf:
       - $ref: '#/components/schemas/ScheduledMessageBase'
@@ -694,38 +708,21 @@ components:
           rendered_content: {}
           scheduled_delivery_timestamp: {}
           failed: {}
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
 
-              '
-    RequiredContent:
-      description: 'The content of the message.
+        supported by the endpoint.
 
 
-        Clients should use the `max_message_length` returned by the
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
 
-        [`POST /register`](/api/register-queue) endpoint to determine
-
-        the maximum message size.
+        for details on this and its change history.
 
         '
-      type: string
-      example: Hello
-    NonExistingChannelIdError:
+    CodedError:
       allOf:
       - $ref: '#/components/schemas/CodedErrorBase'
       - additionalProperties: false
@@ -733,16 +730,6 @@ components:
           result: {}
           msg: {}
           code: {}
-          stream_id:
-            type: integer
-            description: 'The channel ID that could not be found.
-
-              '
-        example:
-          code: STREAM_DOES_NOT_EXIST
-          msg: Channel with ID '9' does not exist
-          result: error
-          stream_id: 9
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -772,6 +759,19 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    RequiredContent:
+      description: 'The content of the message.
+
+
+        Clients should use the `max_message_length` returned by the
+
+        [`POST /register`](/api/register-queue) endpoint to determine
+
+        the maximum message size.
+
+        '
+      type: string
+      example: Hello
   responses:
     SimpleSuccess:
       description: Success.

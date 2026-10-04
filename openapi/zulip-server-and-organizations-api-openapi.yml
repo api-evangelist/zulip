@@ -2939,6 +2939,75 @@ paths:
                       signup_url: /accounts/register/social/github
 components:
   schemas:
+    LegacyPresenceFormat:
+      type: object
+      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
+
+        presence.
+
+
+        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
+
+        contain two keys, `"website"` and `"aggregated"`, with identical data. The
+
+        server no longer stores which client submitted presence updates.
+
+
+        Previously, the `{client_name}` keys for these objects were the names of the
+
+        different clients where the user was logged in, for example `website` or
+
+        `ZulipDesktop`.
+
+        '
+      additionalProperties: false
+      properties:
+        client:
+          type: string
+          description: 'The client''s platform name.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
+
+            always be `"website"` as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+        status:
+          type: string
+          enum:
+          - idle
+          - active
+          description: 'The status of the user on this client. Will be either `"idle"`
+
+            or `"active"`.
+
+            '
+        timestamp:
+          type: integer
+          description: 'The UNIX timestamp of when this client sent the user''s presence
+
+            to the server with the precision of a second.
+
+            '
+        pushable:
+          type: boolean
+          description: 'Whether the client is capable of showing mobile/push notifications
+
+            to the user.
+
+
+            Not present in objects with the `"aggregated"` key.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), always
+
+            `false` when present as the server no longer stores which client
+
+            submitted presence data.
+
+            '
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -2950,6 +3019,110 @@ components:
         example:
           msg: ''
           result: success
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    RealmExport:
+      type: object
+      additionalProperties: false
+      description: 'Object containing details about a
+
+        [data export](/help/export-your-organization).
+
+        '
+      properties:
+        id:
+          type: integer
+          description: 'The ID of the data export.
+
+            '
+        acting_user_id:
+          type: integer
+          description: 'The ID of the user who created the data export.
+
+            '
+        export_time:
+          type: number
+          description: 'The UNIX timestamp of when the data export was started.
+
+            '
+        deleted_timestamp:
+          type:
+          - number
+          - 'null'
+          description: 'The UNIX timestamp of when the data export was deleted.
+
+
+            Will be `null` if the data export has not been deleted.
+
+            '
+        failed_timestamp:
+          type:
+          - number
+          - 'null'
+          description: 'The UNIX timestamp of when the data export failed.
+
+
+            Will be `null` if the data export succeeded, or if it''s
+
+            still being generated.
+
+            '
+        export_url:
+          type:
+          - string
+          - 'null'
+          description: 'The URL to download the generated data export.
+
+
+            Will be `null` if the data export failed, or if it''s
+
+            still being generated.
+
+            '
+        pending:
+          type: boolean
+          description: 'Whether the data export is pending, which indicates it
+
+            is still being generated, or if it succeeded, failed or
+
+            was deleted before being generated.
+
+
+            Depending on the size of the organization, it can take
+
+            anywhere from seconds to an hour to generate the data
+
+            export.
+
+            '
+        export_type:
+          type: string
+          enum:
+          - public
+          - full_with_consent
+          - full_without_consent
+          description: "Whether the data export is public, full with consent, or full without consent.\n\n- `public` = Public data export.\n- `full_with_consent` = Public and private data export (with consent), which includes private data\n  for users who have granted consent.\n- `full_without_consent` = All public and private data, which includes private data for all users.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nthe export type was not included in these objects because only\npublic data exports could be created or listed via the API or UI.\n"
     IgnoredParametersUnsupported:
       type: array
       items:
@@ -2964,48 +3137,131 @@ components:
         for details on this and its change history.
 
         '
-    IgnoredParametersSuccess:
+    CodedError:
       allOf:
-      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - $ref: '#/components/schemas/CodedErrorBase'
       - additionalProperties: false
         properties:
           result: {}
           msg: {}
-          ignored_parameters_unsupported: {}
-      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
+          code: {}
+    LinkifierPattern:
+      description: 'The [Python regular
 
-        array was added as a possible return value for all REST API endpoint
+        expression](https://docs.python.org/3/howto/regex.html) that should
 
-        JSON success responses in Zulip 7.0 (feature level 167).
+        trigger the linkifier.
 
+        '
+      type: string
+      example: '#(?P<id>[0-9]+)'
+    EmailAddressVisibility:
+      type: integer
+      description: 'The [policy][permission-level] for [which other users][help-email-visibility]
 
-        Previously, it was added to
-
-        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
-
-        in Zulip 5.0 (feature level 111) and to
-
-        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
-
-        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
-
-        (feature level 78) as a return value for the
-
-        [`PATCH /settings`](/api/update-settings) endpoint.
+        in this organization can see the user''s real email address.
 
 
-        A typical successful JSON response with ignored parameters may look like:
+        - 1 = Everyone
+
+        - 2 = Members only
+
+        - 3 = Administrators only
+
+        - 4 = Nobody
+
+        - 5 = Moderators only
+
+
+        **Changes**: New in Zulip 7.0 (feature level 163), replacing the
+
+        realm-level setting.
+
+
+        [permission-level]: /api/roles-and-permissions#permission-levels
+
+        [help-email-visibility]: /help/configure-email-visibility
+
+        '
+    LinkifierURLTemplate:
+      description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
+
+        compliant URL template used for the link.
+
+        If you used named groups in `pattern`, you can insert their
+
+        content here with `{name_of_group}`.
+
+
+        **Changes**: New in Zulip 7.0 (feature level 176). This replaced
+
+        the `url_format_string` parameter, which was a format string in which
+
+        named groups'' content could be inserted with `%(name_of_group)s`.
+
+        '
+      type: string
+      example: https://github.com/zulip/zulip/issues/{id}
+    IgnoredParametersBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
 
 
         [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
-      example:
-        ignored_parameters_unsupported:
-        - invalid_param_1
-        - invalid_param_2
-        msg: ''
-        result: success
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    RealmDomain:
+      type: object
+      additionalProperties: false
+      properties:
+        domain:
+          type: string
+          description: 'The allowed domain.
+
+            '
+        allow_subdomains:
+          type: boolean
+          description: 'Whether subdomains are allowed for this domain.
+
+            '
+      required:
+      - domain
+      - allow_subdomains
     CustomProfileField:
       type: object
       additionalProperties: false
@@ -3167,275 +3423,6 @@ components:
       - hint
       - required
       - editable_by_user
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    LinkifierPattern:
-      description: 'The [Python regular
-
-        expression](https://docs.python.org/3/howto/regex.html) that should
-
-        trigger the linkifier.
-
-        '
-      type: string
-      example: '#(?P<id>[0-9]+)'
-    RealmDomain:
-      type: object
-      additionalProperties: false
-      properties:
-        domain:
-          type: string
-          description: 'The allowed domain.
-
-            '
-        allow_subdomains:
-          type: boolean
-          description: 'Whether subdomains are allowed for this domain.
-
-            '
-      required:
-      - domain
-      - allow_subdomains
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    IgnoredParametersBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    EmailAddressVisibility:
-      type: integer
-      description: 'The [policy][permission-level] for [which other users][help-email-visibility]
-
-        in this organization can see the user''s real email address.
-
-
-        - 1 = Everyone
-
-        - 2 = Members only
-
-        - 3 = Administrators only
-
-        - 4 = Nobody
-
-        - 5 = Moderators only
-
-
-        **Changes**: New in Zulip 7.0 (feature level 163), replacing the
-
-        realm-level setting.
-
-
-        [permission-level]: /api/roles-and-permissions#permission-levels
-
-        [help-email-visibility]: /help/configure-email-visibility
-
-        '
-    RealmExport:
-      type: object
-      additionalProperties: false
-      description: 'Object containing details about a
-
-        [data export](/help/export-your-organization).
-
-        '
-      properties:
-        id:
-          type: integer
-          description: 'The ID of the data export.
-
-            '
-        acting_user_id:
-          type: integer
-          description: 'The ID of the user who created the data export.
-
-            '
-        export_time:
-          type: number
-          description: 'The UNIX timestamp of when the data export was started.
-
-            '
-        deleted_timestamp:
-          type:
-          - number
-          - 'null'
-          description: 'The UNIX timestamp of when the data export was deleted.
-
-
-            Will be `null` if the data export has not been deleted.
-
-            '
-        failed_timestamp:
-          type:
-          - number
-          - 'null'
-          description: 'The UNIX timestamp of when the data export failed.
-
-
-            Will be `null` if the data export succeeded, or if it''s
-
-            still being generated.
-
-            '
-        export_url:
-          type:
-          - string
-          - 'null'
-          description: 'The URL to download the generated data export.
-
-
-            Will be `null` if the data export failed, or if it''s
-
-            still being generated.
-
-            '
-        pending:
-          type: boolean
-          description: 'Whether the data export is pending, which indicates it
-
-            is still being generated, or if it succeeded, failed or
-
-            was deleted before being generated.
-
-
-            Depending on the size of the organization, it can take
-
-            anywhere from seconds to an hour to generate the data
-
-            export.
-
-            '
-        export_type:
-          type: string
-          enum:
-          - public
-          - full_with_consent
-          - full_without_consent
-          description: "Whether the data export is public, full with consent, or full without consent.\n\n- `public` = Public data export.\n- `full_with_consent` = Public and private data export (with consent), which includes private data\n  for users who have granted consent.\n- `full_without_consent` = All public and private data, which includes private data for all users.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nthe export type was not included in these objects because only\npublic data exports could be created or listed via the API or UI.\n"
-    LegacyPresenceFormat:
-      type: object
-      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
-
-        presence.
-
-
-        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
-
-        contain two keys, `"website"` and `"aggregated"`, with identical data. The
-
-        server no longer stores which client submitted presence updates.
-
-
-        Previously, the `{client_name}` keys for these objects were the names of the
-
-        different clients where the user was logged in, for example `website` or
-
-        `ZulipDesktop`.
-
-        '
-      additionalProperties: false
-      properties:
-        client:
-          type: string
-          description: 'The client''s platform name.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
-
-            always be `"website"` as the server no longer stores which client
-
-            submitted presence data.
-
-            '
-        status:
-          type: string
-          enum:
-          - idle
-          - active
-          description: 'The status of the user on this client. Will be either `"idle"`
-
-            or `"active"`.
-
-            '
-        timestamp:
-          type: integer
-          description: 'The UNIX timestamp of when this client sent the user''s presence
-
-            to the server with the precision of a second.
-
-            '
-        pushable:
-          type: boolean
-          description: 'Whether the client is capable of showing mobile/push notifications
-
-            to the user.
-
-
-            Not present in objects with the `"aggregated"` key.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), always
-
-            `false` when present as the server no longer stores which client
-
-            submitted presence data.
-
-            '
-    LinkifierURLTemplate:
-      description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
-
-        compliant URL template used for the link.
-
-        If you used named groups in `pattern`, you can insert their
-
-        content here with `{name_of_group}`.
-
-
-        **Changes**: New in Zulip 7.0 (feature level 176). This replaced
-
-        the `url_format_string` parameter, which was a format string in which
-
-        named groups'' content could be inserted with `%(name_of_group)s`.
-
-        '
-      type: string
-      example: https://github.com/zulip/zulip/issues/{id}
     RealmEmoji:
       type: object
       additionalProperties: false
@@ -3511,35 +3498,48 @@ components:
             was accessible via an `author` object with an `id` field.
 
             '
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+    IgnoredParametersSuccess:
+      allOf:
+      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
 
-        parameters sent in the request are not supported by this
+        array was added as a possible return value for all REST API endpoint
 
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
+        JSON success responses in Zulip 7.0 (feature level 167).
 
 
-        A typical successful JSON response may look like:
+        Previously, it was added to
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
+
+        in Zulip 5.0 (feature level 111) and to
+
+        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
+
+        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
+
+        (feature level 78) as a return value for the
+
+        [`PATCH /settings`](/api/update-settings) endpoint.
+
+
+        A typical successful JSON response with ignored parameters may look like:
 
 
         [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+      example:
+        ignored_parameters_unsupported:
+        - invalid_param_1
+        - invalid_param_2
+        msg: ''
+        result: success
   responses:
     SuccessIgnoredParameters:
       description: Success.

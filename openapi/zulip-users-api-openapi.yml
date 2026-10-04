@@ -5983,62 +5983,6 @@ paths:
                     '
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    IgnoredParametersSuccess:
-      allOf:
-      - $ref: '#/components/schemas/IgnoredParametersBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
-
-        array was added as a possible return value for all REST API endpoint
-
-        JSON success responses in Zulip 7.0 (feature level 167).
-
-
-        Previously, it was added to
-
-        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
-
-        in Zulip 5.0 (feature level 111) and to
-
-        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
-
-        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
-
-        (feature level 78) as a return value for the
-
-        [`PATCH /settings`](/api/update-settings) endpoint.
-
-
-        A typical successful JSON response with ignored parameters may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      example:
-        ignored_parameters_unsupported:
-        - invalid_param_1
-        - invalid_param_2
-        msg: ''
-        result: success
     LegacyPresenceFormat:
       type: object
       description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
@@ -6108,31 +6052,72 @@ components:
             submitted presence data.
 
             '
-    User:
+    ModernPresenceFormat:
+      type: object
+      description: '`{user_id}`: Presence data (modern format) for the user with
+
+        the specified ID.
+
+        '
+      additionalProperties: false
+      properties:
+        active_timestamp:
+          type: integer
+          description: 'The UNIX timestamp of the last time a client connected
+
+            to Zulip reported that the user was actually present
+
+            (e.g. via focusing a browser window or interacting
+
+            with a computer running the desktop app).
+
+
+            Clients should display users with a current
+
+            `active_timestamp` as fully present.
+
+            '
+        idle_timestamp:
+          type: integer
+          description: 'The UNIX timestamp of the last time the user had a
+
+            client connected to Zulip, including idle clients
+
+            where the user hasn''t interacted with the system
+
+            recently.
+
+
+            The Zulip server has no way of distinguishing whether
+
+            an idle web app user is at their computer, but hasn''t
+
+            interacted with the Zulip tab recently, or simply left
+
+            their desktop computer on when they left.
+
+
+            Thus, clients should display users with a current
+
+            `idle_timestamp` but no current `active_timestamp` as
+
+            potentially present.
+
+            '
+    IgnoredParametersBase:
       allOf:
-      - $ref: '#/components/schemas/UserBase'
-      - additionalProperties: false
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
         properties:
-          user_id: {}
-          delivery_email: {}
-          email: {}
-          full_name: {}
-          date_joined: {}
-          is_active: {}
-          is_owner: {}
-          is_admin: {}
-          is_guest: {}
-          is_bot: {}
-          bot_type: {}
-          bot_owner_id: {}
-          role: {}
-          timezone: {}
-          avatar_url: {}
-          avatar_version: {}
-          is_imported_stub: {}
-          is_deleted: {}
-          profile_data:
-            $ref: '#/components/schemas/ProfileData'
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     UserStatus:
       type: object
       additionalProperties: false
@@ -6182,77 +6167,6 @@ components:
           - realm_emoji
           - zulip_extra_emoji
           description: "If present, a string indicating the type of emoji. Each emoji\n`reaction_type` has an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: New in Zulip 5.0 (feature level 86).\n"
-    GroupSettingValue:
-      oneOf:
-      - type: integer
-        description: 'The ID of the [user group](/help/user-groups) with this permission.
-
-          '
-      - type: object
-        additionalProperties: false
-        properties:
-          direct_members:
-            description: 'The list of IDs of individual users in the collection of users with this permission.
-
-
-              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
-
-              deactivated users who had the permission before being deactivated.
-
-              '
-            type: array
-            items:
-              type: integer
-          direct_subgroups:
-            description: 'The list of IDs of the groups in the collection of users with this permission.
-
-              '
-            type: array
-            items:
-              type: integer
-        description: 'An object with these fields:
-
-          '
-    ProfileDataUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The ID of the custom profile field to update.
-
-            '
-        value:
-          description: 'The new value for the user of the specified custom profile field.
-
-
-            If null, then any value already set for the specified custom
-
-            profile field will be removed.
-
-            '
-          oneOf:
-          - type:
-            - string
-            - 'null'
-            description: 'A string value that matches the [type of the custom profile
-
-              field](/help/custom-profile-fields#profile-field-types), e.g., if the
-
-              profile field type is a link then the string must be a URL.
-
-              '
-          - type: array
-            items:
-              type: integer
-            description: 'An array of integer user IDs, which is for the **Users** type of
-
-              [custom profile field](/help/custom-profile-fields#profile-field-types).
-
-              '
-      required:
-      - id
-      - value
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
@@ -6282,57 +6196,73 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    JsonSuccess:
+    IgnoredParametersSuccess:
       allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
+      - $ref: '#/components/schemas/IgnoredParametersBase'
       - additionalProperties: false
         properties:
           result: {}
           msg: {}
           ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    CodedError:
+      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
+
+        array was added as a possible return value for all REST API endpoint
+
+        JSON success responses in Zulip 7.0 (feature level 167).
+
+
+        Previously, it was added to
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
+
+        in Zulip 5.0 (feature level 111) and to
+
+        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
+
+        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
+
+        (feature level 78) as a return value for the
+
+        [`PATCH /settings`](/api/update-settings) endpoint.
+
+
+        A typical successful JSON response with ignored parameters may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      example:
+        ignored_parameters_unsupported:
+        - invalid_param_1
+        - invalid_param_2
+        msg: ''
+        result: success
+    User:
       allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
+      - $ref: '#/components/schemas/UserBase'
       - additionalProperties: false
         properties:
-          result: {}
-          msg: {}
-          code: {}
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    IgnoredParametersBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+          user_id: {}
+          delivery_email: {}
+          email: {}
+          full_name: {}
+          date_joined: {}
+          is_active: {}
+          is_owner: {}
+          is_admin: {}
+          is_guest: {}
+          is_bot: {}
+          bot_type: {}
+          bot_owner_id: {}
+          role: {}
+          timezone: {}
+          avatar_url: {}
+          avatar_version: {}
+          is_imported_stub: {}
+          is_deleted: {}
+          profile_data:
+            $ref: '#/components/schemas/ProfileData'
     ProfileData:
       type: object
       description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
@@ -6641,6 +6571,37 @@ components:
       properties:
         result:
           type: string
+    GroupSettingValue:
+      oneOf:
+      - type: integer
+        description: 'The ID of the [user group](/help/user-groups) with this permission.
+
+          '
+      - type: object
+        additionalProperties: false
+        properties:
+          direct_members:
+            description: 'The list of IDs of individual users in the collection of users with this permission.
+
+
+              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+
+              deactivated users who had the permission before being deactivated.
+
+              '
+            type: array
+            items:
+              type: integer
+          direct_subgroups:
+            description: 'The list of IDs of the groups in the collection of users with this permission.
+
+              '
+            type: array
+            items:
+              type: integer
+        description: 'An object with these fields:
+
+          '
     GroupSettingValueUpdate:
       type: object
       additionalProperties: false
@@ -6663,58 +6624,72 @@ components:
           - $ref: '#/components/schemas/GroupSettingValue'
       required:
       - new
-    ModernPresenceFormat:
+    ProfileDataUpdate:
       type: object
-      description: '`{user_id}`: Presence data (modern format) for the user with
-
-        the specified ID.
-
-        '
       additionalProperties: false
       properties:
-        active_timestamp:
+        id:
           type: integer
-          description: 'The UNIX timestamp of the last time a client connected
-
-            to Zulip reported that the user was actually present
-
-            (e.g. via focusing a browser window or interacting
-
-            with a computer running the desktop app).
-
-
-            Clients should display users with a current
-
-            `active_timestamp` as fully present.
+          description: 'The ID of the custom profile field to update.
 
             '
-        idle_timestamp:
-          type: integer
-          description: 'The UNIX timestamp of the last time the user had a
-
-            client connected to Zulip, including idle clients
-
-            where the user hasn''t interacted with the system
-
-            recently.
+        value:
+          description: 'The new value for the user of the specified custom profile field.
 
 
-            The Zulip server has no way of distinguishing whether
+            If null, then any value already set for the specified custom
 
-            an idle web app user is at their computer, but hasn''t
-
-            interacted with the Zulip tab recently, or simply left
-
-            their desktop computer on when they left.
-
-
-            Thus, clients should display users with a current
-
-            `idle_timestamp` but no current `active_timestamp` as
-
-            potentially present.
+            profile field will be removed.
 
             '
+          oneOf:
+          - type:
+            - string
+            - 'null'
+            description: 'A string value that matches the [type of the custom profile
+
+              field](/help/custom-profile-fields#profile-field-types), e.g., if the
+
+              profile field type is a link then the string must be a URL.
+
+              '
+          - type: array
+            items:
+              type: integer
+            description: 'An array of integer user IDs, which is for the **Users** type of
+
+              [custom profile field](/help/custom-profile-fields#profile-field-types).
+
+              '
+      required:
+      - id
+      - value
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     Attachment:
       type: object
       description: 'Dictionary containing details of a file uploaded by a user.
@@ -6783,7 +6758,84 @@ components:
             '
           items:
             type: integer
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
   parameters:
+    IncludeCustomProfileFields:
+      name: include_custom_profile_fields
+      in: query
+      description: 'Whether the client wants [custom profile field](/help/custom-profile-fields)
+
+        data to be included in the response.
+
+
+        **Changes**: New in Zulip 2.1.0. Previous versions do not offer these
+
+        data via the API.
+
+        '
+      schema:
+        type: boolean
+        default: false
+      example: true
+    UserGroupId:
+      name: user_group_id
+      in: path
+      description: 'The ID of the target user group.
+
+        '
+      schema:
+        type: integer
+      example: 38
+      required: true
+    UserId:
+      name: user_id
+      in: path
+      description: 'The target user''s ID.
+
+        '
+      schema:
+        type: integer
+      example: 12
+      required: true
+    MutedUserId:
+      name: muted_user_id
+      in: path
+      description: 'The ID of the user to mute/unmute.
+
+
+        **Changes**: Before Zulip 8.0 (feature level 188), bot users could not
+
+        be muted/unmuted, and specifying a bot user''s ID returned an error response.
+
+        '
+      schema:
+        type: integer
+      example: 10
+      required: true
     ClientGravatar:
       name: client_gravatar
       in: query
@@ -6813,6 +6865,16 @@ components:
         type: boolean
         default: true
       example: false
+    BotId:
+      name: bot_id
+      in: path
+      description: 'The user ID of the target bot.
+
+        '
+      schema:
+        type: integer
+      example: 17
+      required: true
     DirectMemberOnly:
       name: direct_member_only
       in: query
@@ -6825,82 +6887,6 @@ components:
         type: boolean
       example: false
       required: false
-    BotId:
-      name: bot_id
-      in: path
-      description: 'The user ID of the target bot.
-
-        '
-      schema:
-        type: integer
-      example: 17
-      required: true
-    UserId:
-      name: user_id
-      in: path
-      description: 'The target user''s ID.
-
-        '
-      schema:
-        type: integer
-      example: 12
-      required: true
-    MutedUserId:
-      name: muted_user_id
-      in: path
-      description: 'The ID of the user to mute/unmute.
-
-
-        **Changes**: Before Zulip 8.0 (feature level 188), bot users could not
-
-        be muted/unmuted, and specifying a bot user''s ID returned an error response.
-
-        '
-      schema:
-        type: integer
-      example: 10
-      required: true
-    UserGroupId:
-      name: user_group_id
-      in: path
-      description: 'The ID of the target user group.
-
-        '
-      schema:
-        type: integer
-      example: 38
-      required: true
-    IncludeCustomProfileFields:
-      name: include_custom_profile_fields
-      in: query
-      description: 'Whether the client wants [custom profile field](/help/custom-profile-fields)
-
-        data to be included in the response.
-
-
-        **Changes**: New in Zulip 2.1.0. Previous versions do not offer these
-
-        data via the API.
-
-        '
-      schema:
-        type: boolean
-        default: false
-      example: true
-  responses:
-    SuccessIgnoredParameters:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            allOf:
-            - $ref: '#/components/schemas/IgnoredParametersSuccess'
-    SimpleSuccess:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JsonSuccess'
   requestBodies:
     UpdateUser:
       required: false
@@ -6982,6 +6968,20 @@ components:
               contentType: application/json
             profile_data:
               contentType: application/json
+  responses:
+    SuccessIgnoredParameters:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/IgnoredParametersSuccess'
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
   securitySchemes:
     BasicAuth:
       type: http

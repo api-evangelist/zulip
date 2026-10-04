@@ -482,78 +482,6 @@ paths:
                     msg: Saved snippet does not exist.
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    SavedSnippet:
-      type: object
-      description: 'Object containing the details of the saved snippet.
-
-        '
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID of the saved snippet.
-
-            '
-        title:
-          type: string
-          description: 'The title of the saved snippet.
-
-            '
-        content:
-          type: string
-          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
-
-
-            Clients should insert this content into a message when using
-
-            a saved snippet.
-
-            '
-        date_created:
-          type: integer
-          description: 'The UNIX timestamp for when the saved snippet was created, in
-
-            UTC seconds.
-
-            '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     Draft:
       type: object
       description: 'A dictionary for representing a message draft.
@@ -622,6 +550,22 @@ components:
       - to
       - topic
       - content
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
     CodedErrorBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
@@ -640,6 +584,62 @@ components:
             description: 'A string that identifies the error.
 
               '
+    SavedSnippet:
+      type: object
+      description: 'Object containing the details of the saved snippet.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the saved snippet.
+
+            '
+        title:
+          type: string
+          description: 'The title of the saved snippet.
+
+            '
+        content:
+          type: string
+          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+            Clients should insert this content into a message when using
+
+            a saved snippet.
+
+            '
+        date_created:
+          type: integer
+          description: 'The UNIX timestamp for when the saved snippet was created, in
+
+            UTC seconds.
+
+            '
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     JsonSuccessBase:
       description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 

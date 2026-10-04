@@ -367,20 +367,6 @@ paths:
                       realm_url: http://localhost:9991
 components:
   schemas:
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
     UserBase:
       type: object
       description: 'A dictionary containing basic data on a given Zulip user.
@@ -642,6 +628,49 @@ components:
       properties:
         result:
           type: string
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     ApiKeyResponse:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -677,35 +706,6 @@ components:
           msg: ''
           result: success
           user_id: 5
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   securitySchemes:
     BasicAuth:
       type: http

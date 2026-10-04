@@ -176,6 +176,24 @@ components:
           - realm_emoji
           - zulip_extra_emoji
           description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
+    EmojiReaction:
+      allOf:
+      - $ref: '#/components/schemas/EmojiBase'
+      - additionalProperties: false
+        properties:
+          emoji_code: {}
+          emoji_name: {}
+          reaction_type: {}
+          user_id:
+            type: integer
+            description: 'The ID of the user who added the reaction.
+
+
+              **Changes**: New in Zulip 3.0 (feature level 2), which
+
+              deprecated the `user` object.
+
+              '
     MessagesBase:
       type: object
       description: 'Object containing details of the message.
@@ -681,24 +699,6 @@ components:
           description: 'The type of the message: `"stream"` or `"private"`.
 
             '
-    EmojiReaction:
-      allOf:
-      - $ref: '#/components/schemas/EmojiBase'
-      - additionalProperties: false
-        properties:
-          emoji_code: {}
-          emoji_name: {}
-          reaction_type: {}
-          user_id:
-            type: integer
-            description: 'The ID of the user who added the reaction.
-
-
-              **Changes**: New in Zulip 3.0 (feature level 2), which
-
-              deprecated the `user` object.
-
-              '
   securitySchemes:
     BasicAuth:
       type: http
