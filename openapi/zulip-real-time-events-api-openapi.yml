@@ -15139,654 +15139,50 @@ paths:
                 - $ref: '#/components/schemas/RateLimitedError'
 components:
   schemas:
-    LegacyPresenceFormat:
-      type: object
-      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
-
-        presence.
-
-
-        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
-
-        contain two keys, `"website"` and `"aggregated"`, with identical data. The
-
-        server no longer stores which client submitted presence updates.
-
-
-        Previously, the `{client_name}` keys for these objects were the names of the
-
-        different clients where the user was logged in, for example `website` or
-
-        `ZulipDesktop`.
-
-        '
-      additionalProperties: false
-      properties:
-        client:
-          type: string
-          description: 'The client''s platform name.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
-
-            always be `"website"` as the server no longer stores which client
-
-            submitted presence data.
-
-            '
-        status:
-          type: string
-          enum:
-          - idle
-          - active
-          description: 'The status of the user on this client. Will be either `"idle"`
-
-            or `"active"`.
-
-            '
-        timestamp:
-          type: integer
-          description: 'The UNIX timestamp of when this client sent the user''s presence
-
-            to the server with the precision of a second.
-
-            '
-        pushable:
-          type: boolean
-          description: 'Whether the client is capable of showing mobile/push notifications
-
-            to the user.
-
-
-            Not present in objects with the `"aggregated"` key.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), always
-
-            `false` when present as the server no longer stores which client
-
-            submitted presence data.
-
-            '
-    Draft:
-      type: object
-      description: 'A dictionary for representing a message draft.
-
-        '
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          description: 'The unique ID of the draft.
-
-            '
-        type:
-          type: string
-          description: 'The type of the draft. Either unaddressed (empty string), `"stream"`,
-
-            or `"private"` (for one-on-one and group direct messages).
-
-            '
-          enum:
-          - ''
-          - stream
-          - private
-        to:
-          type: array
-          description: 'An array of the tentative target audience IDs. For channel
-
-            messages, this should contain exactly 1 ID, the ID of the
-
-            target channel. For direct messages, this should be an array
-
-            of target user IDs. For unaddressed drafts, this is ignored,
-
-            and clients should send an empty array.
-
-            '
-          items:
-            type: integer
-        topic:
-          type: string
-          description: 'For channel message drafts, the tentative topic name. For direct
-
-            or unaddressed messages, this will be ignored and should ideally
-
-            be the empty string. Should not contain null bytes.
-
-            '
-        content:
-          type: string
-          description: 'The body of the draft. Should not contain null bytes.
-
-            '
-        timestamp:
-          type: integer
-          description: 'A Unix timestamp (seconds only) representing when the draft was
-
-            last edited. When creating a draft, this key need not be present
-
-            and it will be filled in automatically by the server.
-
-            '
-          example: 1595479019
-      additionalProperties: false
-      required:
-      - type
-      - to
-      - topic
-      - content
-    FolderId:
-      type:
-      - integer
-      - 'null'
-      description: 'The ID of the folder to which the channel belongs.
-
-
-        Is `null` if channel does not belong to any folder.
-
-
-        **Changes**: New in Zulip 11.0 (feature level 389).
-
-        '
-    RealmPlayground:
-      type: object
-      additionalProperties: false
-      description: 'Object containing details about a realm playground.
-
-        '
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID for the realm playground.
-
-            '
-        name:
-          type: string
-          description: 'The user-visible display name of the playground. Clients
-
-            should display this in UI for picking which playground to
-
-            open a code block in, to differentiate between multiple
-
-            configured playground options for a given pygments
-
-            language.
-
-
-            **Changes**: New in Zulip 4.0 (feature level 49).
-
-            '
-        pygments_language:
-          type: string
-          description: 'The name of the Pygments language lexer for that
-
-            programming language.
-
-            '
-        url_template:
-          type: string
-          description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
-
-            compliant URL template for the playground. The template contains
-
-            exactly one variable named `code`, which determines how the
-
-            extracted code should be substituted in the playground URL.
-
-
-            **Changes**: New in Zulip 8.0 (feature level 196). This replaced the
-
-            `url_prefix` parameter, which was used to construct URLs by just
-
-            concatenating url_prefix and code.
-
-            '
-    AllPublicChannels:
-      description: 'Whether you would like to request message events from all public
-
-        channels. Useful for workflow bots that you''d like to see all new messages
-
-        sent to public channels. (You can also subscribe the user to private channels).
-
-        '
-      type: boolean
-      default: false
-      example: true
-    ModernPresenceFormat:
-      type: object
-      description: '`{user_id}`: Presence data (modern format) for the user with
-
-        the specified ID.
-
-        '
-      additionalProperties: false
-      properties:
-        active_timestamp:
-          type: integer
-          description: 'The UNIX timestamp of the last time a client connected
-
-            to Zulip reported that the user was actually present
-
-            (e.g. via focusing a browser window or interacting
-
-            with a computer running the desktop app).
-
-
-            Clients should display users with a current
-
-            `active_timestamp` as fully present.
-
-            '
-        idle_timestamp:
-          type: integer
-          description: 'The UNIX timestamp of the last time the user had a
-
-            client connected to Zulip, including idle clients
-
-            where the user hasn''t interacted with the system
-
-            recently.
-
-
-            The Zulip server has no way of distinguishing whether
-
-            an idle web app user is at their computer, but hasn''t
-
-            interacted with the Zulip tab recently, or simply left
-
-            their desktop computer on when they left.
-
-
-            Thus, clients should display users with a current
-
-            `idle_timestamp` but no current `active_timestamp` as
-
-            potentially present.
-
-            '
-    OnboardingStep:
-      type: object
-      additionalProperties: false
-      description: 'Dictionary containing details of a single onboarding step.
-
-        '
-      properties:
-        type:
-          type: string
-          description: 'The type of the onboarding step. Valid value is `"one_time_notice"`.
-
-
-            **Changes**: Removed type `"hotspot"` in Zulip 9.0 (feature level 259).
-
-
-            New in Zulip 8.0 (feature level 233).
-
-            '
-        name:
-          type: string
-          description: 'The name of the onboarding step.
-
-            '
-    Bot:
-      allOf:
-      - $ref: '#/components/schemas/BasicBotBase'
-      - description: 'Object containing details of a bot.
-
-
-          **Changes**: Removed `avatar_url`, `bot_type`, `email`,
-
-          `full_name`, `is_active` and `owner_id` fields from the
-
-          dictionary in Zulip 12.0 (feature level 474). Clients
-
-          can get all these data from the corresponding user object.
-
-
-          Removed `api_key` field from the dictionary in
-
-          Zulip 12.0 (feature level 474). Clients now use
-
-          [`GET /bots/{bot_id}/api_key`](/api/get-bot-api-key) to get
-
-          api key for the bot.
-
-          '
-        additionalProperties: false
-        properties:
-          user_id: {}
-          default_sending_stream: {}
-          default_events_register_stream: {}
-          default_all_public_streams: {}
-          services: {}
-    WebhookUrlOption:
-      type: array
-      description: 'An array of optional URL parameter options for the incoming webhook
-
-        integration. In the web app, these are used when
-
-        [generating a URL for an integration](/help/generate-integration-url).
-
-
-        **Changes**: Before Zulip 12.0 (feature level 485), `input_type`
-
-        was named `validator`.
-
-
-        New in Zulip 11.0 (feature level 403). Previously, these optional
-
-        URL parameter options were included in the `config_options` object.
-
-        '
-      items:
-        type: object
-        additionalProperties: false
-        properties:
-          key:
-            type: string
-            description: 'The name of the URL parameter.
-
-              '
-          label:
-            type: string
-            description: 'The label used for the input field in the UI.
-
-              '
-          input_type:
-            type: string
-            description: 'The type of input field this URL parameter maps to in the UI.
-
-              '
-    UserStatus:
-      type: object
-      additionalProperties: false
-      properties:
-        away:
-          type: boolean
-          deprecated: true
-          description: 'If present, the user has marked themself "away".
-
-
-            **Changes**: Deprecated in Zulip 6.0 (feature level 148);
-
-            starting with that feature level, `away` is a legacy way to
-
-            access the user''s `presence_enabled` setting, with
-
-            `away = !presence_enabled`. To be removed in a future release.
-
-            '
-        status_text:
-          type: string
-          description: 'If present, the text content of the user''s status message.
-
-            '
-        emoji_name:
-          type: string
-          description: 'If present, the name for the emoji to associate with the user''s status.
-
-
-            **Changes**: New in Zulip 5.0 (feature level 86).
-
-            '
-        emoji_code:
-          type: string
-          description: 'If present, a unique identifier, defining the specific emoji codepoint
-
-            requested, within the namespace of the `reaction_type`.
-
-
-            **Changes**: New in Zulip 5.0 (feature level 86).
-
-            '
-        reaction_type:
-          type: string
-          enum:
-          - unicode_emoji
-          - realm_emoji
-          - zulip_extra_emoji
-          description: "If present, a string indicating the type of emoji. Each emoji\n`reaction_type` has an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: New in Zulip 5.0 (feature level 86).\n"
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    RealmAuthenticationMethod:
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          description: 'Boolean describing whether the authentication method (i.e. its key)
-
-            is enabled in this organization.
-
-            '
-        available:
-          type: boolean
-          description: 'Boolean describing whether the authentication method is available for use.
-
-            If false, the organization is not eligible to enable the authentication
-
-            method.
-
-            '
-        unavailable_reason:
-          type: string
-          description: 'Reason why the authentication method is unavailable. This field is optional
-
-            and is only present when ''available'' is false.
-
-            '
-      additionalProperties: false
-      description: 'Dictionary describing the properties of an authentication method for the
-
-        organization - its enabled status and availability for use by the
-
-        organization.
-
-        '
-    Event_types:
-      description: "A JSON-encoded array indicating which types of events you're interested\nin. Values that you might find useful include:\n\n- **message** (messages)\n- **subscription** (changes in your subscriptions)\n- **realm_user** (changes to users in the organization and\n  their properties, such as their name).\n\nIf you do not specify this parameter, you will receive all\nevents, and have to filter out the events not relevant to\nyour client in your client code. For most applications, one\nis only interested in messages, so one specifies:\n`\"event_types\": [\"message\"]`\n\nEvent types not supported by the server are ignored, in order to simplify\nthe implementation of client apps that support multiple server versions.\n"
-      type: array
-      items:
-        type: string
-      example:
-      - message
-    BasicChannel:
-      allOf:
-      - $ref: '#/components/schemas/BasicChannelBase'
-      - additionalProperties: false
-        properties:
-          stream_id: {}
-          name: {}
-          is_archived: {}
-          description: {}
-          date_created: {}
-          creator_id: {}
-          invite_only: {}
-          rendered_description: {}
-          is_web_public: {}
-          stream_post_policy: {}
-          message_retention_days: {}
-          history_public_to_subscribers: {}
-          topics_policy: {}
-          first_message_id: {}
-          folder_id: {}
-          is_recently_active: {}
-          is_announcement_only: {}
-          can_add_subscribers_group: {}
-          can_remove_subscribers_group: {}
-          can_administer_channel_group: {}
-          can_delete_any_message_group: {}
-          can_delete_own_message_group: {}
-          can_move_messages_out_of_channel_group: {}
-          can_move_messages_within_channel_group: {}
-          can_send_message_group: {}
-          can_subscribe_group: {}
-          can_resolve_topics_group: {}
-          can_create_topic_group: {}
-          subscriber_count: {}
-          stream_weekly_traffic:
-            type:
-            - integer
-            - 'null'
-            description: 'The average number of messages sent to the channel per week, as
-
-              estimated based on recent weeks, rounded to the nearest integer.
-
-
-              If `null`, no information is provided on the average traffic.
-
-              This can be because the channel was recently created and there
-
-              is insufficient data to make an estimate, or because the server
-
-              wishes to omit this information for this client, this realm, or
-
-              this endpoint or type of event.
-
-
-              **Changes**: New in Zulip 8.0 (feature level 199). Previously, this
-
-              statistic was available only in subscription objects.
-
-              '
-        required:
-        - stream_id
-        - name
-        - is_archived
-        - description
-        - date_created
-        - creator_id
-        - invite_only
-        - rendered_description
-        - is_web_public
-        - stream_post_policy
-        - subscriber_count
-        - message_retention_days
-        - history_public_to_subscribers
-        - first_message_id
-        - folder_id
-        - is_recently_active
-        - is_announcement_only
-        - can_remove_subscribers_group
-        - stream_weekly_traffic
-        - can_subscribe_group
-    User:
-      allOf:
-      - $ref: '#/components/schemas/UserBase'
-      - additionalProperties: false
-        properties:
-          user_id: {}
-          delivery_email: {}
-          email: {}
-          full_name: {}
-          date_joined: {}
-          is_active: {}
-          is_owner: {}
-          is_admin: {}
-          is_guest: {}
-          is_bot: {}
-          bot_type: {}
-          bot_owner_id: {}
-          role: {}
-          timezone: {}
-          avatar_url: {}
-          avatar_version: {}
-          is_imported_stub: {}
-          is_deleted: {}
-          profile_data:
-            $ref: '#/components/schemas/ProfileData'
-    CanResolveTopicsGroup:
+    TopicsPolicy:
+      type: string
+      enum:
+      - inherit
+      - allow_empty_topic
+      - disable_empty_topic
+      - empty_topic_only
+      example: inherit
+      description: "Whether [named topics](/help/introduction-to-topics) and the empty\ntopic (i.e., [\"general chat\" topic](/help/general-chat-topic))\nare enabled in this channel.\n\n- `\"inherit\"`: Messages can be sent to named topics in this channel,\n  and the [organization-level `realm_topics_policy`][realm-topics-policy]\n  is used for whether messages can be sent to the empty topic in this\n  channel.\n- `\"allow_empty_topic\"`: Messages can be sent to both named topics and\n  the empty topic in this channel.\n- `\"disable_empty_topic\"`: Messages can be sent to named topics in this\n  channel, but the empty topic is disabled.\n- `\"empty_topic_only\"`: Messages can be sent to the empty topic in this\n  channel, but named topics are disabled. See [\"general chat\"\n  channels](/help/general-chat-channels).\n\nThe `\"empty_topic_only\"` policy can only be set if all existing messages\nin the channel are already in the empty topic.\n\nWhen creating a new channel, if the `topics_policy` is not specified, the\n`\"inherit\"` option will be set.\n\n**Changes**: In Zulip 11.0 (feature level 404), the `\"empty_topic_only\"`\noption was added.\n\nNew in Zulip 11.0 (feature level 392).\n\n[realm-topics-policy]: /help/require-topics#set-the-default-general-chat-topic-configuration\n"
+    ChannelCanAddSubscribersGroup:
       allOf:
       - $ref: '#/components/schemas/GroupSettingValue'
       - description: 'A [group-setting value][setting-values] defining the set of users
 
-          who have permission to resolve topics in the channel.
+          who have permission to add subscribers to this channel.
 
 
-          Users who have similar realm-level permissions can resolve topics
+          Users who can administer the channel or have similar realm-level
 
-          in a channel regardless of the value of this setting.
+          permissions can add subscribers to a public channel regardless
+
+          of the value of this setting.
 
 
-          **Changes**: New in Zulip 11.0 (feature level 402).
+          Users in this group need not be subscribed to a private channel to
+
+          add subscribers to it.
+
+
+          Note that a user must [have content access](/help/channel-permissions)
+
+          to a channel and permission to administer the channel in order to
+
+          modify this setting.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 342). Previously, there was no
+
+          channel-level setting for this permission.
 
 
           [setting-values]: /api/group-setting-values
 
           '
-    ProfileData:
-      type: object
-      description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
-
-
-        A dictionary containing custom profile field data for the user. Each entry
-
-        maps the integer ID of a custom profile field in the organization to a
-
-        dictionary containing the user''s data for that field. Generally the data
-
-        includes just a single `value` key; for those custom profile fields
-
-        supporting Markdown, a `rendered_value` key will also be present.
-
-        '
-      additionalProperties:
-        type: object
-        additionalProperties: false
-        description: '`{id}`: Object with data about what value the user filled in the custom
-
-          profile field with that ID.
-
-          '
-        properties:
-          value:
-            type: string
-            description: 'User''s personal value for this custom profile field.
-
-              '
-          rendered_value:
-            type: string
-            description: 'The `value` rendered in HTML. Will only be present for
-
-              custom profile field types that support Markdown rendering.
-
-
-              This user-generated HTML content should be rendered
-
-              using the same CSS and client-side security protections
-
-              as are used for message content.
-
-
-              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
-
-              '
     UserBase:
       type: object
       description: 'A dictionary containing basic data on a given Zulip user.
@@ -16043,31 +15439,6 @@ components:
             **Changes**: New in Zulip 12.0 (feature level 490).
 
             '
-    RealmDeactivatedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: REALM_DEACTIVATED
-          msg: This organization is deactivated
-          result: error
-        description: '### Realm deactivated
-
-
-          A typical failed json response for when user''s organization is deactivated.
-
-
-          **Changes**: As of Zulip 5.0 (feature level 76), these errors use the
-
-          HTTP 401 status code. Before this feature level, they used the HTTP 403
-
-          status code.
-
-          '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     ScheduledMessageBase:
       type: object
       description: 'Object containing details of the scheduled message.
@@ -16169,6 +15540,566 @@ components:
       - rendered_content
       - scheduled_delivery_timestamp
       - failed
+    User:
+      allOf:
+      - $ref: '#/components/schemas/UserBase'
+      - additionalProperties: false
+        properties:
+          user_id: {}
+          delivery_email: {}
+          email: {}
+          full_name: {}
+          date_joined: {}
+          is_active: {}
+          is_owner: {}
+          is_admin: {}
+          is_guest: {}
+          is_bot: {}
+          bot_type: {}
+          bot_owner_id: {}
+          role: {}
+          timezone: {}
+          avatar_url: {}
+          avatar_version: {}
+          is_imported_stub: {}
+          is_deleted: {}
+          profile_data:
+            $ref: '#/components/schemas/ProfileData'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    WebhookConfigOption:
+      type: array
+      description: 'An array of configuration options that can be set when creating
+
+        a bot user for this incoming webhook integration.
+
+
+        This is an unstable API. Please discuss in chat.zulip.org before
+
+        using it.
+
+
+        **Changes**: As of Zulip 11.0 (feature level 403), this
+
+        object is reserved for integration-specific configuration options
+
+        that can be set when creating a bot user. Previously, this object
+
+        also included optional webhook URL parameters, which are now
+
+        specified in the `url_options` object.
+
+
+        Before Zulip 10.0 (feature level 318), this field was named `config`,
+
+        and was reserved for configuration data key-value pairs.
+
+        '
+      items:
+        type: object
+        additionalProperties: false
+        properties:
+          key:
+            type: string
+            description: 'A key for the configuration option.
+
+              '
+          label:
+            type: string
+            description: 'A human-readable label of the configuration option.
+
+              '
+          validator:
+            type: string
+            description: 'The name of the validator function for the configuration
+
+              option.
+
+              '
+    RealmPlayground:
+      type: object
+      additionalProperties: false
+      description: 'Object containing details about a realm playground.
+
+        '
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID for the realm playground.
+
+            '
+        name:
+          type: string
+          description: 'The user-visible display name of the playground. Clients
+
+            should display this in UI for picking which playground to
+
+            open a code block in, to differentiate between multiple
+
+            configured playground options for a given pygments
+
+            language.
+
+
+            **Changes**: New in Zulip 4.0 (feature level 49).
+
+            '
+        pygments_language:
+          type: string
+          description: 'The name of the Pygments language lexer for that
+
+            programming language.
+
+            '
+        url_template:
+          type: string
+          description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
+
+            compliant URL template for the playground. The template contains
+
+            exactly one variable named `code`, which determines how the
+
+            extracted code should be substituted in the playground URL.
+
+
+            **Changes**: New in Zulip 8.0 (feature level 196). This replaced the
+
+            `url_prefix` parameter, which was used to construct URLs by just
+
+            concatenating url_prefix and code.
+
+            '
+    CanMoveMessagesWithinChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to move messages within this channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to move messages within the channel.
+
+
+          Channel administrators and users present in the organization-level
+
+          `can_move_messages_between_topics_group` setting can always move messages
+
+          within the channel if they [have content access](/help/channel-permissions) to
+
+          the channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+          change, only the users in `can_move_messages_between_topics_group` were able
+
+          move messages between topics of a channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    UserGroup:
+      type: object
+      additionalProperties: false
+      description: 'Object containing the user group''s attributes.
+
+        '
+      properties:
+        name:
+          type: string
+          description: 'The name of the user group.
+
+            '
+        date_created:
+          type:
+          - integer
+          - 'null'
+          description: 'The UNIX timestamp for when the user group was created, in UTC seconds.
+
+
+            A `null` value means the user group has no recorded date, which is often
+
+            because the user group is very old, or because it was created via a data
+
+            import tool or [management command][management-commands].
+
+
+            **Changes**: New in Zulip 10.0 (feature level 292).
+
+            [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html
+
+            '
+        creator_id:
+          type:
+          - integer
+          - 'null'
+          description: 'The ID of the user who created this user group.
+
+
+            A `null` value means the user group has no recorded creator, which is often
+
+            because the user group is very old, or because it was created via a data
+
+            import tool or [management command][management-commands].
+
+
+            **Changes**: New in Zulip 10.0 (feature level 292).
+
+            [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html
+
+            '
+        description:
+          type: string
+          description: 'The description of the user group.
+
+            '
+        members:
+          type: array
+          items:
+            type: integer
+          description: 'Array containing the ID of the users who are
+
+            members of this user group.
+
+
+            **Changes**: Prior to Zulip 10.0 (feature level 303), this
+
+            list also included deactivated users who were members of
+
+            the user group before being deactivated.
+
+            '
+        direct_subgroup_ids:
+          type: array
+          items:
+            type: integer
+          description: 'Array containing the ID of the direct_subgroups of
+
+            this user group.
+
+
+            **Changes**: New in Zulip 6.0 (feature level 131).
+
+            Introduced in feature level 127 as `subgroups`, but
+
+            clients can ignore older events as this feature level
+
+            predates subgroups being fully implemented.
+
+            '
+        id:
+          type: integer
+          description: 'The ID of the user group.
+
+            '
+        is_system_group:
+          type: boolean
+          description: 'Whether the user group is a system group which cannot be
+
+            directly modified by users.
+
+
+            **Changes**: New in Zulip 5.0 (feature level 93).
+
+            '
+        can_add_members_group:
+          allOf:
+          - $ref: '#/components/schemas/GroupSettingValue'
+          - description: 'A [group-setting value][setting-values] defining the set of users who
+
+              have permission to add members to this user group.
+
+
+              **Changes**: New in Zulip 10.0 (feature level 305). Previously, this
+
+              permission was controlled by the `can_manage_group` setting.
+
+
+              Will be one of the following:
+
+
+              [setting-values]: /api/group-setting-values
+
+              '
+        can_join_group:
+          allOf:
+          - $ref: '#/components/schemas/GroupSettingValue'
+          - description: 'A [group-setting value][setting-values] defining the set of users who
+
+              have permission to join this user group.
+
+
+              **Changes**: New in Zulip 10.0 (feature level 301).
+
+
+              Will be one of the following:
+
+
+              [setting-values]: /api/group-setting-values
+
+              '
+        can_leave_group:
+          allOf:
+          - $ref: '#/components/schemas/GroupSettingValue'
+          - description: 'A [group-setting value][setting-values] defining the set of users who
+
+              have permission to leave this user group.
+
+
+              **Changes**: New in Zulip 10.0 (feature level 308).
+
+
+              Will be one of the following:
+
+
+              [setting-values]: /api/group-setting-values
+
+              '
+        can_manage_group:
+          allOf:
+          - $ref: '#/components/schemas/GroupSettingValue'
+          - description: 'A [group-setting value][setting-values] defining the set of users who
+
+              have permission to [manage this user group][manage-user-groups].
+
+
+              **Changes**: New in Zulip 10.0 (feature level 283).
+
+
+              Will be one of the following:
+
+
+              [setting-values]: /api/group-setting-values
+
+              [manage-user-groups]: /help/manage-user-groups
+
+              '
+        can_mention_group:
+          allOf:
+          - $ref: '#/components/schemas/GroupSettingValue'
+          - description: 'A [group-setting value][setting-values] defining the set of users who
+
+              have permission to [mention this user group][mentions].
+
+
+              **Changes**: Before Zulip 9.0 (feature level 258), this setting was
+
+              always the integer form of a [group-setting value][setting-values].
+
+
+              Before Zulip 8.0 (feature level 198), this setting was named
+
+              `can_mention_group_id`.
+
+
+              New in Zulip 8.0 (feature level 191). Previously, groups could be
+
+              mentioned only if they were not [system groups][system-groups].
+
+
+              Will be one of the following:
+
+
+              [setting-values]: /api/group-setting-values
+
+              [system-groups]: /api/group-setting-values#system-groups
+
+              [mentions]: /help/mention-a-user-or-group
+
+              '
+        can_remove_members_group:
+          allOf:
+          - $ref: '#/components/schemas/GroupSettingValue'
+          - description: 'A [group-setting value][setting-values] defining the set of users who
+
+              have permission to remove members from this user group.
+
+
+              **Changes**: New in Zulip 10.0 (feature level 324). Previously, this
+
+              permission was controlled by the `can_manage_group` setting.
+
+
+              Will be one of the following:
+
+
+              [setting-values]: /api/group-setting-values
+
+              '
+        deactivated:
+          type: boolean
+          description: 'Whether the user group is deactivated. Deactivated groups
+
+            cannot be used as a subgroup of another group or used for
+
+            any other purpose.
+
+
+            **Changes**: New in Zulip 10.0 (feature level 290).
+
+            '
+    RealmDomain:
+      type: object
+      additionalProperties: false
+      properties:
+        domain:
+          type: string
+          description: 'The allowed domain.
+
+            '
+        allow_subdomains:
+          type: boolean
+          description: 'Whether subdomains are allowed for this domain.
+
+            '
+      required:
+      - domain
+      - allow_subdomains
+    RealmExport:
+      type: object
+      additionalProperties: false
+      description: 'Object containing details about a
+
+        [data export](/help/export-your-organization).
+
+        '
+      properties:
+        id:
+          type: integer
+          description: 'The ID of the data export.
+
+            '
+        acting_user_id:
+          type: integer
+          description: 'The ID of the user who created the data export.
+
+            '
+        export_time:
+          type: number
+          description: 'The UNIX timestamp of when the data export was started.
+
+            '
+        deleted_timestamp:
+          type:
+          - number
+          - 'null'
+          description: 'The UNIX timestamp of when the data export was deleted.
+
+
+            Will be `null` if the data export has not been deleted.
+
+            '
+        failed_timestamp:
+          type:
+          - number
+          - 'null'
+          description: 'The UNIX timestamp of when the data export failed.
+
+
+            Will be `null` if the data export succeeded, or if it''s
+
+            still being generated.
+
+            '
+        export_url:
+          type:
+          - string
+          - 'null'
+          description: 'The URL to download the generated data export.
+
+
+            Will be `null` if the data export failed, or if it''s
+
+            still being generated.
+
+            '
+        pending:
+          type: boolean
+          description: 'Whether the data export is pending, which indicates it
+
+            is still being generated, or if it succeeded, failed or
+
+            was deleted before being generated.
+
+
+            Depending on the size of the organization, it can take
+
+            anywhere from seconds to an hour to generate the data
+
+            export.
+
+            '
+        export_type:
+          type: string
+          enum:
+          - public
+          - full_with_consent
+          - full_without_consent
+          description: "Whether the data export is public, full with consent, or full without consent.\n\n- `public` = Public data export.\n- `full_with_consent` = Public and private data export (with consent), which includes private data\n  for users who have granted consent.\n- `full_without_consent` = All public and private data, which includes private data for all users.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nthe export type was not included in these objects because only\npublic data exports could be created or listed via the API or UI.\n"
+    ModernPresenceFormat:
+      type: object
+      description: '`{user_id}`: Presence data (modern format) for the user with
+
+        the specified ID.
+
+        '
+      additionalProperties: false
+      properties:
+        active_timestamp:
+          type: integer
+          description: 'The UNIX timestamp of the last time a client connected
+
+            to Zulip reported that the user was actually present
+
+            (e.g. via focusing a browser window or interacting
+
+            with a computer running the desktop app).
+
+
+            Clients should display users with a current
+
+            `active_timestamp` as fully present.
+
+            '
+        idle_timestamp:
+          type: integer
+          description: 'The UNIX timestamp of the last time the user had a
+
+            client connected to Zulip, including idle clients
+
+            where the user hasn''t interacted with the system
+
+            recently.
+
+
+            The Zulip server has no way of distinguishing whether
+
+            an idle web app user is at their computer, but hasn''t
+
+            interacted with the Zulip tab recently, or simply left
+
+            their desktop computer on when they left.
+
+
+            Thus, clients should display users with a current
+
+            `idle_timestamp` but no current `active_timestamp` as
+
+            potentially present.
+
+            '
     MessagesEvent:
       allOf:
       - $ref: '#/components/schemas/MessagesBase'
@@ -16196,34 +16127,983 @@ components:
           timestamp: {}
           topic_links: {}
           type: {}
-    UserNotAuthorizedError:
+    CanDeleteOwnMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to delete the messages that they have sent in the channel.
+
+
+          [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to delete their own message in the channel.
+
+
+          Users with permission to delete any message in the channel
+
+          and users present in the organization-level `can_delete_own_message_group` setting
+
+          can always delete their own messages in the channel if they
+
+          [have content access](/help/channel-permissions) to that channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+          change, only the users in the organization-level `can_delete_any_message_group`
+
+          and `can_delete_own_message_group` settings were able delete their own messages in
+
+          the organization.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    BasicBotBase:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          description: 'The user ID of the bot.
+
+            '
+        default_sending_stream:
+          type:
+          - string
+          - 'null'
+          description: 'The default sending channel of the bot. If `null`, the bot doesn''t
+
+            have a default sending channel.
+
+            '
+        default_events_register_stream:
+          type:
+          - string
+          - 'null'
+          description: 'The default channel for which the bot receives events/register data.
+
+            If `null`, the bot doesn''t have such a default channel.
+
+            '
+        default_all_public_streams:
+          type: boolean
+          description: 'Whether the bot can send messages to all channels by default.
+
+            '
+        services:
+          type: array
+          description: 'An array containing extra configuration fields only relevant for
+
+            outgoing webhook bots and embedded bots. This is always a single-element
+
+            array.
+
+
+            We consider this part of the Zulip API to be unstable; it is used only
+
+            for UI elements for administering bots and is likely to change.
+
+            '
+          items:
+            description: 'Object with extra configuration details for the bot. The fields in the
+
+              object depend on the type of bot.
+
+              '
+            oneOf:
+            - type: object
+              additionalProperties: false
+              description: 'When the bot is an outgoing webhook.
+
+                '
+              properties:
+                base_url:
+                  type: string
+                  description: 'The URL the outgoing webhook is configured to post to.
+
+                    '
+                token:
+                  type: string
+                  description: 'A unique token that the third-party service can use to confirm
+
+                    that the request is indeed coming from Zulip.
+
+                    '
+                interface:
+                  type: integer
+                  description: 'An integer indicating what format requests are posted in:
+
+
+                    - 1 = Zulip''s native outgoing webhook format.
+
+                    - 2 = Emulate the Slack outgoing webhook format.
+
+                    '
+            - type: object
+              additionalProperties: false
+              description: 'When the bot is an embedded bot.
+
+                '
+              properties:
+                service_name:
+                  type: string
+                  description: 'The name of the bot.
+
+                    '
+                config_data:
+                  $ref: '#/components/schemas/BotConfiguration'
+    BotConfiguration:
+      type: object
+      description: 'A dictionary of string key/value pairs, which describe the configuration
+
+        for the bot. These are usually details like API keys, and are unique to
+
+        the integration/bot. Can be an empty dictionary.
+
+        '
+      additionalProperties:
+        description: '`{config_key}`: Description/value of the configuration data key.
+
+          '
+        type: string
+    UserDeactivatedError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
       - example:
-          code: BAD_REQUEST
-          msg: User not authorized for this query
+          code: USER_DEACTIVATED
+          msg: Account is deactivated
           result: error
-        description: '### User not authorized for query
+        description: '### User account deactivated
 
 
-          A typical failed JSON response for when the user is not authorized for
+          A typical failed json response for when user''s account is deactivated.
 
-          a query.
+
+          **Changes**: As of Zulip 5.0 (feature level 76), these errors use the
+
+          HTTP 401 status code. Before this feature level, they used the HTTP 403
+
+          status code.
 
           '
-    ScheduledMessage:
+    Narrow:
+      description: 'A JSON-encoded array of arrays of length 2 indicating the
+
+        [narrow filter(s)](/api/construct-narrow) for which you''d
+
+        like to receive events for.
+
+
+        For example, to receive events for direct messages (including
+
+        group direct messages) received by the user, one can use
+
+        `"narrow": [["is", "dm"]]`.
+
+
+        Unlike the API for [fetching messages](/api/get-messages),
+
+        this narrow parameter is simply a filter on messages that the
+
+        user receives through their channel subscriptions (or because
+
+        they are a recipient of a direct message).
+
+
+        This means that a client that requests a `narrow` filter of
+
+        `[["channel", "Denmark"]]` will receive events for new messages
+
+        sent to that channel while the user is subscribed to that
+
+        channel. The client will not receive any message events at all
+
+        if the user is not subscribed to `"Denmark"`.
+
+
+        Newly created bot users are not usually subscribed to any
+
+        channels, so bots using this API need to be
+
+        [subscribed](/api/subscribe) to any channels whose messages
+
+        you''d like them to process using this endpoint.
+
+
+        See the `all_public_streams` parameter for how to process all
+
+        public channel messages in an organization.
+
+
+        **Changes**: See [changes section](/api/construct-narrow#changes)
+
+        of search/narrow filter documentation.
+
+        '
+      type: array
+      items:
+        type: array
+        items:
+          type: string
+      default: []
+      example:
+      - - channel
+        - Denmark
+    CodedError:
       allOf:
-      - $ref: '#/components/schemas/ScheduledMessageBase'
+      - $ref: '#/components/schemas/CodedErrorBase'
       - additionalProperties: false
         properties:
-          scheduled_message_id: {}
-          type: {}
-          to: {}
-          topic: {}
-          content: {}
-          rendered_content: {}
-          scheduled_delivery_timestamp: {}
-          failed: {}
+          result: {}
+          msg: {}
+          code: {}
+    RealmEmoji:
+      type: object
+      additionalProperties: false
+      description: 'Object containing details about an emoji. It has the
+
+        following properties:
+
+        '
+      properties:
+        id:
+          type: string
+          description: 'The ID for this emoji, same as the object''s key.
+
+            '
+        name:
+          type: string
+          description: 'The user-friendly name for this emoji. Users in the organization
+
+            can use this emoji by writing this name between colons (`:name :`).
+
+            '
+        source_url:
+          type: string
+          description: 'The path relative to the organization''s URL where the
+
+            emoji''s image can be found.
+
+            '
+        still_url:
+          type:
+          - string
+          - 'null'
+          description: 'Only non-null when the emoji''s image is animated.
+
+
+            The path relative to the organization''s URL where a still
+
+            (not animated) version of the emoji can be found. (This is
+
+            currently always the first frame of the animation).
+
+
+            This is useful for clients to display the emoji in contexts
+
+            where continuously animating it would be a bad user experience
+
+            (E.g. because it would be distracting).
+
+
+            **Changes**: New in Zulip 5.0 (added as optional field in
+
+            feature level 97 and then made mandatory, but nullable, in
+
+            feature level 113).
+
+            '
+        deactivated:
+          type: boolean
+          description: 'Whether the emoji has been deactivated or not.
+
+            '
+        author_id:
+          type:
+          - integer
+          - 'null'
+          description: 'The user ID of the user who uploaded the custom emoji.
+
+            Will be `null` if the uploader is unknown.
+
+
+            **Changes**: New in Zulip 3.0 (feature level 7). Previously
+
+            was accessible via an `author` object with an `id` field.
+
+            '
+    EventIdSchema:
+      type: integer
+      description: 'The ID of the event. Events appear in increasing order but may not be consecutive.
+
+        '
+    CanCreateTopicGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to create a new topic in this channel.
+
+
+          Note that using this permission requires also having permission to
+
+          send messages in the channel.
+
+
+          Note that this must be the `role:everyone` [system group][system-groups]
+
+          for [private channels with protected history][private-channels].
+
+
+          **Changes**: New in Zulip 12.0 (feature level 441). Previously,
+
+          if you could send messages in a channel, you could create topics in
+
+          the channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          [private-channels]: /help/channel-permissions/#private-channels
+
+          [system-groups]: /api/group-setting-values#system-groups
+
+          '
+    GroupPermissionSetting:
+      description: 'Configuration for a group permission setting specifying the groups
+
+        to which the setting can be set to and the default values for the
+
+        setting.
+
+
+        **Changes**: Removed `allow_owners_group` field in Zulip 10.0 (feature level 326), as we now
+
+        support anonymous user groups. Previously, the `role:owners` system group was
+
+        not offered when `allow_owners_group` was false.
+
+
+        Removed unnecessary `id_field_name` field in Zulip 10.0 (feature level 326). Previously,
+
+        this always had the value of `"{setting_name}_id"`; it was an internal implementation
+
+        detail of the server not intended to be included in the API.
+
+        '
+      additionalProperties: false
+      type: object
+      properties:
+        require_system_group:
+          type: boolean
+          description: 'Whether the setting can only be set to a system user group.
+
+            '
+        allow_internet_group:
+          type: boolean
+          description: 'Whether the setting can be set to `role:internet` system group.
+
+            '
+        allow_nobody_group:
+          type: boolean
+          description: 'Whether the setting can be set to `role:nobody` system group.
+
+            '
+        allow_everyone_group:
+          type: boolean
+          description: 'Whether the setting can be set to `role:everyone` system group.
+
+
+            If false, guest users cannot exercise this permission even if they are part of
+
+            the [group-setting value](/api/group-setting-values) for this setting.
+
+            '
+        default_group_name:
+          type: string
+          description: "Name of the default system group for the setting.\n\nFor some channel settings, this can also be `channel_creator`.\nIn that case:\n\n- If the channel's [`creator_id`][channel-response] is not `null`, default for the\n  setting is an anonymous group with the channel creator as\n  the only member.\n- If the channel's [`creator_id`][channel-response] is `null`, default for the setting\n  is `role:nobody` system group.\n\n**Changes**: In Zulip 12.0 (feature level 427), renamed\n`stream_creator_or_nobody` value to `channel_creator`.\n\n[channel-response]: /api/get-stream-by-id#response\n"
+        default_for_system_groups:
+          type:
+          - string
+          - 'null'
+          description: 'Name of the default group for the setting for system groups.
+
+
+            This is non-null only for group-level settings.
+
+            '
+        allowed_system_groups:
+          type: array
+          description: 'An array of names of system groups to which the setting can
+
+            be set to.
+
+
+            If the list is empty, the setting can be set to system groups
+
+            based on the other boolean fields.
+
+
+            **Changes**: New in Zulip 8.0 (feature level 225).
+
+            '
+          items:
+            type: string
+    CanSendMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to post in this channel.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          Note that using this permission to send a message to a new topic requires
+
+          also having permission to create new topics in the channel.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 333). Previously
+
+          `stream_post_policy` field used to control the permission to
+
+          post in the channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    Attachment:
+      type: object
+      description: 'Dictionary containing details of a file uploaded by a user.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID for the attachment.
+
+            '
+        name:
+          type: string
+          description: 'Name of the uploaded file.
+
+            '
+        path_id:
+          type: string
+          description: 'A representation of the path of the file within the
+
+            repository of user-uploaded files. If the `path_id` of a
+
+            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
+
+            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
+
+            '
+        size:
+          type: integer
+          description: 'Size of the file in bytes.
+
+            '
+        create_time:
+          type: integer
+          description: 'Time when the attachment was uploaded as a UNIX timestamp.
+
+
+            **Changes**: Before Zulip 12.0 (feature level 443), this value
+
+            was milliseconds since the epoch, not seconds.
+
+
+            Changed in Zulip 3.0 (feature level 22). This field was
+
+            previously a floating point number.
+
+            '
+        message_ids:
+          type: array
+          description: 'Array containing the IDs of messages that reference this
+
+            [uploaded file](/api/upload-file). This includes messages
+
+            sent by any user in the Zulip organization who sent a
+
+            message containing a link to the uploaded file.
+
+
+            **Changes**: In Zulip 12.0 (feature level 472), this
+
+            replaced the previous `messages` field, which was an array
+
+            of objects containing both `id` and `date_sent` properties.
+
+            '
+          items:
+            type: integer
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    ProfileData:
+      type: object
+      description: 'Only present if `is_bot` is false; bots can''t have custom profile fields.
+
+
+        A dictionary containing custom profile field data for the user. Each entry
+
+        maps the integer ID of a custom profile field in the organization to a
+
+        dictionary containing the user''s data for that field. Generally the data
+
+        includes just a single `value` key; for those custom profile fields
+
+        supporting Markdown, a `rendered_value` key will also be present.
+
+        '
+      additionalProperties:
+        type: object
+        additionalProperties: false
+        description: '`{id}`: Object with data about what value the user filled in the custom
+
+          profile field with that ID.
+
+          '
+        properties:
+          value:
+            type: string
+            description: 'User''s personal value for this custom profile field.
+
+              '
+          rendered_value:
+            type: string
+            description: 'The `value` rendered in HTML. Will only be present for
+
+              custom profile field types that support Markdown rendering.
+
+
+              This user-generated HTML content should be rendered
+
+              using the same CSS and client-side security protections
+
+              as are used for message content.
+
+
+              See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+              '
+    UserStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        away:
+          type: boolean
+          deprecated: true
+          description: 'If present, the user has marked themself "away".
+
+
+            **Changes**: Deprecated in Zulip 6.0 (feature level 148);
+
+            starting with that feature level, `away` is a legacy way to
+
+            access the user''s `presence_enabled` setting, with
+
+            `away = !presence_enabled`. To be removed in a future release.
+
+            '
+        status_text:
+          type: string
+          description: 'If present, the text content of the user''s status message.
+
+            '
+        emoji_name:
+          type: string
+          description: 'If present, the name for the emoji to associate with the user''s status.
+
+
+            **Changes**: New in Zulip 5.0 (feature level 86).
+
+            '
+        emoji_code:
+          type: string
+          description: 'If present, a unique identifier, defining the specific emoji codepoint
+
+            requested, within the namespace of the `reaction_type`.
+
+
+            **Changes**: New in Zulip 5.0 (feature level 86).
+
+            '
+        reaction_type:
+          type: string
+          enum:
+          - unicode_emoji
+          - realm_emoji
+          - zulip_extra_emoji
+          description: "If present, a string indicating the type of emoji. Each emoji\n`reaction_type` has an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n\n**Changes**: New in Zulip 5.0 (feature level 86).\n"
+    NavigationView:
+      type: object
+      description: 'Represents a user''s personal configuration for a specific
+
+        navigation view (displayed most visibly at the top of the web
+
+        application''s left sidebar).
+
+
+        Navigation views can be either an override to the default
+
+        behavior of a built-in view, or a custom view.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 390).
+
+        '
+      additionalProperties: false
+      required:
+      - fragment
+      - is_pinned
+      properties:
+        fragment:
+          type: string
+          description: 'A unique identifier for the view, used to determine navigation
+
+            behavior when clicked.
+
+
+            Clients should use this value to navigate to the corresponding URL hash.
+
+            '
+          example: narrow/is/alerted
+        is_pinned:
+          type: boolean
+          description: 'Determines whether the view appears directly in the sidebar or
+
+            is hidden in the "More Views" menu.
+
+
+            - `true` - Pinned and visible in the sidebar.
+
+            - `false` - Hidden and accessible via the "More Views" menu.
+
+            '
+          example: true
+        name:
+          type:
+          - string
+          - 'null'
+          description: 'The user-facing name for custom navigation views. Omit this
+
+            field for built-in views.
+
+            '
+          example: Alert Words
+    EmojiReaction:
+      allOf:
+      - $ref: '#/components/schemas/EmojiBase'
+      - additionalProperties: false
+        properties:
+          emoji_code: {}
+          emoji_name: {}
+          reaction_type: {}
+          user_id:
+            type: integer
+            description: 'The ID of the user who added the reaction.
+
+
+              **Changes**: New in Zulip 3.0 (feature level 2), which
+
+              deprecated the `user` object.
+
+              '
+    BasicBot:
+      allOf:
+      - $ref: '#/components/schemas/BasicBotBase'
+      - additionalProperties: false
+        properties:
+          user_id: {}
+          default_sending_stream: {}
+          default_events_register_stream: {}
+          default_all_public_streams: {}
+          services: {}
+    RateLimitedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        description: '### Rate limit exceeded
+
+
+          A typical failed JSON response for when a rate limit is exceeded.
+
+          Zulip sets a few [HTTP response headers][rate-limit-headers]
+
+          to help with preventing rate limit errors.
+
+
+          The value of `retry-after` in the response indicates how many
+
+          seconds the client must wait before making additional requests.
+
+
+          **Changes**: Before Zulip 4.0 (feature level 36), the `code` key
+
+          was not present in rate limit errors.
+
+
+          [rate-limit-headers]: /api/http-headers#rate-limiting-response-headers
+
+          '
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          retry-after:
+            type: integer
+            description: 'How many seconds the client must wait before making
+
+              additional requests.
+
+              '
+        example:
+          code: RATE_LIMIT_HIT
+          msg: API usage exceeded rate limit
+          result: error
+          retry-after: 28.706807374954224
+    CanAdministerChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to administer this channel.
+
+
+          Organization administrators can administer every channel as though they were
+
+          in this group without being explicitly listed here.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          **Changes**: Prior to Zulip 10.0 (feature level 349) a user needed to
+
+          [have content access](/help/channel-permissions) to a channel in
+
+          order to modify it. The exception to this rule was that organization
+
+          administrators can edit channel names and descriptions without
+
+          having full access to the channel.
+
+
+          New in Zulip 10.0 (feature level 325). Prior to this
+
+          change, the permission to administer channels was limited to realm
+
+          administrators.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    WebhookUrlOption:
+      type: array
+      description: 'An array of optional URL parameter options for the incoming webhook
+
+        integration. In the web app, these are used when
+
+        [generating a URL for an integration](/help/generate-integration-url).
+
+
+        **Changes**: Before Zulip 12.0 (feature level 485), `input_type`
+
+        was named `validator`.
+
+
+        New in Zulip 11.0 (feature level 403). Previously, these optional
+
+        URL parameter options were included in the `config_options` object.
+
+        '
+      items:
+        type: object
+        additionalProperties: false
+        properties:
+          key:
+            type: string
+            description: 'The name of the URL parameter.
+
+              '
+          label:
+            type: string
+            description: 'The label used for the input field in the UI.
+
+              '
+          input_type:
+            type: string
+            description: 'The type of input field this URL parameter maps to in the UI.
+
+              '
+    ChannelFolder:
+      type: object
+      additionalProperties: false
+      description: 'Object containing the channel folder''s attributes.
+
+        '
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the channel folder.
+
+            '
+        name:
+          type: string
+          description: 'The name of the channel folder.
+
+            '
+        order:
+          type: integer
+          description: 'This value determines in which order the channel folder should be
+
+            displayed in the UI. The value is 0 indexed, and a channel folder with
+
+            a lower value should be displayed before channel folders with higher
+
+            values.
+
+
+            **Changes**: New in Zulip 11.0 (feature level 414).
+
+            '
+        date_created:
+          type:
+          - integer
+          - 'null'
+          description: 'The UNIX timestamp for when the channel folder was created,
+
+            in UTC seconds.
+
+            '
+        creator_id:
+          type:
+          - integer
+          - 'null'
+          description: 'The ID of the user who created the channel folder.
+
+            '
+        description:
+          type: string
+          description: 'The description of the channel folder. Can be an empty string.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details
+
+            on Zulip''s HTML format.
+
+            '
+        rendered_description:
+          type: string
+          description: 'The description of the channel folder rendered as HTML, intended to be
+
+            used for UI that displays the channel folder description.
+
+
+            Clients should use the standard Zulip rendered_markdown CSS when
+
+            displaying this content so that emoji, LaTeX, and other syntax work
+
+            correctly. And any client-side security logic for user-generated
+
+            message content should be applied when displaying this HTML as though
+
+            it were the body of a Zulip message.
+
+            '
+        is_archived:
+          type: boolean
+          description: 'Whether the channel folder is archived or not.
+
+            '
+    LegacyPresenceFormat:
+      type: object
+      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
+
+        presence.
+
+
+        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
+
+        contain two keys, `"website"` and `"aggregated"`, with identical data. The
+
+        server no longer stores which client submitted presence updates.
+
+
+        Previously, the `{client_name}` keys for these objects were the names of the
+
+        different clients where the user was logged in, for example `website` or
+
+        `ZulipDesktop`.
+
+        '
+      additionalProperties: false
+      properties:
+        client:
+          type: string
+          description: 'The client''s platform name.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
+
+            always be `"website"` as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+        status:
+          type: string
+          enum:
+          - idle
+          - active
+          description: 'The status of the user on this client. Will be either `"idle"`
+
+            or `"active"`.
+
+            '
+        timestamp:
+          type: integer
+          description: 'The UNIX timestamp of when this client sent the user''s presence
+
+            to the server with the precision of a second.
+
+            '
+        pushable:
+          type: boolean
+          description: 'Whether the client is capable of showing mobile/push notifications
+
+            to the user.
+
+
+            Not present in objects with the `"aggregated"` key.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), always
+
+            `false` when present as the server no longer stores which client
+
+            submitted presence data.
+
+            '
     Subscription:
       type: object
       additionalProperties: false
@@ -16677,90 +17557,105 @@ components:
             **Changes**: New in Zulip 11.0 (feature level 394).
 
             '
-    ChannelCanAddSubscribersGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to add subscribers to this channel.
-
-
-          Users who can administer the channel or have similar realm-level
-
-          permissions can add subscribers to a public channel regardless
-
-          of the value of this setting.
-
-
-          Users in this group need not be subscribed to a private channel to
-
-          add subscribers to it.
-
-
-          Note that a user must [have content access](/help/channel-permissions)
-
-          to a channel and permission to administer the channel in order to
-
-          modify this setting.
-
-
-          **Changes**: New in Zulip 10.0 (feature level 342). Previously, there was no
-
-          channel-level setting for this permission.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    WebhookConfigOption:
-      type: array
-      description: 'An array of configuration options that can be set when creating
-
-        a bot user for this incoming webhook integration.
-
-
-        This is an unstable API. Please discuss in chat.zulip.org before
-
-        using it.
-
-
-        **Changes**: As of Zulip 11.0 (feature level 403), this
-
-        object is reserved for integration-specific configuration options
-
-        that can be set when creating a bot user. Previously, this object
-
-        also included optional webhook URL parameters, which are now
-
-        specified in the `url_options` object.
-
-
-        Before Zulip 10.0 (feature level 318), this field was named `config`,
-
-        and was reserved for configuration data key-value pairs.
+    Reminder:
+      type: object
+      additionalProperties: false
+      description: 'Object containing details of the scheduled message.
 
         '
-      items:
-        type: object
-        additionalProperties: false
-        properties:
-          key:
-            type: string
-            description: 'A key for the configuration option.
+      properties:
+        reminder_id:
+          type: integer
+          description: 'The unique ID of the reminder, which can be used to
 
-              '
-          label:
-            type: string
-            description: 'A human-readable label of the configuration option.
+            delete the reminder.
 
-              '
-          validator:
-            type: string
-            description: 'The name of the validator function for the configuration
 
-              option.
+            This is different from the unique ID that the message would have
 
-              '
+            after being sent.
+
+            '
+        type:
+          type: string
+          description: 'The type of the reminder. Always set to `"private"`.
+
+            '
+          enum:
+          - private
+        to:
+          type: array
+          items:
+            type: integer
+          description: 'Contains the ID of the user who scheduled the reminder,
+
+            and to which the reminder will be sent.
+
+            '
+        content:
+          type: string
+          description: 'The content/body of the reminder, in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
+
+            '
+        rendered_content:
+          type: string
+          description: 'The content/body of the reminder rendered in HTML.
+
+            '
+        scheduled_delivery_timestamp:
+          type: integer
+          description: 'The UNIX timestamp for when the message will be sent
+
+            by the server, in UTC seconds.
+
+            '
+          example: 1595479019
+        failed:
+          type: boolean
+          description: 'Whether the server has tried to send the reminder
+
+            and it failed to successfully send.
+
+
+            Clients that support unscheduling reminders
+
+            should display scheduled messages with `"failed": true` with an
+
+            indicator that the server failed to send the message at the
+
+            scheduled time, so that the user is aware of the failure and can
+
+            get the content of the scheduled message.
+
+            '
+        reminder_target_message_id:
+          type: integer
+          description: 'The ID of the message that the reminder is created for.
+
+            '
+      required:
+      - reminder_id
+      - type
+      - to
+      - content
+      - rendered_content
+      - scheduled_delivery_timestamp
+      - failed
+      - reminder_target_message_id
+    AllPublicChannels:
+      description: 'Whether you would like to request message events from all public
+
+        channels. Useful for workflow bots that you''d like to see all new messages
+
+        sent to public channels. (You can also subscribe the user to private channels).
+
+        '
+      type: boolean
+      default: false
+      example: true
     EmojiBase:
       type: object
       properties:
@@ -16783,171 +17678,36 @@ components:
           - realm_emoji
           - zulip_extra_emoji
           description: "A string indicating the type of emoji. Each emoji `reaction_type`\nhas an independent namespace for values of `emoji_code`.\n\nMust be one of the following values:\n\n- `unicode_emoji` : In this namespace, `emoji_code` will be a\n  dash-separated hex encoding of the sequence of Unicode codepoints\n  that define this emoji in the Unicode specification.\n\n- `realm_emoji` : In this namespace, `emoji_code` will be the ID of\n  the uploaded [custom emoji](/help/custom-emoji).\n\n- `zulip_extra_emoji` : These are special emoji included with Zulip.\n  In this namespace, `emoji_code` will be the name of the emoji (e.g.\n  \"zulip\").\n"
-    NavigationView:
-      type: object
-      description: 'Represents a user''s personal configuration for a specific
-
-        navigation view (displayed most visibly at the top of the web
-
-        application''s left sidebar).
-
-
-        Navigation views can be either an override to the default
-
-        behavior of a built-in view, or a custom view.
-
-
-        **Changes**: New in Zulip 11.0 (feature level 390).
-
-        '
-      additionalProperties: false
-      required:
-      - fragment
-      - is_pinned
-      properties:
-        fragment:
-          type: string
-          description: 'A unique identifier for the view, used to determine navigation
-
-            behavior when clicked.
-
-
-            Clients should use this value to navigate to the corresponding URL hash.
-
-            '
-          example: narrow/is/alerted
-        is_pinned:
-          type: boolean
-          description: 'Determines whether the view appears directly in the sidebar or
-
-            is hidden in the "More Views" menu.
-
-
-            - `true` - Pinned and visible in the sidebar.
-
-            - `false` - Hidden and accessible via the "More Views" menu.
-
-            '
-          example: true
-        name:
-          type:
-          - string
-          - 'null'
-          description: 'The user-facing name for custom navigation views. Omit this
-
-            field for built-in views.
-
-            '
-          example: Alert Words
-    EmojiReactionEvent:
-      allOf:
-      - $ref: '#/components/schemas/EmojiBase'
-      - properties:
-          user_id:
-            type: integer
-            description: 'The ID of the user who added the reaction.
-
-
-              **Changes**: In Zulip 12.0 (feature level 484),
-
-              the deprecated `user` object field was removed. It contained
-
-              the following properties: `user_id`, `email`,
-
-              `full_name`, and `is_mirror_dummy`.
-
-
-              Previously, in Zulip 10.0 (feature level 339), this
-
-              object was temporarily re-added to support older mobile
-
-              clients, after having been removed in Zulip 10.0
-
-              (feature level 328).
-
-
-              New in Zulip 3.0 (feature level 2).
-
-              '
-    GroupSettingValue:
-      oneOf:
-      - type: integer
-        description: 'The ID of the [user group](/help/user-groups) with this permission.
-
-          '
-      - type: object
-        additionalProperties: false
-        properties:
-          direct_members:
-            description: 'The list of IDs of individual users in the collection of users with this permission.
-
-
-              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
-
-              deactivated users who had the permission before being deactivated.
-
-              '
-            type: array
-            items:
-              type: integer
-          direct_subgroups:
-            description: 'The list of IDs of the groups in the collection of users with this permission.
-
-              '
-            type: array
-            items:
-              type: integer
-        description: 'An object with these fields:
-
-          '
-    CanDeleteOwnMessageGroup:
+    CanResolveTopicsGroup:
       allOf:
       - $ref: '#/components/schemas/GroupSettingValue'
       - description: 'A [group-setting value][setting-values] defining the set of users
 
-          who have permission to delete the messages that they have sent in the channel.
+          who have permission to resolve topics in the channel.
 
 
-          [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+          Users who have similar realm-level permissions can resolve topics
+
+          in a channel regardless of the value of this setting.
 
 
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to delete their own message in the channel.
-
-
-          Users with permission to delete any message in the channel
-
-          and users present in the organization-level `can_delete_own_message_group` setting
-
-          can always delete their own messages in the channel if they
-
-          [have content access](/help/channel-permissions) to that channel.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
-
-          change, only the users in the organization-level `can_delete_any_message_group`
-
-          and `can_delete_own_message_group` settings were able delete their own messages in
-
-          the organization.
+          **Changes**: New in Zulip 11.0 (feature level 402).
 
 
           [setting-values]: /api/group-setting-values
 
           '
-    UserDeactivatedError:
+    RealmDeactivatedError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
       - example:
-          code: USER_DEACTIVATED
-          msg: Account is deactivated
+          code: REALM_DEACTIVATED
+          msg: This organization is deactivated
           result: error
-        description: '### User account deactivated
+        description: '### Realm deactivated
 
 
-          A typical failed json response for when user''s account is deactivated.
+          A typical failed json response for when user''s organization is deactivated.
 
 
           **Changes**: As of Zulip 5.0 (feature level 76), these errors use the
@@ -16957,314 +17717,117 @@ components:
           status code.
 
           '
-    BotConfiguration:
-      type: object
-      description: 'A dictionary of string key/value pairs, which describe the configuration
-
-        for the bot. These are usually details like API keys, and are unique to
-
-        the integration/bot. Can be an empty dictionary.
-
-        '
-      additionalProperties:
-        description: '`{config_key}`: Description/value of the configuration data key.
-
-          '
-        type: string
-    CanAdministerChannelGroup:
+    BasicChannel:
       allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
+      - $ref: '#/components/schemas/BasicChannelBase'
+      - additionalProperties: false
+        properties:
+          stream_id: {}
+          name: {}
+          is_archived: {}
+          description: {}
+          date_created: {}
+          creator_id: {}
+          invite_only: {}
+          rendered_description: {}
+          is_web_public: {}
+          stream_post_policy: {}
+          message_retention_days: {}
+          history_public_to_subscribers: {}
+          topics_policy: {}
+          first_message_id: {}
+          folder_id: {}
+          is_recently_active: {}
+          is_announcement_only: {}
+          can_add_subscribers_group: {}
+          can_remove_subscribers_group: {}
+          can_administer_channel_group: {}
+          can_delete_any_message_group: {}
+          can_delete_own_message_group: {}
+          can_move_messages_out_of_channel_group: {}
+          can_move_messages_within_channel_group: {}
+          can_send_message_group: {}
+          can_subscribe_group: {}
+          can_resolve_topics_group: {}
+          can_create_topic_group: {}
+          subscriber_count: {}
+          stream_weekly_traffic:
+            type:
+            - integer
+            - 'null'
+            description: 'The average number of messages sent to the channel per week, as
 
-          who have permission to administer this channel.
+              estimated based on recent weeks, rounded to the nearest integer.
 
 
-          Organization administrators can administer every channel as though they were
+              If `null`, no information is provided on the average traffic.
 
-          in this group without being explicitly listed here.
+              This can be because the channel was recently created and there
 
+              is insufficient data to make an estimate, or because the server
 
-          Note that a user must have metadata access to a channel and permission
+              wishes to omit this information for this client, this realm, or
 
-          to administer the channel in order to modify this setting.
-
-
-          **Changes**: Prior to Zulip 10.0 (feature level 349) a user needed to
-
-          [have content access](/help/channel-permissions) to a channel in
-
-          order to modify it. The exception to this rule was that organization
-
-          administrators can edit channel names and descriptions without
-
-          having full access to the channel.
+              this endpoint or type of event.
 
 
-          New in Zulip 10.0 (feature level 325). Prior to this
+              **Changes**: New in Zulip 8.0 (feature level 199). Previously, this
 
-          change, the permission to administer channels was limited to realm
+              statistic was available only in subscription objects.
 
-          administrators.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    BasicBot:
+              '
+        required:
+        - stream_id
+        - name
+        - is_archived
+        - description
+        - date_created
+        - creator_id
+        - invite_only
+        - rendered_description
+        - is_web_public
+        - stream_post_policy
+        - subscriber_count
+        - message_retention_days
+        - history_public_to_subscribers
+        - first_message_id
+        - folder_id
+        - is_recently_active
+        - is_announcement_only
+        - can_remove_subscribers_group
+        - stream_weekly_traffic
+        - can_subscribe_group
+    Bot:
       allOf:
       - $ref: '#/components/schemas/BasicBotBase'
-      - additionalProperties: false
+      - description: 'Object containing details of a bot.
+
+
+          **Changes**: Removed `avatar_url`, `bot_type`, `email`,
+
+          `full_name`, `is_active` and `owner_id` fields from the
+
+          dictionary in Zulip 12.0 (feature level 474). Clients
+
+          can get all these data from the corresponding user object.
+
+
+          Removed `api_key` field from the dictionary in
+
+          Zulip 12.0 (feature level 474). Clients now use
+
+          [`GET /bots/{bot_id}/api_key`](/api/get-bot-api-key) to get
+
+          api key for the bot.
+
+          '
+        additionalProperties: false
         properties:
           user_id: {}
           default_sending_stream: {}
           default_events_register_stream: {}
           default_all_public_streams: {}
           services: {}
-    CanDeleteAnyMessageGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to delete any message in the channel.
-
-
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to delete any message in the channel.
-
-
-          Users present in the organization-level `can_delete_any_message_group`
-
-          setting can always delete any message in the channel if they
-
-          [have content access](/help/channel-permissions) to that channel.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
-
-          change, only the users in `can_delete_any_message_group` were able
-
-          delete any message in the organization.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    CanSubscribeGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to subscribe themselves to this channel.
-
-
-          Everyone, excluding guests, can subscribe to any public channel
-
-          irrespective of this setting.
-
-
-          Users in this group can subscribe to a private channel as well.
-
-
-          Note that a user must [have content access](/help/channel-permissions)
-
-          to a channel and permission to administer the channel in order to
-
-          modify this setting.
-
-
-          **Changes**: New in Zulip 10.0 (feature level 357).
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    IncompatibleParametersError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        description: '### Incompatible request parameters
-
-
-          A typical failed JSON response for when two or more, optional
-
-          parameters are supplied that are incompatible with each other.
-
-
-          The value of `parameters` in the response is string containing
-
-          the parameters, separated by commas, that are incompatible.
-
-          '
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          parameters:
-            type: string
-            description: 'A string containing the parameters, separated by commas,
-
-              that are incompatible.
-
-              '
-        example:
-          code: BAD_REQUEST
-          msg: 'Unsupported parameter combination: object_id, object_name'
-          result: error
-          parameters: object_id, object_name
-    SavedSnippet:
-      type: object
-      description: 'Object containing the details of the saved snippet.
-
-        '
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID of the saved snippet.
-
-            '
-        title:
-          type: string
-          description: 'The title of the saved snippet.
-
-            '
-        content:
-          type: string
-          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
-
-
-            Clients should insert this content into a message when using
-
-            a saved snippet.
-
-            '
-        date_created:
-          type: integer
-          description: 'The UNIX timestamp for when the saved snippet was created, in
-
-            UTC seconds.
-
-            '
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    Narrow:
-      description: 'A JSON-encoded array of arrays of length 2 indicating the
-
-        [narrow filter(s)](/api/construct-narrow) for which you''d
-
-        like to receive events for.
-
-
-        For example, to receive events for direct messages (including
-
-        group direct messages) received by the user, one can use
-
-        `"narrow": [["is", "dm"]]`.
-
-
-        Unlike the API for [fetching messages](/api/get-messages),
-
-        this narrow parameter is simply a filter on messages that the
-
-        user receives through their channel subscriptions (or because
-
-        they are a recipient of a direct message).
-
-
-        This means that a client that requests a `narrow` filter of
-
-        `[["channel", "Denmark"]]` will receive events for new messages
-
-        sent to that channel while the user is subscribed to that
-
-        channel. The client will not receive any message events at all
-
-        if the user is not subscribed to `"Denmark"`.
-
-
-        Newly created bot users are not usually subscribed to any
-
-        channels, so bots using this API need to be
-
-        [subscribed](/api/subscribe) to any channels whose messages
-
-        you''d like them to process using this endpoint.
-
-
-        See the `all_public_streams` parameter for how to process all
-
-        public channel messages in an organization.
-
-
-        **Changes**: See [changes section](/api/construct-narrow#changes)
-
-        of search/narrow filter documentation.
-
-        '
-      type: array
-      items:
-        type: array
-        items:
-          type: string
-      default: []
-      example:
-      - - channel
-        - Denmark
-    DefaultChannelGroup:
-      type: object
-      description: 'Dictionary containing details of a default channel
-
-        group.
-
-        '
-      additionalProperties: false
-      properties:
-        name:
-          type: string
-          description: 'Name of the default channel group.
-
-            '
-        description:
-          type: string
-          description: 'Description of the default channel group.
-
-            '
-        id:
-          type: integer
-          description: 'The ID of the default channel group.
-
-            '
-        streams:
-          type: array
-          description: 'An array of IDs of all the channels in the default stream group.
-
-
-            **Changes**: Before Zulip 10.0 (feature level 330), we sent array
-
-            of dictionaries where each dictionary contained details about a
-
-            single stream in the default stream group.
-
-            '
-          items:
-            type: integer
     MessagesBase:
       type: object
       description: 'Object containing details of the message.
@@ -17770,102 +18333,13 @@ components:
           description: 'The type of the message: `"stream"` or `"private"`.
 
             '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    CanRemoveSubscribersGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
+    EventTypeSchema:
+      type: string
+      description: 'The event''s type, relevant both for client-side dispatch and server-side
 
-          who have permission to remove subscribers from this channel.
+        filtering by event type in [POST /register](/api/register-queue).
 
-
-          Organization administrators can unsubscribe others from a channel as though
-
-          they were in this group without being explicitly listed here.
-
-
-          Note that a user must have metadata access to a channel and permission
-
-          to administer the channel in order to modify this setting.
-
-
-          **Changes**: Prior to Zulip 10.0 (feature level 349), channel administrators
-
-          could not unsubscribe other users if they were not an organization
-
-          administrator or part of `can_remove_subscribers_group`. Realm administrators
-
-          were not allowed to unsubscribe other users from a private channel if they
-
-          were not subscribed to that channel.
-
-
-          Prior to Zulip 10.0 (feature level 320), this value was always the integer
-
-          ID of a system group.
-
-
-          Before Zulip 8.0 (feature level 197), the `can_remove_subscribers_group`
-
-          setting was named `can_remove_subscribers_group_id`.
-
-
-          New in Zulip 6.0 (feature level 142).
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    RateLimitedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        description: '### Rate limit exceeded
-
-
-          A typical failed JSON response for when a rate limit is exceeded.
-
-          Zulip sets a few [HTTP response headers][rate-limit-headers]
-
-          to help with preventing rate limit errors.
-
-
-          The value of `retry-after` in the response indicates how many
-
-          seconds the client must wait before making additional requests.
-
-
-          **Changes**: Before Zulip 4.0 (feature level 36), the `code` key
-
-          was not present in rate limit errors.
-
-
-          [rate-limit-headers]: /api/http-headers#rate-limiting-response-headers
-
-          '
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          retry-after:
-            type: integer
-            description: 'How many seconds the client must wait before making
-
-              additional requests.
-
-              '
-        example:
-          code: RATE_LIMIT_HIT
-          msg: API usage exceeded rate limit
-          result: error
-          retry-after: 28.706807374954224
+        '
     EmailAddressVisibility:
       type: integer
       description: 'The [policy][permission-level] for [which other users][help-email-visibility]
@@ -17894,6 +18368,36 @@ components:
         [help-email-visibility]: /help/configure-email-visibility
 
         '
+    CanDeleteAnyMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to delete any message in the channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to delete any message in the channel.
+
+
+          Users present in the organization-level `can_delete_any_message_group`
+
+          setting can always delete any message in the channel if they
+
+          [have content access](/help/channel-permissions) to that channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+          change, only the users in `can_delete_any_message_group` were able
+
+          delete any message in the organization.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
     BadEventQueueIdError:
       allOf:
       - $ref: '#/components/schemas/CodedErrorBase'
@@ -17912,742 +18416,146 @@ components:
           msg: 'Bad event queue ID: fb67bf8a-c031-47cc-84cf-ed80accacda8'
           queue_id: fb67bf8a-c031-47cc-84cf-ed80accacda8
           result: error
-    CanMoveMessagesOutOfChannelGroup:
+    OnboardingStep:
+      type: object
+      additionalProperties: false
+      description: 'Dictionary containing details of a single onboarding step.
+
+        '
+      properties:
+        type:
+          type: string
+          description: 'The type of the onboarding step. Valid value is `"one_time_notice"`.
+
+
+            **Changes**: Removed type `"hotspot"` in Zulip 9.0 (feature level 259).
+
+
+            New in Zulip 8.0 (feature level 233).
+
+            '
+        name:
+          type: string
+          description: 'The name of the onboarding step.
+
+            '
+    UserNotAuthorizedError:
       allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to move messages out of this channel.
-
-
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to move messages out of the channel.
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: BAD_REQUEST
+          msg: User not authorized for this query
+          result: error
+        description: '### User not authorized for query
 
 
-          Channel administrators and users present in the organization-level
+          A typical failed JSON response for when the user is not authorized for
 
-          `can_move_messages_between_channels_group` setting can always move messages
-
-          out of the channel if they [have content access](/help/channel-permissions) to
-
-          the channel.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
-
-          change, only the users in `can_move_messages_between_channels_group` were able
-
-          move messages between channels.
-
-
-          [setting-values]: /api/group-setting-values
+          a query.
 
           '
-    BasicBotBase:
+    Draft:
       type: object
-      properties:
-        user_id:
-          type: integer
-          description: 'The user ID of the bot.
-
-            '
-        default_sending_stream:
-          type:
-          - string
-          - 'null'
-          description: 'The default sending channel of the bot. If `null`, the bot doesn''t
-
-            have a default sending channel.
-
-            '
-        default_events_register_stream:
-          type:
-          - string
-          - 'null'
-          description: 'The default channel for which the bot receives events/register data.
-
-            If `null`, the bot doesn''t have such a default channel.
-
-            '
-        default_all_public_streams:
-          type: boolean
-          description: 'Whether the bot can send messages to all channels by default.
-
-            '
-        services:
-          type: array
-          description: 'An array containing extra configuration fields only relevant for
-
-            outgoing webhook bots and embedded bots. This is always a single-element
-
-            array.
-
-
-            We consider this part of the Zulip API to be unstable; it is used only
-
-            for UI elements for administering bots and is likely to change.
-
-            '
-          items:
-            description: 'Object with extra configuration details for the bot. The fields in the
-
-              object depend on the type of bot.
-
-              '
-            oneOf:
-            - type: object
-              additionalProperties: false
-              description: 'When the bot is an outgoing webhook.
-
-                '
-              properties:
-                base_url:
-                  type: string
-                  description: 'The URL the outgoing webhook is configured to post to.
-
-                    '
-                token:
-                  type: string
-                  description: 'A unique token that the third-party service can use to confirm
-
-                    that the request is indeed coming from Zulip.
-
-                    '
-                interface:
-                  type: integer
-                  description: 'An integer indicating what format requests are posted in:
-
-
-                    - 1 = Zulip''s native outgoing webhook format.
-
-                    - 2 = Emulate the Slack outgoing webhook format.
-
-                    '
-            - type: object
-              additionalProperties: false
-              description: 'When the bot is an embedded bot.
-
-                '
-              properties:
-                service_name:
-                  type: string
-                  description: 'The name of the bot.
-
-                    '
-                config_data:
-                  $ref: '#/components/schemas/BotConfiguration'
-    ChannelFolder:
-      type: object
-      additionalProperties: false
-      description: 'Object containing the channel folder''s attributes.
+      description: 'A dictionary for representing a message draft.
 
         '
       properties:
         id:
           type: integer
-          description: 'The unique ID of the channel folder.
-
-            '
-        name:
-          type: string
-          description: 'The name of the channel folder.
-
-            '
-        order:
-          type: integer
-          description: 'This value determines in which order the channel folder should be
-
-            displayed in the UI. The value is 0 indexed, and a channel folder with
-
-            a lower value should be displayed before channel folders with higher
-
-            values.
-
-
-            **Changes**: New in Zulip 11.0 (feature level 414).
-
-            '
-        date_created:
-          type:
-          - integer
-          - 'null'
-          description: 'The UNIX timestamp for when the channel folder was created,
-
-            in UTC seconds.
-
-            '
-        creator_id:
-          type:
-          - integer
-          - 'null'
-          description: 'The ID of the user who created the channel folder.
-
-            '
-        description:
-          type: string
-          description: 'The description of the channel folder. Can be an empty string.
-
-
-            See [Markdown message formatting](/api/message-formatting) for details
-
-            on Zulip''s HTML format.
-
-            '
-        rendered_description:
-          type: string
-          description: 'The description of the channel folder rendered as HTML, intended to be
-
-            used for UI that displays the channel folder description.
-
-
-            Clients should use the standard Zulip rendered_markdown CSS when
-
-            displaying this content so that emoji, LaTeX, and other syntax work
-
-            correctly. And any client-side security logic for user-generated
-
-            message content should be applied when displaying this HTML as though
-
-            it were the body of a Zulip message.
-
-            '
-        is_archived:
-          type: boolean
-          description: 'Whether the channel folder is archived or not.
-
-            '
-    RealmDomain:
-      type: object
-      additionalProperties: false
-      properties:
-        domain:
-          type: string
-          description: 'The allowed domain.
-
-            '
-        allow_subdomains:
-          type: boolean
-          description: 'Whether subdomains are allowed for this domain.
-
-            '
-      required:
-      - domain
-      - allow_subdomains
-    RealmExport:
-      type: object
-      additionalProperties: false
-      description: 'Object containing details about a
-
-        [data export](/help/export-your-organization).
-
-        '
-      properties:
-        id:
-          type: integer
-          description: 'The ID of the data export.
-
-            '
-        acting_user_id:
-          type: integer
-          description: 'The ID of the user who created the data export.
-
-            '
-        export_time:
-          type: number
-          description: 'The UNIX timestamp of when the data export was started.
-
-            '
-        deleted_timestamp:
-          type:
-          - number
-          - 'null'
-          description: 'The UNIX timestamp of when the data export was deleted.
-
-
-            Will be `null` if the data export has not been deleted.
-
-            '
-        failed_timestamp:
-          type:
-          - number
-          - 'null'
-          description: 'The UNIX timestamp of when the data export failed.
-
-
-            Will be `null` if the data export succeeded, or if it''s
-
-            still being generated.
-
-            '
-        export_url:
-          type:
-          - string
-          - 'null'
-          description: 'The URL to download the generated data export.
-
-
-            Will be `null` if the data export failed, or if it''s
-
-            still being generated.
-
-            '
-        pending:
-          type: boolean
-          description: 'Whether the data export is pending, which indicates it
-
-            is still being generated, or if it succeeded, failed or
-
-            was deleted before being generated.
-
-
-            Depending on the size of the organization, it can take
-
-            anywhere from seconds to an hour to generate the data
-
-            export.
-
-            '
-        export_type:
-          type: string
-          enum:
-          - public
-          - full_with_consent
-          - full_without_consent
-          description: "Whether the data export is public, full with consent, or full without consent.\n\n- `public` = Public data export.\n- `full_with_consent` = Public and private data export (with consent), which includes private data\n  for users who have granted consent.\n- `full_without_consent` = All public and private data, which includes private data for all users.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nthe export type was not included in these objects because only\npublic data exports could be created or listed via the API or UI.\n"
-    RealmEmoji:
-      type: object
-      additionalProperties: false
-      description: 'Object containing details about an emoji. It has the
-
-        following properties:
-
-        '
-      properties:
-        id:
-          type: string
-          description: 'The ID for this emoji, same as the object''s key.
-
-            '
-        name:
-          type: string
-          description: 'The user-friendly name for this emoji. Users in the organization
-
-            can use this emoji by writing this name between colons (`:name :`).
-
-            '
-        source_url:
-          type: string
-          description: 'The path relative to the organization''s URL where the
-
-            emoji''s image can be found.
-
-            '
-        still_url:
-          type:
-          - string
-          - 'null'
-          description: 'Only non-null when the emoji''s image is animated.
-
-
-            The path relative to the organization''s URL where a still
-
-            (not animated) version of the emoji can be found. (This is
-
-            currently always the first frame of the animation).
-
-
-            This is useful for clients to display the emoji in contexts
-
-            where continuously animating it would be a bad user experience
-
-            (E.g. because it would be distracting).
-
-
-            **Changes**: New in Zulip 5.0 (added as optional field in
-
-            feature level 97 and then made mandatory, but nullable, in
-
-            feature level 113).
-
-            '
-        deactivated:
-          type: boolean
-          description: 'Whether the emoji has been deactivated or not.
-
-            '
-        author_id:
-          type:
-          - integer
-          - 'null'
-          description: 'The user ID of the user who uploaded the custom emoji.
-
-            Will be `null` if the uploader is unknown.
-
-
-            **Changes**: New in Zulip 3.0 (feature level 7). Previously
-
-            was accessible via an `author` object with an `id` field.
-
-            '
-    CustomProfileField:
-      type: object
-      additionalProperties: false
-      description: 'Dictionary containing the details of a custom profile field configured
-
-        for this organization.
-
-        '
-      properties:
-        id:
-          type: integer
-          description: 'The ID of the custom profile field. This will be referenced in the custom
-
-            profile fields section of user objects.
+          readOnly: true
+          description: 'The unique ID of the draft.
 
             '
         type:
-          type: integer
-          description: 'An integer indicating the type of the custom profile field, which determines
-
-            how it is configured and displayed to users.
-
-
-            See the [Custom profile fields](/help/custom-profile-fields#profile-field-types)
-
-            article for details on what each type means.
-
-
-            - **1**: Short text
-
-            - **2**: Paragraph
-
-            - **3**: Dropdown
-
-            - **4**: Date
-
-            - **5**: Link
-
-            - **6**: Users
-
-            - **7**: External account
-
-            - **8**: Pronouns
-
-
-            **Changes**: Field type `8` added in Zulip 6.0 (feature level 151).
-
-            '
-        order:
-          type: integer
-          description: 'Custom profile fields are displayed in both settings UI and
-
-            UI showing users'' profiles in increasing `order`.
-
-            '
-        name:
           type: string
-          description: 'The name of the custom profile field.
+          description: 'The type of the draft. Either unaddressed (empty string), `"stream"`,
+
+            or `"private"` (for one-on-one and group direct messages).
 
             '
-        hint:
-          type: string
-          description: 'The help text to be displayed for the custom profile field in user-facing
-
-            settings UI for configuring custom profile fields.
-
-            '
-        field_data:
-          type: string
-          description: 'Field types 3 (Dropdown) and 7 (External account) support storing
-
-            additional configuration for the field type in the `field_data` attribute.
-
-
-            For field type 3 (Dropdown), this attribute is a JSON dictionary
-
-            defining the choices and the order they will be displayed in the
-
-            dropdown UI for individual users to select an option.
-
-
-            The interface for field type 7 is not yet stabilized.
-
-            '
-        display_in_profile_summary:
-          type: boolean
-          description: 'Whether the custom profile field, display or not on the user card.
-
-
-            Must be false for `Users`
-
-            [profile field types](/help/custom-profile-fields#profile-field-types).
-
-
-            This field is only included when its value is `true`.
-
-
-            **Changes**: Before Zulip 12.0 (feature level 476), the
-
-            "Paragraph" field type was not supported.
-
-
-            New in Zulip 6.0 (feature level 146).
-
-            '
-          default: false
-        required:
-          type: boolean
-          description: 'Whether an organization administrator has configured this profile field as
-
-            required.
-
-
-            Because the required property is mutable, clients cannot assume that a required
-
-            custom profile field has a value. The Zulip web application displays a prominent
-
-            banner to any user who has not set a value for a required field.
-
-
-            **Changes**: New in Zulip 9.0 (feature level 244).
-
-            '
-        editable_by_user:
-          type: boolean
-          description: 'Whether regular users can edit this profile field on their own account.
-
-
-            Note that organization administrators can edit custom profile fields for any user
-
-            regardless of this setting.
-
-
-            **Changes**: New in Zulip 10.0 (feature level 296).
-
-            '
-          default: true
-        use_for_user_matching:
-          type: boolean
-          description: 'Whether this custom profile field should be used to match users in typeahead
-
-            suggestions. Only allowed for Short Text and External Account
-
-            [profile field types](/help/custom-profile-fields#profile-field-types).
-
-
-            This field is only included when its value is `true`.
-
-
-            **Changes**: New in Zulip 12.0 (feature level 455).
-
-            '
-          default: false
-      required:
-      - id
-      - type
-      - order
-      - name
-      - hint
-      - required
-      - editable_by_user
-    TopicsPolicy:
-      type: string
-      enum:
-      - inherit
-      - allow_empty_topic
-      - disable_empty_topic
-      - empty_topic_only
-      example: inherit
-      description: "Whether [named topics](/help/introduction-to-topics) and the empty\ntopic (i.e., [\"general chat\" topic](/help/general-chat-topic))\nare enabled in this channel.\n\n- `\"inherit\"`: Messages can be sent to named topics in this channel,\n  and the [organization-level `realm_topics_policy`][realm-topics-policy]\n  is used for whether messages can be sent to the empty topic in this\n  channel.\n- `\"allow_empty_topic\"`: Messages can be sent to both named topics and\n  the empty topic in this channel.\n- `\"disable_empty_topic\"`: Messages can be sent to named topics in this\n  channel, but the empty topic is disabled.\n- `\"empty_topic_only\"`: Messages can be sent to the empty topic in this\n  channel, but named topics are disabled. See [\"general chat\"\n  channels](/help/general-chat-channels).\n\nThe `\"empty_topic_only\"` policy can only be set if all existing messages\nin the channel are already in the empty topic.\n\nWhen creating a new channel, if the `topics_policy` is not specified, the\n`\"inherit\"` option will be set.\n\n**Changes**: In Zulip 11.0 (feature level 404), the `\"empty_topic_only\"`\noption was added.\n\nNew in Zulip 11.0 (feature level 392).\n\n[realm-topics-policy]: /help/require-topics#set-the-default-general-chat-topic-configuration\n"
-    GroupPermissionSetting:
-      description: 'Configuration for a group permission setting specifying the groups
-
-        to which the setting can be set to and the default values for the
-
-        setting.
-
-
-        **Changes**: Removed `allow_owners_group` field in Zulip 10.0 (feature level 326), as we now
-
-        support anonymous user groups. Previously, the `role:owners` system group was
-
-        not offered when `allow_owners_group` was false.
-
-
-        Removed unnecessary `id_field_name` field in Zulip 10.0 (feature level 326). Previously,
-
-        this always had the value of `"{setting_name}_id"`; it was an internal implementation
-
-        detail of the server not intended to be included in the API.
-
-        '
-      additionalProperties: false
-      type: object
-      properties:
-        require_system_group:
-          type: boolean
-          description: 'Whether the setting can only be set to a system user group.
-
-            '
-        allow_internet_group:
-          type: boolean
-          description: 'Whether the setting can be set to `role:internet` system group.
-
-            '
-        allow_nobody_group:
-          type: boolean
-          description: 'Whether the setting can be set to `role:nobody` system group.
-
-            '
-        allow_everyone_group:
-          type: boolean
-          description: 'Whether the setting can be set to `role:everyone` system group.
-
-
-            If false, guest users cannot exercise this permission even if they are part of
-
-            the [group-setting value](/api/group-setting-values) for this setting.
-
-            '
-        default_group_name:
-          type: string
-          description: "Name of the default system group for the setting.\n\nFor some channel settings, this can also be `channel_creator`.\nIn that case:\n\n- If the channel's [`creator_id`][channel-response] is not `null`, default for the\n  setting is an anonymous group with the channel creator as\n  the only member.\n- If the channel's [`creator_id`][channel-response] is `null`, default for the setting\n  is `role:nobody` system group.\n\n**Changes**: In Zulip 12.0 (feature level 427), renamed\n`stream_creator_or_nobody` value to `channel_creator`.\n\n[channel-response]: /api/get-stream-by-id#response\n"
-        default_for_system_groups:
-          type:
-          - string
-          - 'null'
-          description: 'Name of the default group for the setting for system groups.
-
-
-            This is non-null only for group-level settings.
-
-            '
-        allowed_system_groups:
+          enum:
+          - ''
+          - stream
+          - private
+        to:
           type: array
-          description: 'An array of names of system groups to which the setting can
+          description: 'An array of the tentative target audience IDs. For channel
 
-            be set to.
+            messages, this should contain exactly 1 ID, the ID of the
 
+            target channel. For direct messages, this should be an array
 
-            If the list is empty, the setting can be set to system groups
+            of target user IDs. For unaddressed drafts, this is ignored,
 
-            based on the other boolean fields.
-
-
-            **Changes**: New in Zulip 8.0 (feature level 225).
-
-            '
-          items:
-            type: string
-    MissingArgumentError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        description: '### Missing request parameter
-
-
-          A typical failed JSON response for when a required request parameter
-
-          is not supplied.
-
-
-          The value of `var_name` contains information about the missing parameter.
-
-          '
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-          var_name:
-            type: string
-            description: 'It contains the information about the missing parameter.
-
-              '
-        example:
-          code: REQUEST_VARIABLE_MISSING
-          msg: Missing 'content' argument
-          result: error
-          var_name: content
-    Attachment:
-      type: object
-      description: 'Dictionary containing details of a file uploaded by a user.
-
-        '
-      additionalProperties: false
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID for the attachment.
-
-            '
-        name:
-          type: string
-          description: 'Name of the uploaded file.
-
-            '
-        path_id:
-          type: string
-          description: 'A representation of the path of the file within the
-
-            repository of user-uploaded files. If the `path_id` of a
-
-            file is `{realm_id}/ab/cdef/temp_file.py`, its URL will be:
-
-            `{server_url}/user_uploads/{realm_id}/ab/cdef/temp_file.py`.
-
-            '
-        size:
-          type: integer
-          description: 'Size of the file in bytes.
-
-            '
-        create_time:
-          type: integer
-          description: 'Time when the attachment was uploaded as a UNIX timestamp.
-
-
-            **Changes**: Before Zulip 12.0 (feature level 443), this value
-
-            was milliseconds since the epoch, not seconds.
-
-
-            Changed in Zulip 3.0 (feature level 22). This field was
-
-            previously a floating point number.
-
-            '
-        message_ids:
-          type: array
-          description: 'Array containing the IDs of messages that reference this
-
-            [uploaded file](/api/upload-file). This includes messages
-
-            sent by any user in the Zulip organization who sent a
-
-            message containing a link to the uploaded file.
-
-
-            **Changes**: In Zulip 12.0 (feature level 472), this
-
-            replaced the previous `messages` field, which was an array
-
-            of objects containing both `id` and `date_sent` properties.
+            and clients should send an empty array.
 
             '
           items:
             type: integer
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
+        topic:
+          type: string
+          description: 'For channel message drafts, the tentative topic name. For direct
+
+            or unaddressed messages, this will be ignored and should ideally
+
+            be the empty string. Should not contain null bytes.
+
+            '
+        content:
+          type: string
+          description: 'The body of the draft. Should not contain null bytes.
+
+            '
+        timestamp:
+          type: integer
+          description: 'A Unix timestamp (seconds only) representing when the draft was
+
+            last edited. When creating a draft, this key need not be present
+
+            and it will be filled in automatically by the server.
+
+            '
+          example: 1595479019
+      additionalProperties: false
+      required:
+      - type
+      - to
+      - topic
+      - content
+    SavedSnippet:
+      type: object
+      description: 'Object containing the details of the saved snippet.
+
+        '
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the saved snippet.
+
+            '
+        title:
+          type: string
+          description: 'The title of the saved snippet.
+
+            '
+        content:
+          type: string
+          description: 'The content of the saved snippet in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
+
+
+            Clients should insert this content into a message when using
+
+            a saved snippet.
+
+            '
+        date_created:
+          type: integer
+          description: 'The UNIX timestamp for when the saved snippet was created, in
+
+            UTC seconds.
+
+            '
     BasicChannelBase:
       type: object
       description: 'Object containing basic details about the channel.
@@ -18918,399 +18826,395 @@ components:
             **Changes**: New in Zulip 11.0 (feature level 394).
 
             '
-    Reminder:
+    FolderId:
+      type:
+      - integer
+      - 'null'
+      description: 'The ID of the folder to which the channel belongs.
+
+
+        Is `null` if channel does not belong to any folder.
+
+
+        **Changes**: New in Zulip 11.0 (feature level 389).
+
+        '
+    EmojiReactionEvent:
+      allOf:
+      - $ref: '#/components/schemas/EmojiBase'
+      - properties:
+          user_id:
+            type: integer
+            description: 'The ID of the user who added the reaction.
+
+
+              **Changes**: In Zulip 12.0 (feature level 484),
+
+              the deprecated `user` object field was removed. It contained
+
+              the following properties: `user_id`, `email`,
+
+              `full_name`, and `is_mirror_dummy`.
+
+
+              Previously, in Zulip 10.0 (feature level 339), this
+
+              object was temporarily re-added to support older mobile
+
+              clients, after having been removed in Zulip 10.0
+
+              (feature level 328).
+
+
+              New in Zulip 3.0 (feature level 2).
+
+              '
+    CustomProfileField:
       type: object
       additionalProperties: false
-      description: 'Object containing details of the scheduled message.
+      description: 'Dictionary containing the details of a custom profile field configured
+
+        for this organization.
 
         '
       properties:
-        reminder_id:
+        id:
           type: integer
-          description: 'The unique ID of the reminder, which can be used to
+          description: 'The ID of the custom profile field. This will be referenced in the custom
 
-            delete the reminder.
-
-
-            This is different from the unique ID that the message would have
-
-            after being sent.
+            profile fields section of user objects.
 
             '
         type:
-          type: string
-          description: 'The type of the reminder. Always set to `"private"`.
-
-            '
-          enum:
-          - private
-        to:
-          type: array
-          items:
-            type: integer
-          description: 'Contains the ID of the user who scheduled the reminder,
-
-            and to which the reminder will be sent.
-
-            '
-        content:
-          type: string
-          description: 'The content/body of the reminder, in [Zulip-flavored Markdown](/help/format-your-message-using-markdown) format.
-
-
-            See [Markdown message formatting](/api/message-formatting) for details on Zulip''s HTML format.
-
-            '
-        rendered_content:
-          type: string
-          description: 'The content/body of the reminder rendered in HTML.
-
-            '
-        scheduled_delivery_timestamp:
           type: integer
-          description: 'The UNIX timestamp for when the message will be sent
+          description: 'An integer indicating the type of the custom profile field, which determines
 
-            by the server, in UTC seconds.
+            how it is configured and displayed to users.
+
+
+            See the [Custom profile fields](/help/custom-profile-fields#profile-field-types)
+
+            article for details on what each type means.
+
+
+            - **1**: Short text
+
+            - **2**: Paragraph
+
+            - **3**: Dropdown
+
+            - **4**: Date
+
+            - **5**: Link
+
+            - **6**: Users
+
+            - **7**: External account
+
+            - **8**: Pronouns
+
+
+            **Changes**: Field type `8` added in Zulip 6.0 (feature level 151).
 
             '
-          example: 1595479019
-        failed:
+        order:
+          type: integer
+          description: 'Custom profile fields are displayed in both settings UI and
+
+            UI showing users'' profiles in increasing `order`.
+
+            '
+        name:
+          type: string
+          description: 'The name of the custom profile field.
+
+            '
+        hint:
+          type: string
+          description: 'The help text to be displayed for the custom profile field in user-facing
+
+            settings UI for configuring custom profile fields.
+
+            '
+        field_data:
+          type: string
+          description: 'Field types 3 (Dropdown) and 7 (External account) support storing
+
+            additional configuration for the field type in the `field_data` attribute.
+
+
+            For field type 3 (Dropdown), this attribute is a JSON dictionary
+
+            defining the choices and the order they will be displayed in the
+
+            dropdown UI for individual users to select an option.
+
+
+            The interface for field type 7 is not yet stabilized.
+
+            '
+        display_in_profile_summary:
           type: boolean
-          description: 'Whether the server has tried to send the reminder
-
-            and it failed to successfully send.
+          description: 'Whether the custom profile field, display or not on the user card.
 
 
-            Clients that support unscheduling reminders
+            Must be false for `Users`
 
-            should display scheduled messages with `"failed": true` with an
+            [profile field types](/help/custom-profile-fields#profile-field-types).
 
-            indicator that the server failed to send the message at the
 
-            scheduled time, so that the user is aware of the failure and can
+            This field is only included when its value is `true`.
 
-            get the content of the scheduled message.
 
-            '
-        reminder_target_message_id:
-          type: integer
-          description: 'The ID of the message that the reminder is created for.
+            **Changes**: Before Zulip 12.0 (feature level 476), the
+
+            "Paragraph" field type was not supported.
+
+
+            New in Zulip 6.0 (feature level 146).
 
             '
+          default: false
+        required:
+          type: boolean
+          description: 'Whether an organization administrator has configured this profile field as
+
+            required.
+
+
+            Because the required property is mutable, clients cannot assume that a required
+
+            custom profile field has a value. The Zulip web application displays a prominent
+
+            banner to any user who has not set a value for a required field.
+
+
+            **Changes**: New in Zulip 9.0 (feature level 244).
+
+            '
+        editable_by_user:
+          type: boolean
+          description: 'Whether regular users can edit this profile field on their own account.
+
+
+            Note that organization administrators can edit custom profile fields for any user
+
+            regardless of this setting.
+
+
+            **Changes**: New in Zulip 10.0 (feature level 296).
+
+            '
+          default: true
+        use_for_user_matching:
+          type: boolean
+          description: 'Whether this custom profile field should be used to match users in typeahead
+
+            suggestions. Only allowed for Short Text and External Account
+
+            [profile field types](/help/custom-profile-fields#profile-field-types).
+
+
+            This field is only included when its value is `true`.
+
+
+            **Changes**: New in Zulip 12.0 (feature level 455).
+
+            '
+          default: false
       required:
-      - reminder_id
+      - id
       - type
-      - to
-      - content
-      - rendered_content
-      - scheduled_delivery_timestamp
-      - failed
-      - reminder_target_message_id
-    UserGroup:
+      - order
+      - name
+      - hint
+      - required
+      - editable_by_user
+    ScheduledMessage:
+      allOf:
+      - $ref: '#/components/schemas/ScheduledMessageBase'
+      - additionalProperties: false
+        properties:
+          scheduled_message_id: {}
+          type: {}
+          to: {}
+          topic: {}
+          content: {}
+          rendered_content: {}
+          scheduled_delivery_timestamp: {}
+          failed: {}
+    InvalidApiKeyError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: INVALID_API_KEY
+          msg: Invalid API key
+          result: error
+        description: '### Invalid API key
+
+
+          A typical failed JSON response for when the API key is invalid.
+
+          '
+    DefaultChannelGroup:
       type: object
-      additionalProperties: false
-      description: 'Object containing the user group''s attributes.
+      description: 'Dictionary containing details of a default channel
+
+        group.
 
         '
+      additionalProperties: false
       properties:
         name:
           type: string
-          description: 'The name of the user group.
-
-            '
-        date_created:
-          type:
-          - integer
-          - 'null'
-          description: 'The UNIX timestamp for when the user group was created, in UTC seconds.
-
-
-            A `null` value means the user group has no recorded date, which is often
-
-            because the user group is very old, or because it was created via a data
-
-            import tool or [management command][management-commands].
-
-
-            **Changes**: New in Zulip 10.0 (feature level 292).
-
-            [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html
-
-            '
-        creator_id:
-          type:
-          - integer
-          - 'null'
-          description: 'The ID of the user who created this user group.
-
-
-            A `null` value means the user group has no recorded creator, which is often
-
-            because the user group is very old, or because it was created via a data
-
-            import tool or [management command][management-commands].
-
-
-            **Changes**: New in Zulip 10.0 (feature level 292).
-
-            [management-commands]: https://zulip.readthedocs.io/en/latest/production/management-commands.html
+          description: 'Name of the default channel group.
 
             '
         description:
           type: string
-          description: 'The description of the user group.
-
-            '
-        members:
-          type: array
-          items:
-            type: integer
-          description: 'Array containing the ID of the users who are
-
-            members of this user group.
-
-
-            **Changes**: Prior to Zulip 10.0 (feature level 303), this
-
-            list also included deactivated users who were members of
-
-            the user group before being deactivated.
-
-            '
-        direct_subgroup_ids:
-          type: array
-          items:
-            type: integer
-          description: 'Array containing the ID of the direct_subgroups of
-
-            this user group.
-
-
-            **Changes**: New in Zulip 6.0 (feature level 131).
-
-            Introduced in feature level 127 as `subgroups`, but
-
-            clients can ignore older events as this feature level
-
-            predates subgroups being fully implemented.
+          description: 'Description of the default channel group.
 
             '
         id:
           type: integer
-          description: 'The ID of the user group.
+          description: 'The ID of the default channel group.
 
             '
-        is_system_group:
-          type: boolean
-          description: 'Whether the user group is a system group which cannot be
-
-            directly modified by users.
+        streams:
+          type: array
+          description: 'An array of IDs of all the channels in the default stream group.
 
 
-            **Changes**: New in Zulip 5.0 (feature level 93).
+            **Changes**: Before Zulip 10.0 (feature level 330), we sent array
+
+            of dictionaries where each dictionary contained details about a
+
+            single stream in the default stream group.
 
             '
-        can_add_members_group:
-          allOf:
-          - $ref: '#/components/schemas/GroupSettingValue'
-          - description: 'A [group-setting value][setting-values] defining the set of users who
+          items:
+            type: integer
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
-              have permission to add members to this user group.
+        parameters sent in the request are not supported by this
 
+        endpoint, a successful JSON response will include an
 
-              **Changes**: New in Zulip 10.0 (feature level 305). Previously, this
+        [`ignored_parameters_unsupported`][ignored_params] array.
 
-              permission was controlled by the `can_manage_group` setting.
 
+        A typical successful JSON response may look like:
 
-              Will be one of the following:
 
-
-              [setting-values]: /api/group-setting-values
-
-              '
-        can_join_group:
-          allOf:
-          - $ref: '#/components/schemas/GroupSettingValue'
-          - description: 'A [group-setting value][setting-values] defining the set of users who
-
-              have permission to join this user group.
-
-
-              **Changes**: New in Zulip 10.0 (feature level 301).
-
-
-              Will be one of the following:
-
-
-              [setting-values]: /api/group-setting-values
-
-              '
-        can_leave_group:
-          allOf:
-          - $ref: '#/components/schemas/GroupSettingValue'
-          - description: 'A [group-setting value][setting-values] defining the set of users who
-
-              have permission to leave this user group.
-
-
-              **Changes**: New in Zulip 10.0 (feature level 308).
-
-
-              Will be one of the following:
-
-
-              [setting-values]: /api/group-setting-values
-
-              '
-        can_manage_group:
-          allOf:
-          - $ref: '#/components/schemas/GroupSettingValue'
-          - description: 'A [group-setting value][setting-values] defining the set of users who
-
-              have permission to [manage this user group][manage-user-groups].
-
-
-              **Changes**: New in Zulip 10.0 (feature level 283).
-
-
-              Will be one of the following:
-
-
-              [setting-values]: /api/group-setting-values
-
-              [manage-user-groups]: /help/manage-user-groups
-
-              '
-        can_mention_group:
-          allOf:
-          - $ref: '#/components/schemas/GroupSettingValue'
-          - description: 'A [group-setting value][setting-values] defining the set of users who
-
-              have permission to [mention this user group][mentions].
-
-
-              **Changes**: Before Zulip 9.0 (feature level 258), this setting was
-
-              always the integer form of a [group-setting value][setting-values].
-
-
-              Before Zulip 8.0 (feature level 198), this setting was named
-
-              `can_mention_group_id`.
-
-
-              New in Zulip 8.0 (feature level 191). Previously, groups could be
-
-              mentioned only if they were not [system groups][system-groups].
-
-
-              Will be one of the following:
-
-
-              [setting-values]: /api/group-setting-values
-
-              [system-groups]: /api/group-setting-values#system-groups
-
-              [mentions]: /help/mention-a-user-or-group
-
-              '
-        can_remove_members_group:
-          allOf:
-          - $ref: '#/components/schemas/GroupSettingValue'
-          - description: 'A [group-setting value][setting-values] defining the set of users who
-
-              have permission to remove members from this user group.
-
-
-              **Changes**: New in Zulip 10.0 (feature level 324). Previously, this
-
-              permission was controlled by the `can_manage_group` setting.
-
-
-              Will be one of the following:
-
-
-              [setting-values]: /api/group-setting-values
-
-              '
-        deactivated:
-          type: boolean
-          description: 'Whether the user group is deactivated. Deactivated groups
-
-            cannot be used as a subgroup of another group or used for
-
-            any other purpose.
-
-
-            **Changes**: New in Zulip 10.0 (feature level 290).
-
-            '
-    CanMoveMessagesWithinChannelGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to move messages within this channel.
-
-
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to move messages within the channel.
-
-
-          Channel administrators and users present in the organization-level
-
-          `can_move_messages_between_topics_group` setting can always move messages
-
-          within the channel if they [have content access](/help/channel-permissions) to
-
-          the channel.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
-
-          change, only the users in `can_move_messages_between_topics_group` were able
-
-          move messages between topics of a channel.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    EventIdSchema:
-      type: integer
-      description: 'The ID of the event. Events appear in increasing order but may not be consecutive.
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
-    CanSendMessageGroup:
       allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to post in this channel.
-
-
-          Note that a user must have metadata access to a channel and permission
-
-          to administer the channel in order to modify this setting.
-
-
-          Note that using this permission to send a message to a new topic requires
-
-          also having permission to create new topics in the channel.
-
-
-          **Changes**: New in Zulip 10.0 (feature level 333). Previously
-
-          `stream_post_policy` field used to control the permission to
-
-          post in the channel.
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    IncompatibleParametersError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        description: '### Incompatible request parameters
 
 
-          [setting-values]: /api/group-setting-values
+          A typical failed JSON response for when two or more, optional
+
+          parameters are supplied that are incompatible with each other.
+
+
+          The value of `parameters` in the response is string containing
+
+          the parameters, separated by commas, that are incompatible.
 
           '
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          parameters:
+            type: string
+            description: 'A string containing the parameters, separated by commas,
+
+              that are incompatible.
+
+              '
+        example:
+          code: BAD_REQUEST
+          msg: 'Unsupported parameter combination: object_id, object_name'
+          result: error
+          parameters: object_id, object_name
+    RealmAuthenticationMethod:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: 'Boolean describing whether the authentication method (i.e. its key)
+
+            is enabled in this organization.
+
+            '
+        available:
+          type: boolean
+          description: 'Boolean describing whether the authentication method is available for use.
+
+            If false, the organization is not eligible to enable the authentication
+
+            method.
+
+            '
+        unavailable_reason:
+          type: string
+          description: 'Reason why the authentication method is unavailable. This field is optional
+
+            and is only present when ''available'' is false.
+
+            '
+      additionalProperties: false
+      description: 'Dictionary describing the properties of an authentication method for the
+
+        organization - its enabled status and availability for use by the
+
+        organization.
+
+        '
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    Event_types:
+      description: "A JSON-encoded array indicating which types of events you're interested\nin. Values that you might find useful include:\n\n- **message** (messages)\n- **subscription** (changes in your subscriptions)\n- **realm_user** (changes to users in the organization and\n  their properties, such as their name).\n\nIf you do not specify this parameter, you will receive all\nevents, and have to filter out the events not relevant to\nyour client in your client code. For most applications, one\nis only interested in messages, so one specifies:\n`\"event_types\": [\"message\"]`\n\nEvent types not supported by the server are ignored, in order to simplify\nthe implementation of client apps that support multiple server versions.\n"
+      type: array
+      items:
+        type: string
+      example:
+      - message
     IgnoredParametersUnsupported:
       type: array
       items:
@@ -19325,76 +19229,179 @@ components:
         for details on this and its change history.
 
         '
-    InvalidApiKeyError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: INVALID_API_KEY
-          msg: Invalid API key
-          result: error
-        description: '### Invalid API key
-
-
-          A typical failed JSON response for when the API key is invalid.
-
-          '
-    EmojiReaction:
-      allOf:
-      - $ref: '#/components/schemas/EmojiBase'
-      - additionalProperties: false
-        properties:
-          emoji_code: {}
-          emoji_name: {}
-          reaction_type: {}
-          user_id:
-            type: integer
-            description: 'The ID of the user who added the reaction.
-
-
-              **Changes**: New in Zulip 3.0 (feature level 2), which
-
-              deprecated the `user` object.
-
-              '
-    EventTypeSchema:
-      type: string
-      description: 'The event''s type, relevant both for client-side dispatch and server-side
-
-        filtering by event type in [POST /register](/api/register-queue).
-
-        '
-    CanCreateTopicGroup:
+    CanRemoveSubscribersGroup:
       allOf:
       - $ref: '#/components/schemas/GroupSettingValue'
       - description: 'A [group-setting value][setting-values] defining the set of users
 
-          who have permission to create a new topic in this channel.
+          who have permission to remove subscribers from this channel.
 
 
-          Note that using this permission requires also having permission to
+          Organization administrators can unsubscribe others from a channel as though
 
-          send messages in the channel.
-
-
-          Note that this must be the `role:everyone` [system group][system-groups]
-
-          for [private channels with protected history][private-channels].
+          they were in this group without being explicitly listed here.
 
 
-          **Changes**: New in Zulip 12.0 (feature level 441). Previously,
+          Note that a user must have metadata access to a channel and permission
 
-          if you could send messages in a channel, you could create topics in
+          to administer the channel in order to modify this setting.
 
-          the channel.
+
+          **Changes**: Prior to Zulip 10.0 (feature level 349), channel administrators
+
+          could not unsubscribe other users if they were not an organization
+
+          administrator or part of `can_remove_subscribers_group`. Realm administrators
+
+          were not allowed to unsubscribe other users from a private channel if they
+
+          were not subscribed to that channel.
+
+
+          Prior to Zulip 10.0 (feature level 320), this value was always the integer
+
+          ID of a system group.
+
+
+          Before Zulip 8.0 (feature level 197), the `can_remove_subscribers_group`
+
+          setting was named `can_remove_subscribers_group_id`.
+
+
+          New in Zulip 6.0 (feature level 142).
 
 
           [setting-values]: /api/group-setting-values
 
-          [private-channels]: /help/channel-permissions/#private-channels
+          '
+    CanSubscribeGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
 
-          [system-groups]: /api/group-setting-values#system-groups
+          who have permission to subscribe themselves to this channel.
+
+
+          Everyone, excluding guests, can subscribe to any public channel
+
+          irrespective of this setting.
+
+
+          Users in this group can subscribe to a private channel as well.
+
+
+          Note that a user must [have content access](/help/channel-permissions)
+
+          to a channel and permission to administer the channel in order to
+
+          modify this setting.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 357).
+
+
+          [setting-values]: /api/group-setting-values
 
           '
+    MissingArgumentError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        description: '### Missing request parameter
+
+
+          A typical failed JSON response for when a required request parameter
+
+          is not supplied.
+
+
+          The value of `var_name` contains information about the missing parameter.
+
+          '
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+          var_name:
+            type: string
+            description: 'It contains the information about the missing parameter.
+
+              '
+        example:
+          code: REQUEST_VARIABLE_MISSING
+          msg: Missing 'content' argument
+          result: error
+          var_name: content
+    GroupSettingValue:
+      oneOf:
+      - type: integer
+        description: 'The ID of the [user group](/help/user-groups) with this permission.
+
+          '
+      - type: object
+        additionalProperties: false
+        properties:
+          direct_members:
+            description: 'The list of IDs of individual users in the collection of users with this permission.
+
+
+              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+
+              deactivated users who had the permission before being deactivated.
+
+              '
+            type: array
+            items:
+              type: integer
+          direct_subgroups:
+            description: 'The list of IDs of the groups in the collection of users with this permission.
+
+              '
+            type: array
+            items:
+              type: integer
+        description: 'An object with these fields:
+
+          '
+    CanMoveMessagesOutOfChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to move messages out of this channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to move messages out of the channel.
+
+
+          Channel administrators and users present in the organization-level
+
+          `can_move_messages_between_channels_group` setting can always move messages
+
+          out of the channel if they [have content access](/help/channel-permissions) to
+
+          the channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+          change, only the users in `can_move_messages_between_channels_group` were able
+
+          move messages between channels.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+  responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
   parameters:
     QueueId:
       name: queue_id
@@ -19408,13 +19415,6 @@ components:
         type: string
       example: fb67bf8a-c031-47cc-84cf-ed80accacda8
       required: true
-  responses:
-    SimpleSuccess:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JsonSuccess'
   securitySchemes:
     BasicAuth:
       type: http

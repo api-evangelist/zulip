@@ -252,6 +252,35 @@ paths:
                     msg: Navigation view does not exist.
 components:
   schemas:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -281,11 +310,6 @@ components:
             description: 'A string that identifies the error.
 
               '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     IgnoredParametersUnsupported:
       type: array
       items:
@@ -300,14 +324,11 @@ components:
         for details on this and its change history.
 
         '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
     NavigationView:
       type: object
       description: 'Represents a user''s personal configuration for a specific
@@ -364,35 +385,14 @@ components:
 
             '
           example: Alert Words
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
+    CodedError:
       allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
         properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+          result: {}
+          msg: {}
+          code: {}
   responses:
     SimpleSuccess:
       description: Success.

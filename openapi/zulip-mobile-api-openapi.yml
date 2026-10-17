@@ -555,90 +555,19 @@ paths:
           $ref: '#/components/responses/SimpleSuccess'
 components:
   schemas:
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    FailedToConnectBouncerError:
+    InvalidPushDeviceTokenError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
       - example:
-          code: FAILED_TO_CONNECT_BOUNCER
-          msg: Network error while connecting to Zulip push notification service.
+          code: INVALID_PUSH_DEVICE_TOKEN
+          msg: Device not recognized
           result: error
-        description: '## Failed to connect bouncer
+        description: '## Invalid push device token
 
 
-          A typical failed JSON response for when a network error occurs
+          A typical failed JSON response for when the push device token is not
 
-          while the server attempts to connect to the bouncer server.
-
-          '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    NoActivePushDeviceError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: NO_ACTIVE_PUSH_DEVICE
-          msg: No active registered push device
-          result: error
-        description: '## No active push device
-
-
-          A typical failed JSON response for when no registered device is available
-
-          for the user (and `push_account_id`) to receive a push notification.
+          recognized by the Zulip server:
 
           '
     JsonSuccessBase:
@@ -670,6 +599,35 @@ components:
             type: string
           ignored_parameters_unsupported:
             $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
     PushNotificationAdminActionRequiredError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
@@ -687,6 +645,61 @@ components:
           an expired plan, or an unregistered organization. Admin action is required.
 
           '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    InternalBouncerServerError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: INTERNAL_SERVER_ERROR_ON_BOUNCER
+          msg: Internal server error on Zulip push notification service, retry later.
+          result: error
+        description: '## Internal bouncer server error
+
+
+          A typical failed JSON response for when a 5xx error occurs on the bouncer server.
+
+          '
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    FailedToConnectBouncerError:
+      allOf:
+      - $ref: '#/components/schemas/CodedError'
+      - example:
+          code: FAILED_TO_CONNECT_BOUNCER
+          msg: Network error while connecting to Zulip push notification service.
+          result: error
+        description: '## Failed to connect bouncer
+
+
+          A typical failed JSON response for when a network error occurs
+
+          while the server attempts to connect to the bouncer server.
+
+          '
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
     InvalidRemotePushDeviceTokenError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
@@ -702,32 +715,19 @@ components:
           by the push notification bouncer:
 
           '
-    InvalidPushDeviceTokenError:
+    NoActivePushDeviceError:
       allOf:
       - $ref: '#/components/schemas/CodedError'
       - example:
-          code: INVALID_PUSH_DEVICE_TOKEN
-          msg: Device not recognized
+          code: NO_ACTIVE_PUSH_DEVICE
+          msg: No active registered push device
           result: error
-        description: '## Invalid push device token
+        description: '## No active push device
 
 
-          A typical failed JSON response for when the push device token is not
+          A typical failed JSON response for when no registered device is available
 
-          recognized by the Zulip server:
-
-          '
-    InternalBouncerServerError:
-      allOf:
-      - $ref: '#/components/schemas/CodedError'
-      - example:
-          code: INTERNAL_SERVER_ERROR_ON_BOUNCER
-          msg: Internal server error on Zulip push notification service, retry later.
-          result: error
-        description: '## Internal bouncer server error
-
-
-          A typical failed JSON response for when a 5xx error occurs on the bouncer server.
+          for the user (and `push_account_id`) to receive a push notification.
 
           '
   responses:

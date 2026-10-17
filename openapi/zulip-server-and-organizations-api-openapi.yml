@@ -2939,75 +2939,49 @@ paths:
                       signup_url: /accounts/register/social/github
 components:
   schemas:
-    LegacyPresenceFormat:
-      type: object
-      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
 
-        presence.
+        parameters sent in the request are not supported by this
 
+        endpoint, a successful JSON response will include an
 
-        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
-
-        contain two keys, `"website"` and `"aggregated"`, with identical data. The
-
-        server no longer stores which client submitted presence updates.
+        [`ignored_parameters_unsupported`][ignored_params] array.
 
 
-        Previously, the `{client_name}` keys for these objects were the names of the
+        A typical successful JSON response may look like:
 
-        different clients where the user was logged in, for example `website` or
 
-        `ZulipDesktop`.
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
-      additionalProperties: false
-      properties:
-        client:
-          type: string
-          description: 'The client''s platform name.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
-
-            always be `"website"` as the server no longer stores which client
-
-            submitted presence data.
-
-            '
-        status:
-          type: string
-          enum:
-          - idle
-          - active
-          description: 'The status of the user on this client. Will be either `"idle"`
-
-            or `"active"`.
-
-            '
-        timestamp:
-          type: integer
-          description: 'The UNIX timestamp of when this client sent the user''s presence
-
-            to the server with the precision of a second.
-
-            '
-        pushable:
-          type: boolean
-          description: 'Whether the client is capable of showing mobile/push notifications
-
-            to the user.
-
-
-            Not present in objects with the `"aggregated"` key.
-
-
-            **Changes**: Starting with Zulip 7.0 (feature level 178), always
-
-            `false` when present as the server no longer stores which client
-
-            submitted presence data.
-
-            '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    IgnoredParametersBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
     JsonSuccess:
       allOf:
       - $ref: '#/components/schemas/JsonSuccessBase'
@@ -3019,11 +2993,6 @@ components:
         example:
           msg: ''
           result: success
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
     CodedErrorBase:
       allOf:
       - $ref: '#/components/schemas/JsonResponseBase'
@@ -3042,6 +3011,53 @@ components:
             description: 'A string that identifies the error.
 
               '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    EmailAddressVisibility:
+      type: integer
+      description: 'The [policy][permission-level] for [which other users][help-email-visibility]
+
+        in this organization can see the user''s real email address.
+
+
+        - 1 = Everyone
+
+        - 2 = Members only
+
+        - 3 = Administrators only
+
+        - 4 = Nobody
+
+        - 5 = Moderators only
+
+
+        **Changes**: New in Zulip 7.0 (feature level 163), replacing the
+
+        realm-level setting.
+
+
+        [permission-level]: /api/roles-and-permissions#permission-levels
+
+        [help-email-visibility]: /help/configure-email-visibility
+
+        '
     RealmExport:
       type: object
       additionalProperties: false
@@ -3123,28 +3139,23 @@ components:
           - full_with_consent
           - full_without_consent
           description: "Whether the data export is public, full with consent, or full without consent.\n\n- `public` = Public data export.\n- `full_with_consent` = Public and private data export (with consent), which includes private data\n  for users who have granted consent.\n- `full_without_consent` = All public and private data, which includes private data for all users.\n\n**Changes**: Zulip 12.0 (feature level 449) changed the type of\nthis field from int to string with `1` being replaced by `public` and\n`2` being replaced by `full_with_consent`. The option `full_without_consent`\nwas added for full exports without member consent.\n\n**Changes**: New in Zulip 10.0 (feature level 304). Previously,\nthe export type was not included in these objects because only\npublic data exports could be created or listed via the API or UI.\n"
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
+    RealmDomain:
+      type: object
+      additionalProperties: false
+      properties:
+        domain:
+          type: string
+          description: 'The allowed domain.
 
-        supported by the endpoint.
+            '
+        allow_subdomains:
+          type: boolean
+          description: 'Whether subdomains are allowed for this domain.
 
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
+            '
+      required:
+      - domain
+      - allow_subdomains
     LinkifierPattern:
       description: 'The [Python regular
 
@@ -3155,34 +3166,6 @@ components:
         '
       type: string
       example: '#(?P<id>[0-9]+)'
-    EmailAddressVisibility:
-      type: integer
-      description: 'The [policy][permission-level] for [which other users][help-email-visibility]
-
-        in this organization can see the user''s real email address.
-
-
-        - 1 = Everyone
-
-        - 2 = Members only
-
-        - 3 = Administrators only
-
-        - 4 = Nobody
-
-        - 5 = Moderators only
-
-
-        **Changes**: New in Zulip 7.0 (feature level 163), replacing the
-
-        realm-level setting.
-
-
-        [permission-level]: /api/roles-and-permissions#permission-levels
-
-        [help-email-visibility]: /help/configure-email-visibility
-
-        '
     LinkifierURLTemplate:
       description: 'The [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570.html)
 
@@ -3202,66 +3185,56 @@ components:
         '
       type: string
       example: https://github.com/zulip/zulip/issues/{id}
-    IgnoredParametersBase:
+    IgnoredParametersSuccess:
       allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
+      - $ref: '#/components/schemas/IgnoredParametersBase'
+      - additionalProperties: false
         properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
 
-        parameters sent in the request are not supported by this
+        array was added as a possible return value for all REST API endpoint
 
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
+        JSON success responses in Zulip 7.0 (feature level 167).
 
 
-        A typical successful JSON response may look like:
+        Previously, it was added to
+
+        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
+
+        in Zulip 5.0 (feature level 111) and to
+
+        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
+
+        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
+
+        (feature level 78) as a return value for the
+
+        [`PATCH /settings`](/api/update-settings) endpoint.
+
+
+        A typical successful JSON response with ignored parameters may look like:
 
 
         [ignored_params]: /api/rest-error-handling#ignored-parameters
 
         '
+      example:
+        ignored_parameters_unsupported:
+        - invalid_param_1
+        - invalid_param_2
+        msg: ''
+        result: success
+    CodedError:
       allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
         properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    RealmDomain:
-      type: object
-      additionalProperties: false
-      properties:
-        domain:
-          type: string
-          description: 'The allowed domain.
-
-            '
-        allow_subdomains:
-          type: boolean
-          description: 'Whether subdomains are allowed for this domain.
-
-            '
-      required:
-      - domain
-      - allow_subdomains
+          result: {}
+          msg: {}
+          code: {}
     CustomProfileField:
       type: object
       additionalProperties: false
@@ -3423,6 +3396,75 @@ components:
       - hint
       - required
       - editable_by_user
+    LegacyPresenceFormat:
+      type: object
+      description: '`{client_name}` or `"aggregated"`: Object containing the details of the user''s
+
+        presence.
+
+
+        **Changes**: Starting with Zulip 7.0 (feature level 178), this will always
+
+        contain two keys, `"website"` and `"aggregated"`, with identical data. The
+
+        server no longer stores which client submitted presence updates.
+
+
+        Previously, the `{client_name}` keys for these objects were the names of the
+
+        different clients where the user was logged in, for example `website` or
+
+        `ZulipDesktop`.
+
+        '
+      additionalProperties: false
+      properties:
+        client:
+          type: string
+          description: 'The client''s platform name.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), this will
+
+            always be `"website"` as the server no longer stores which client
+
+            submitted presence data.
+
+            '
+        status:
+          type: string
+          enum:
+          - idle
+          - active
+          description: 'The status of the user on this client. Will be either `"idle"`
+
+            or `"active"`.
+
+            '
+        timestamp:
+          type: integer
+          description: 'The UNIX timestamp of when this client sent the user''s presence
+
+            to the server with the precision of a second.
+
+            '
+        pushable:
+          type: boolean
+          description: 'Whether the client is capable of showing mobile/push notifications
+
+            to the user.
+
+
+            Not present in objects with the `"aggregated"` key.
+
+
+            **Changes**: Starting with Zulip 7.0 (feature level 178), always
+
+            `false` when present as the server no longer stores which client
+
+            submitted presence data.
+
+            '
     RealmEmoji:
       type: object
       additionalProperties: false
@@ -3498,49 +3540,13 @@ components:
             was accessible via an `author` object with an `id` field.
 
             '
-    IgnoredParametersSuccess:
-      allOf:
-      - $ref: '#/components/schemas/IgnoredParametersBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-      description: '**Changes**: The [`ignored_parameters_unsupported`][ignored_params]
-
-        array was added as a possible return value for all REST API endpoint
-
-        JSON success responses in Zulip 7.0 (feature level 167).
-
-
-        Previously, it was added to
-
-        [`POST /users/me/subscriptions/properties`](/api/update-subscription-settings)
-
-        in Zulip 5.0 (feature level 111) and to
-
-        [`PATCH /realm/user_settings_defaults`](/api/update-realm-user-settings-defaults)
-
-        in Zulip 5.0 (feature level 96). The feature was introduced in Zulip 5.0
-
-        (feature level 78) as a return value for the
-
-        [`PATCH /settings`](/api/update-settings) endpoint.
-
-
-        A typical successful JSON response with ignored parameters may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      example:
-        ignored_parameters_unsupported:
-        - invalid_param_1
-        - invalid_param_2
-        msg: ''
-        result: success
   responses:
+    SimpleSuccess:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JsonSuccess'
     SuccessIgnoredParameters:
       description: Success.
       content:
@@ -3548,12 +3554,6 @@ components:
           schema:
             allOf:
             - $ref: '#/components/schemas/IgnoredParametersSuccess'
-    SimpleSuccess:
-      description: Success.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JsonSuccess'
   securitySchemes:
     BasicAuth:
       type: http

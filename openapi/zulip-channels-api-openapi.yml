@@ -3743,34 +3743,344 @@ paths:
                     result: success
                     url: https://example.constructor.app/groups/room/room-123
 components:
-  schemas:
-    FolderId:
-      type:
-      - integer
-      - 'null'
-      description: 'The ID of the folder to which the channel belongs.
-
-
-        Is `null` if channel does not belong to any folder.
-
-
-        **Changes**: New in Zulip 11.0 (feature level 389).
+  parameters:
+    ChannelFolderId:
+      name: channel_folder_id
+      in: path
+      description: 'The ID of the target channel folder.
 
         '
-    SubscriptionProperty:
+      schema:
+        type: integer
+      example: 1
+      required: true
+    IncludeSubscribers:
+      name: include_subscribers
+      in: query
+      description: 'Whether each returned channel object should include a `subscribers`
+
+        field containing a list of the user IDs of its subscribers.
+
+
+        Client apps supporting organizations with many thousands of users
+
+        should not pass `true`, because the full subscriber matrix may be
+
+        several megabytes of data. The `partial` value, combined with the
+
+        `subscriber_count` and fetching subscribers for individual channels as
+
+        needed, is recommended to support client app features where
+
+        channel subscriber data is useful.
+
+
+        If a client passes `partial` for this parameter, the server may,
+
+        for some channels, return a subset of the channel''s subscribers
+
+        in the `partial_subscribers` field instead of the `subscribers` field,
+
+        which always contains the complete set of subscribers.
+
+
+        The server guarantees that it will always return a `subscribers`
+
+        field for channels with fewer than 250 total subscribers. When
+
+        returning a `partial_subscribers` field, the server guarantees
+
+        that all bot users and users active within the last 14 days will
+
+        be included. For other cases, the server may use its discretion
+
+        to determine which channels and users to include, balancing between
+
+        payload size and usefulness of the data provided to the client.
+
+
+        **Changes**: The `partial` value is new in Zulip 11.0 (feature level 412).
+
+
+        New in Zulip 2.1.0.
+
+        '
+      schema:
+        type: string
+        enum:
+        - 'true'
+        - 'false'
+        - partial
+        default: 'false'
+      example: 'true'
+    ChannelIdInPath:
+      name: stream_id
+      in: path
+      description: 'The ID of the channel to access.
+
+        '
+      schema:
+        type: integer
+      example: 1
+      required: true
+    UserId:
+      name: user_id
+      in: path
+      description: 'The target user''s ID.
+
+        '
+      schema:
+        type: integer
+      example: 12
+      required: true
+  schemas:
+    TopicsPolicy:
       type: string
       enum:
-      - color
-      - is_muted
-      - in_home_view
-      - pin_to_top
-      - desktop_notifications
-      - audible_notifications
-      - push_notifications
-      - email_notifications
-      - wildcard_mentions_notify
-      description: "One of the channel properties described below:\n\n- `\"color\"`: The hex value of the user's display color for the channel.\n\n- `\"is_muted\"`: Whether the channel is [muted](/help/mute-a-channel).<br>\n  **Changes**: As of Zulip 6.0 (feature level 139), updating either\n  `\"is_muted\"` or `\"in_home_view\"` generates two [subscription update\n  events](/api/get-events#subscription-update), one for each property,\n  that are sent to clients. Prior to this feature level, updating either\n  property only generated a subscription update event for\n  `\"in_home_view\"`. <br>\n  Prior to Zulip 2.1.0, this feature was represented\n  by the more confusingly named `\"in_home_view\"` (with the\n  opposite value: `in_home_view=!is_muted`); for\n  backwards-compatibility, modern Zulip still accepts that property.\n\n- `\"pin_to_top\"`: Whether to pin the channel at the top of the channel list.\n\n- `\"desktop_notifications\"`: Whether to show desktop notifications\n  for all messages sent to the channel.\n\n- `\"audible_notifications\"`: Whether to play a sound\n  notification for all messages sent to the channel.\n\n- `\"push_notifications\"`: Whether to trigger a mobile push\n  notification for all messages sent to the channel.\n\n- `\"email_notifications\"`: Whether to trigger an email\n  notification for all messages sent to the channel.\n\n- `\"wildcard_mentions_notify\"`: Whether wildcard mentions trigger\n  notifications as though they were personal mentions in this channel.\n"
-      example: pin_to_top
+      - inherit
+      - allow_empty_topic
+      - disable_empty_topic
+      - empty_topic_only
+      example: inherit
+      description: "Whether [named topics](/help/introduction-to-topics) and the empty\ntopic (i.e., [\"general chat\" topic](/help/general-chat-topic))\nare enabled in this channel.\n\n- `\"inherit\"`: Messages can be sent to named topics in this channel,\n  and the [organization-level `realm_topics_policy`][realm-topics-policy]\n  is used for whether messages can be sent to the empty topic in this\n  channel.\n- `\"allow_empty_topic\"`: Messages can be sent to both named topics and\n  the empty topic in this channel.\n- `\"disable_empty_topic\"`: Messages can be sent to named topics in this\n  channel, but the empty topic is disabled.\n- `\"empty_topic_only\"`: Messages can be sent to the empty topic in this\n  channel, but named topics are disabled. See [\"general chat\"\n  channels](/help/general-chat-channels).\n\nThe `\"empty_topic_only\"` policy can only be set if all existing messages\nin the channel are already in the empty topic.\n\nWhen creating a new channel, if the `topics_policy` is not specified, the\n`\"inherit\"` option will be set.\n\n**Changes**: In Zulip 11.0 (feature level 404), the `\"empty_topic_only\"`\noption was added.\n\nNew in Zulip 11.0 (feature level 392).\n\n[realm-topics-policy]: /help/require-topics#set-the-default-general-chat-topic-configuration\n"
+    ChannelCanAddSubscribersGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to add subscribers to this channel.
+
+
+          Users who can administer the channel or have similar realm-level
+
+          permissions can add subscribers to a public channel regardless
+
+          of the value of this setting.
+
+
+          Users in this group need not be subscribed to a private channel to
+
+          add subscribers to it.
+
+
+          Note that a user must [have content access](/help/channel-permissions)
+
+          to a channel and permission to administer the channel in order to
+
+          modify this setting.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 342). Previously, there was no
+
+          channel-level setting for this permission.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CanMoveMessagesWithinChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to move messages within this channel.
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to move messages within the channel.
+
+
+          Channel administrators and users present in the organization-level
+
+          `can_move_messages_between_topics_group` setting can always move messages
+
+          within the channel if they [have content access](/help/channel-permissions) to
+
+          the channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+          change, only the users in `can_move_messages_between_topics_group` were able
+
+          move messages between topics of a channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    CanDeleteOwnMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to delete the messages that they have sent in the channel.
+
+
+          [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+
+
+          Note that a user must [have content access](/help/channel-permissions) to a
+
+          channel in order to delete their own message in the channel.
+
+
+          Users with permission to delete any message in the channel
+
+          and users present in the organization-level `can_delete_own_message_group` setting
+
+          can always delete their own messages in the channel if they
+
+          [have content access](/help/channel-permissions) to that channel.
+
+
+          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
+
+          change, only the users in the organization-level `can_delete_any_message_group`
+
+          and `can_delete_own_message_group` settings were able delete their own messages in
+
+          the organization.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    HistoryPublicToSubscribers:
+      description: 'Whether the channel''s message history should be available to
+
+        newly subscribed members, or users can only access messages
+
+        they actually received while subscribed to the channel.
+
+
+        Corresponds to the shared history option for
+
+        [private channels](/help/channel-permissions#private-channels).
+
+        '
+      type: boolean
+      example: false
+    CodedError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+    SubscriptionPropertyValue:
+      oneOf:
+      - type: boolean
+        description: 'The new boolean value for the specified property.
+
+          '
+      - type: string
+        description: 'The hex value of the user''s display color for the channel.
+
+          '
+      description: 'The new value of the property being modified.
+
+
+        If the property is `"color"`, then `value` is a string
+
+        representing the hex value of the user''s display
+
+        color for the channel. For all other above properties,
+
+        `value` is a boolean.
+
+        '
+      example: 'true'
+    CanCreateTopicGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to create a new topic in this channel.
+
+
+          Note that using this permission requires also having permission to
+
+          send messages in the channel.
+
+
+          Note that this must be the `role:everyone` [system group][system-groups]
+
+          for [private channels with protected history][private-channels].
+
+
+          **Changes**: New in Zulip 12.0 (feature level 441). Previously,
+
+          if you could send messages in a channel, you could create topics in
+
+          the channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          [private-channels]: /help/channel-permissions/#private-channels
+
+          [system-groups]: /api/group-setting-values#system-groups
+
+          '
+    CanSendMessageGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to post in this channel.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          Note that using this permission to send a message to a new topic requires
+
+          also having permission to create new topics in the channel.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 333). Previously
+
+          `stream_post_policy` field used to control the permission to
+
+          post in the channel.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    InvalidChannelError:
+      allOf:
+      - $ref: '#/components/schemas/CodedErrorBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          code: {}
+        example:
+          msg: Invalid channel ID
+          code: BAD_REQUEST
+          result: error
     SendNewSubscriptionMessages:
       description: 'Whether any other users newly subscribed via this request should be
 
@@ -3803,129 +4113,137 @@ components:
       type: boolean
       default: true
       example: true
-    IgnoredParametersBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
-    BasicChannel:
-      allOf:
-      - $ref: '#/components/schemas/BasicChannelBase'
-      - additionalProperties: false
-        properties:
-          stream_id: {}
-          name: {}
-          is_archived: {}
-          description: {}
-          date_created: {}
-          creator_id: {}
-          invite_only: {}
-          rendered_description: {}
-          is_web_public: {}
-          stream_post_policy: {}
-          message_retention_days: {}
-          history_public_to_subscribers: {}
-          topics_policy: {}
-          first_message_id: {}
-          folder_id: {}
-          is_recently_active: {}
-          is_announcement_only: {}
-          can_add_subscribers_group: {}
-          can_remove_subscribers_group: {}
-          can_administer_channel_group: {}
-          can_delete_any_message_group: {}
-          can_delete_own_message_group: {}
-          can_move_messages_out_of_channel_group: {}
-          can_move_messages_within_channel_group: {}
-          can_send_message_group: {}
-          can_subscribe_group: {}
-          can_resolve_topics_group: {}
-          can_create_topic_group: {}
-          subscriber_count: {}
-          stream_weekly_traffic:
-            type:
-            - integer
-            - 'null'
-            description: 'The average number of messages sent to the channel per week, as
+    MessageRetentionDays:
+      description: 'Number of days that messages sent to this channel will be stored
 
-              estimated based on recent weeks, rounded to the nearest integer.
+        before being automatically deleted by the [message retention
+
+        policy](/help/message-retention-policy). Two special string format
+
+        values are supported:
 
 
-              If `null`, no information is provided on the average traffic.
+        - `"realm_default"`: Return to the organization-level setting.
 
-              This can be because the channel was recently created and there
-
-              is insufficient data to make an estimate, or because the server
-
-              wishes to omit this information for this client, this realm, or
-
-              this endpoint or type of event.
+        - `"unlimited"`: Retain messages forever.
 
 
-              **Changes**: New in Zulip 8.0 (feature level 199). Previously, this
+        **Changes**: Prior to Zulip 5.0 (feature level 91), retaining
 
-              statistic was available only in subscription objects.
+        messages forever was encoded using `"forever"` instead of
 
-              '
-        required:
-        - stream_id
-        - name
-        - is_archived
-        - description
-        - date_created
-        - creator_id
-        - invite_only
-        - rendered_description
-        - is_web_public
-        - stream_post_policy
-        - subscriber_count
-        - message_retention_days
-        - history_public_to_subscribers
-        - first_message_id
-        - folder_id
-        - is_recently_active
-        - is_announcement_only
-        - can_remove_subscribers_group
-        - stream_weekly_traffic
-        - can_subscribe_group
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
+        `"unlimited"`.
 
 
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
+        New in Zulip 3.0 (feature level 17).
 
         '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+      oneOf:
+      - type: string
+      - type: integer
+      example: '20'
+    ChannelFolder:
+      type: object
+      additionalProperties: false
+      description: 'Object containing the channel folder''s attributes.
+
+        '
+      properties:
+        id:
+          type: integer
+          description: 'The unique ID of the channel folder.
+
+            '
+        name:
+          type: string
+          description: 'The name of the channel folder.
+
+            '
+        order:
+          type: integer
+          description: 'This value determines in which order the channel folder should be
+
+            displayed in the UI. The value is 0 indexed, and a channel folder with
+
+            a lower value should be displayed before channel folders with higher
+
+            values.
+
+
+            **Changes**: New in Zulip 11.0 (feature level 414).
+
+            '
+        date_created:
+          type:
+          - integer
+          - 'null'
+          description: 'The UNIX timestamp for when the channel folder was created,
+
+            in UTC seconds.
+
+            '
+        creator_id:
+          type:
+          - integer
+          - 'null'
+          description: 'The ID of the user who created the channel folder.
+
+            '
+        description:
+          type: string
+          description: 'The description of the channel folder. Can be an empty string.
+
+
+            See [Markdown message formatting](/api/message-formatting) for details
+
+            on Zulip''s HTML format.
+
+            '
+        rendered_description:
+          type: string
+          description: 'The description of the channel folder rendered as HTML, intended to be
+
+            used for UI that displays the channel folder description.
+
+
+            Clients should use the standard Zulip rendered_markdown CSS when
+
+            displaying this content so that emoji, LaTeX, and other syntax work
+
+            correctly. And any client-side security logic for user-generated
+
+            message content should be applied when displaying this HTML as though
+
+            it were the body of a Zulip message.
+
+            '
+        is_archived:
+          type: boolean
+          description: 'Whether the channel folder is archived or not.
+
+            '
+    GroupSettingValueUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        new:
+          allOf:
+          - description: 'The new [group-setting value](/api/group-setting-values) for who would
+
+              have this permission.
+
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+        old:
+          allOf:
+          - description: 'The expected current [group-setting value](/api/group-setting-values)
+
+              for who has this permission.
+
+              '
+          - $ref: '#/components/schemas/GroupSettingValue'
+      required:
+      - new
     IgnoredParametersSuccess:
       allOf:
       - $ref: '#/components/schemas/IgnoredParametersBase'
@@ -3968,65 +4286,6 @@ components:
         - invalid_param_2
         msg: ''
         result: success
-    CanResolveTopicsGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to resolve topics in the channel.
-
-
-          Users who have similar realm-level permissions can resolve topics
-
-          in a channel regardless of the value of this setting.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 402).
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    InvalidChannelError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-        example:
-          msg: Invalid channel ID
-          code: BAD_REQUEST
-          result: error
-    SubscriptionPropertyValue:
-      oneOf:
-      - type: boolean
-        description: 'The new boolean value for the specified property.
-
-          '
-      - type: string
-        description: 'The hex value of the user''s display color for the channel.
-
-          '
-      description: 'The new value of the property being modified.
-
-
-        If the property is `"color"`, then `value` is a string
-
-        representing the hex value of the user''s display
-
-        color for the channel. For all other above properties,
-
-        `value` is a boolean.
-
-        '
-      example: 'true'
     Subscription:
       type: object
       additionalProperties: false
@@ -4480,148 +4739,119 @@ components:
             **Changes**: New in Zulip 11.0 (feature level 394).
 
             '
-    ChannelCanAddSubscribersGroup:
+    IgnoredParametersBase:
       allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to add subscribers to this channel.
-
-
-          Users who can administer the channel or have similar realm-level
-
-          permissions can add subscribers to a public channel regardless
-
-          of the value of this setting.
-
-
-          Users in this group need not be subscribed to a private channel to
-
-          add subscribers to it.
-
-
-          Note that a user must [have content access](/help/channel-permissions)
-
-          to a channel and permission to administer the channel in order to
-
-          modify this setting.
-
-
-          **Changes**: New in Zulip 10.0 (feature level 342). Previously, there was no
-
-          channel-level setting for this permission.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    GroupSettingValue:
-      oneOf:
-      - type: integer
-        description: 'The ID of the [user group](/help/user-groups) with this permission.
-
-          '
-      - type: object
-        additionalProperties: false
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
         properties:
-          direct_members:
-            description: 'The list of IDs of individual users in the collection of users with this permission.
-
-
-              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
-
-              deactivated users who had the permission before being deactivated.
-
-              '
-            type: array
-            items:
-              type: integer
-          direct_subgroups:
-            description: 'The list of IDs of the groups in the collection of users with this permission.
-
-              '
-            type: array
-            items:
-              type: integer
-        description: 'An object with these fields:
-
-          '
-    CanDeleteOwnMessageGroup:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    CanResolveTopicsGroup:
       allOf:
       - $ref: '#/components/schemas/GroupSettingValue'
       - description: 'A [group-setting value][setting-values] defining the set of users
 
-          who have permission to delete the messages that they have sent in the channel.
+          who have permission to resolve topics in the channel.
 
 
-          [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+          Users who have similar realm-level permissions can resolve topics
+
+          in a channel regardless of the value of this setting.
 
 
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to delete their own message in the channel.
-
-
-          Users with permission to delete any message in the channel
-
-          and users present in the organization-level `can_delete_own_message_group` setting
-
-          can always delete their own messages in the channel if they
-
-          [have content access](/help/channel-permissions) to that channel.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 407). Prior to this
-
-          change, only the users in the organization-level `can_delete_any_message_group`
-
-          and `can_delete_own_message_group` settings were able delete their own messages in
-
-          the organization.
+          **Changes**: New in Zulip 11.0 (feature level 402).
 
 
           [setting-values]: /api/group-setting-values
 
           '
-    CanAdministerChannelGroup:
+    BasicChannel:
       allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
+      - $ref: '#/components/schemas/BasicChannelBase'
+      - additionalProperties: false
+        properties:
+          stream_id: {}
+          name: {}
+          is_archived: {}
+          description: {}
+          date_created: {}
+          creator_id: {}
+          invite_only: {}
+          rendered_description: {}
+          is_web_public: {}
+          stream_post_policy: {}
+          message_retention_days: {}
+          history_public_to_subscribers: {}
+          topics_policy: {}
+          first_message_id: {}
+          folder_id: {}
+          is_recently_active: {}
+          is_announcement_only: {}
+          can_add_subscribers_group: {}
+          can_remove_subscribers_group: {}
+          can_administer_channel_group: {}
+          can_delete_any_message_group: {}
+          can_delete_own_message_group: {}
+          can_move_messages_out_of_channel_group: {}
+          can_move_messages_within_channel_group: {}
+          can_send_message_group: {}
+          can_subscribe_group: {}
+          can_resolve_topics_group: {}
+          can_create_topic_group: {}
+          subscriber_count: {}
+          stream_weekly_traffic:
+            type:
+            - integer
+            - 'null'
+            description: 'The average number of messages sent to the channel per week, as
 
-          who have permission to administer this channel.
+              estimated based on recent weeks, rounded to the nearest integer.
 
 
-          Organization administrators can administer every channel as though they were
+              If `null`, no information is provided on the average traffic.
 
-          in this group without being explicitly listed here.
+              This can be because the channel was recently created and there
 
+              is insufficient data to make an estimate, or because the server
 
-          Note that a user must have metadata access to a channel and permission
+              wishes to omit this information for this client, this realm, or
 
-          to administer the channel in order to modify this setting.
-
-
-          **Changes**: Prior to Zulip 10.0 (feature level 349) a user needed to
-
-          [have content access](/help/channel-permissions) to a channel in
-
-          order to modify it. The exception to this rule was that organization
-
-          administrators can edit channel names and descriptions without
-
-          having full access to the channel.
+              this endpoint or type of event.
 
 
-          New in Zulip 10.0 (feature level 325). Prior to this
+              **Changes**: New in Zulip 8.0 (feature level 199). Previously, this
 
-          change, the permission to administer channels was limited to realm
+              statistic was available only in subscription objects.
 
-          administrators.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
+              '
+        required:
+        - stream_id
+        - name
+        - is_archived
+        - description
+        - date_created
+        - creator_id
+        - invite_only
+        - rendered_description
+        - is_web_public
+        - stream_post_policy
+        - subscriber_count
+        - message_retention_days
+        - history_public_to_subscribers
+        - first_message_id
+        - folder_id
+        - is_recently_active
+        - is_announcement_only
+        - can_remove_subscribers_group
+        - stream_weekly_traffic
+        - can_subscribe_group
     CanDeleteAnyMessageGroup:
       allOf:
       - $ref: '#/components/schemas/GroupSettingValue'
@@ -4652,311 +4882,6 @@ components:
           [setting-values]: /api/group-setting-values
 
           '
-    CanSubscribeGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to subscribe themselves to this channel.
-
-
-          Everyone, excluding guests, can subscribe to any public channel
-
-          irrespective of this setting.
-
-
-          Users in this group can subscribe to a private channel as well.
-
-
-          Note that a user must [have content access](/help/channel-permissions)
-
-          to a channel and permission to administer the channel in order to
-
-          modify this setting.
-
-
-          **Changes**: New in Zulip 10.0 (feature level 357).
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    GroupSettingValueUpdate:
-      type: object
-      additionalProperties: false
-      properties:
-        new:
-          allOf:
-          - description: 'The new [group-setting value](/api/group-setting-values) for who would
-
-              have this permission.
-
-              '
-          - $ref: '#/components/schemas/GroupSettingValue'
-        old:
-          allOf:
-          - description: 'The expected current [group-setting value](/api/group-setting-values)
-
-              for who has this permission.
-
-              '
-          - $ref: '#/components/schemas/GroupSettingValue'
-      required:
-      - new
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
-    MessageRetentionDays:
-      description: 'Number of days that messages sent to this channel will be stored
-
-        before being automatically deleted by the [message retention
-
-        policy](/help/message-retention-policy). Two special string format
-
-        values are supported:
-
-
-        - `"realm_default"`: Return to the organization-level setting.
-
-        - `"unlimited"`: Retain messages forever.
-
-
-        **Changes**: Prior to Zulip 5.0 (feature level 91), retaining
-
-        messages forever was encoded using `"forever"` instead of
-
-        `"unlimited"`.
-
-
-        New in Zulip 3.0 (feature level 17).
-
-        '
-      oneOf:
-      - type: string
-      - type: integer
-      example: '20'
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
-    CanRemoveSubscribersGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to remove subscribers from this channel.
-
-
-          Organization administrators can unsubscribe others from a channel as though
-
-          they were in this group without being explicitly listed here.
-
-
-          Note that a user must have metadata access to a channel and permission
-
-          to administer the channel in order to modify this setting.
-
-
-          **Changes**: Prior to Zulip 10.0 (feature level 349), channel administrators
-
-          could not unsubscribe other users if they were not an organization
-
-          administrator or part of `can_remove_subscribers_group`. Realm administrators
-
-          were not allowed to unsubscribe other users from a private channel if they
-
-          were not subscribed to that channel.
-
-
-          Prior to Zulip 10.0 (feature level 320), this value was always the integer
-
-          ID of a system group.
-
-
-          Before Zulip 8.0 (feature level 197), the `can_remove_subscribers_group`
-
-          setting was named `can_remove_subscribers_group_id`.
-
-
-          New in Zulip 6.0 (feature level 142).
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    CanMoveMessagesOutOfChannelGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to move messages out of this channel.
-
-
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to move messages out of the channel.
-
-
-          Channel administrators and users present in the organization-level
-
-          `can_move_messages_between_channels_group` setting can always move messages
-
-          out of the channel if they [have content access](/help/channel-permissions) to
-
-          the channel.
-
-
-          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
-
-          change, only the users in `can_move_messages_between_channels_group` were able
-
-          move messages between channels.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    ChannelFolder:
-      type: object
-      additionalProperties: false
-      description: 'Object containing the channel folder''s attributes.
-
-        '
-      properties:
-        id:
-          type: integer
-          description: 'The unique ID of the channel folder.
-
-            '
-        name:
-          type: string
-          description: 'The name of the channel folder.
-
-            '
-        order:
-          type: integer
-          description: 'This value determines in which order the channel folder should be
-
-            displayed in the UI. The value is 0 indexed, and a channel folder with
-
-            a lower value should be displayed before channel folders with higher
-
-            values.
-
-
-            **Changes**: New in Zulip 11.0 (feature level 414).
-
-            '
-        date_created:
-          type:
-          - integer
-          - 'null'
-          description: 'The UNIX timestamp for when the channel folder was created,
-
-            in UTC seconds.
-
-            '
-        creator_id:
-          type:
-          - integer
-          - 'null'
-          description: 'The ID of the user who created the channel folder.
-
-            '
-        description:
-          type: string
-          description: 'The description of the channel folder. Can be an empty string.
-
-
-            See [Markdown message formatting](/api/message-formatting) for details
-
-            on Zulip''s HTML format.
-
-            '
-        rendered_description:
-          type: string
-          description: 'The description of the channel folder rendered as HTML, intended to be
-
-            used for UI that displays the channel folder description.
-
-
-            Clients should use the standard Zulip rendered_markdown CSS when
-
-            displaying this content so that emoji, LaTeX, and other syntax work
-
-            correctly. And any client-side security logic for user-generated
-
-            message content should be applied when displaying this HTML as though
-
-            it were the body of a Zulip message.
-
-            '
-        is_archived:
-          type: boolean
-          description: 'Whether the channel folder is archived or not.
-
-            '
-    TopicsPolicy:
-      type: string
-      enum:
-      - inherit
-      - allow_empty_topic
-      - disable_empty_topic
-      - empty_topic_only
-      example: inherit
-      description: "Whether [named topics](/help/introduction-to-topics) and the empty\ntopic (i.e., [\"general chat\" topic](/help/general-chat-topic))\nare enabled in this channel.\n\n- `\"inherit\"`: Messages can be sent to named topics in this channel,\n  and the [organization-level `realm_topics_policy`][realm-topics-policy]\n  is used for whether messages can be sent to the empty topic in this\n  channel.\n- `\"allow_empty_topic\"`: Messages can be sent to both named topics and\n  the empty topic in this channel.\n- `\"disable_empty_topic\"`: Messages can be sent to named topics in this\n  channel, but the empty topic is disabled.\n- `\"empty_topic_only\"`: Messages can be sent to the empty topic in this\n  channel, but named topics are disabled. See [\"general chat\"\n  channels](/help/general-chat-channels).\n\nThe `\"empty_topic_only\"` policy can only be set if all existing messages\nin the channel are already in the empty topic.\n\nWhen creating a new channel, if the `topics_policy` is not specified, the\n`\"inherit\"` option will be set.\n\n**Changes**: In Zulip 11.0 (feature level 404), the `\"empty_topic_only\"`\noption was added.\n\nNew in Zulip 11.0 (feature level 392).\n\n[realm-topics-policy]: /help/require-topics#set-the-default-general-chat-topic-configuration\n"
-    Principals:
-      description: 'A list of user IDs (preferred) or Zulip API email
-
-        addresses of the users to be subscribed to or unsubscribed
-
-        from the channels specified in the `subscriptions` parameter. If
-
-        not provided, then the requesting user/bot is subscribed.
-
-
-        **Changes**: The integer format is new in Zulip 3.0 (feature level 9).
-
-        '
-      oneOf:
-      - type: array
-        items:
-          type: string
-      - type: array
-        items:
-          type: integer
-      example:
-      - ZOE@zulip.com
-    JsonSuccess:
-      allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
     BasicChannelBase:
       type: object
       description: 'Object containing basic details about the channel.
@@ -5227,95 +5152,19 @@ components:
             **Changes**: New in Zulip 11.0 (feature level 394).
 
             '
-    CanMoveMessagesWithinChannelGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to move messages within this channel.
-
-
-          Note that a user must [have content access](/help/channel-permissions) to a
-
-          channel in order to move messages within the channel.
+    FolderId:
+      type:
+      - integer
+      - 'null'
+      description: 'The ID of the folder to which the channel belongs.
 
 
-          Channel administrators and users present in the organization-level
-
-          `can_move_messages_between_topics_group` setting can always move messages
-
-          within the channel if they [have content access](/help/channel-permissions) to
-
-          the channel.
+        Is `null` if channel does not belong to any folder.
 
 
-          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
-
-          change, only the users in `can_move_messages_between_topics_group` were able
-
-          move messages between topics of a channel.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    CanSendMessageGroup:
-      allOf:
-      - $ref: '#/components/schemas/GroupSettingValue'
-      - description: 'A [group-setting value][setting-values] defining the set of users
-
-          who have permission to post in this channel.
-
-
-          Note that a user must have metadata access to a channel and permission
-
-          to administer the channel in order to modify this setting.
-
-
-          Note that using this permission to send a message to a new topic requires
-
-          also having permission to create new topics in the channel.
-
-
-          **Changes**: New in Zulip 10.0 (feature level 333). Previously
-
-          `stream_post_policy` field used to control the permission to
-
-          post in the channel.
-
-
-          [setting-values]: /api/group-setting-values
-
-          '
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
+        **Changes**: New in Zulip 11.0 (feature level 389).
 
         '
-    HistoryPublicToSubscribers:
-      description: 'Whether the channel''s message history should be available to
-
-        newly subscribed members, or users can only access messages
-
-        they actually received while subscribed to the channel.
-
-
-        Corresponds to the shared history option for
-
-        [private channels](/help/channel-permissions#private-channels).
-
-        '
-      type: boolean
-      example: false
     NonExistingChannelNameError:
       allOf:
       - $ref: '#/components/schemas/CodedErrorBase'
@@ -5334,128 +5183,279 @@ components:
           msg: Channel 'nonexistent' does not exist
           result: error
           stream: nonexistent
-    CanCreateTopicGroup:
+    SubscriptionProperty:
+      type: string
+      enum:
+      - color
+      - is_muted
+      - in_home_view
+      - pin_to_top
+      - desktop_notifications
+      - audible_notifications
+      - push_notifications
+      - email_notifications
+      - wildcard_mentions_notify
+      description: "One of the channel properties described below:\n\n- `\"color\"`: The hex value of the user's display color for the channel.\n\n- `\"is_muted\"`: Whether the channel is [muted](/help/mute-a-channel).<br>\n  **Changes**: As of Zulip 6.0 (feature level 139), updating either\n  `\"is_muted\"` or `\"in_home_view\"` generates two [subscription update\n  events](/api/get-events#subscription-update), one for each property,\n  that are sent to clients. Prior to this feature level, updating either\n  property only generated a subscription update event for\n  `\"in_home_view\"`. <br>\n  Prior to Zulip 2.1.0, this feature was represented\n  by the more confusingly named `\"in_home_view\"` (with the\n  opposite value: `in_home_view=!is_muted`); for\n  backwards-compatibility, modern Zulip still accepts that property.\n\n- `\"pin_to_top\"`: Whether to pin the channel at the top of the channel list.\n\n- `\"desktop_notifications\"`: Whether to show desktop notifications\n  for all messages sent to the channel.\n\n- `\"audible_notifications\"`: Whether to play a sound\n  notification for all messages sent to the channel.\n\n- `\"push_notifications\"`: Whether to trigger a mobile push\n  notification for all messages sent to the channel.\n\n- `\"email_notifications\"`: Whether to trigger an email\n  notification for all messages sent to the channel.\n\n- `\"wildcard_mentions_notify\"`: Whether wildcard mentions trigger\n  notifications as though they were personal mentions in this channel.\n"
+      example: pin_to_top
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    Principals:
+      description: 'A list of user IDs (preferred) or Zulip API email
+
+        addresses of the users to be subscribed to or unsubscribed
+
+        from the channels specified in the `subscriptions` parameter. If
+
+        not provided, then the requesting user/bot is subscribed.
+
+
+        **Changes**: The integer format is new in Zulip 3.0 (feature level 9).
+
+        '
+      oneOf:
+      - type: array
+        items:
+          type: string
+      - type: array
+        items:
+          type: integer
+      example:
+      - ZOE@zulip.com
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
+    CanRemoveSubscribersGroup:
       allOf:
       - $ref: '#/components/schemas/GroupSettingValue'
       - description: 'A [group-setting value][setting-values] defining the set of users
 
-          who have permission to create a new topic in this channel.
+          who have permission to remove subscribers from this channel.
 
 
-          Note that using this permission requires also having permission to
+          Organization administrators can unsubscribe others from a channel as though
 
-          send messages in the channel.
-
-
-          Note that this must be the `role:everyone` [system group][system-groups]
-
-          for [private channels with protected history][private-channels].
+          they were in this group without being explicitly listed here.
 
 
-          **Changes**: New in Zulip 12.0 (feature level 441). Previously,
+          Note that a user must have metadata access to a channel and permission
 
-          if you could send messages in a channel, you could create topics in
+          to administer the channel in order to modify this setting.
 
-          the channel.
+
+          **Changes**: Prior to Zulip 10.0 (feature level 349), channel administrators
+
+          could not unsubscribe other users if they were not an organization
+
+          administrator or part of `can_remove_subscribers_group`. Realm administrators
+
+          were not allowed to unsubscribe other users from a private channel if they
+
+          were not subscribed to that channel.
+
+
+          Prior to Zulip 10.0 (feature level 320), this value was always the integer
+
+          ID of a system group.
+
+
+          Before Zulip 8.0 (feature level 197), the `can_remove_subscribers_group`
+
+          setting was named `can_remove_subscribers_group_id`.
+
+
+          New in Zulip 6.0 (feature level 142).
 
 
           [setting-values]: /api/group-setting-values
 
-          [private-channels]: /help/channel-permissions/#private-channels
+          '
+    CanSubscribeGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
 
-          [system-groups]: /api/group-setting-values#system-groups
+          who have permission to subscribe themselves to this channel.
+
+
+          Everyone, excluding guests, can subscribe to any public channel
+
+          irrespective of this setting.
+
+
+          Users in this group can subscribe to a private channel as well.
+
+
+          Note that a user must [have content access](/help/channel-permissions)
+
+          to a channel and permission to administer the channel in order to
+
+          modify this setting.
+
+
+          **Changes**: New in Zulip 10.0 (feature level 357).
+
+
+          [setting-values]: /api/group-setting-values
 
           '
-  parameters:
-    ChannelFolderId:
-      name: channel_folder_id
-      in: path
-      description: 'The ID of the target channel folder.
+    CanMoveMessagesOutOfChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
 
-        '
-      schema:
-        type: integer
-      example: 1
-      required: true
-    IncludeSubscribers:
-      name: include_subscribers
-      in: query
-      description: 'Whether each returned channel object should include a `subscribers`
-
-        field containing a list of the user IDs of its subscribers.
+          who have permission to move messages out of this channel.
 
 
-        Client apps supporting organizations with many thousands of users
+          Note that a user must [have content access](/help/channel-permissions) to a
 
-        should not pass `true`, because the full subscriber matrix may be
-
-        several megabytes of data. The `partial` value, combined with the
-
-        `subscriber_count` and fetching subscribers for individual channels as
-
-        needed, is recommended to support client app features where
-
-        channel subscriber data is useful.
+          channel in order to move messages out of the channel.
 
 
-        If a client passes `partial` for this parameter, the server may,
+          Channel administrators and users present in the organization-level
 
-        for some channels, return a subset of the channel''s subscribers
+          `can_move_messages_between_channels_group` setting can always move messages
 
-        in the `partial_subscribers` field instead of the `subscribers` field,
+          out of the channel if they [have content access](/help/channel-permissions) to
 
-        which always contains the complete set of subscribers.
-
-
-        The server guarantees that it will always return a `subscribers`
-
-        field for channels with fewer than 250 total subscribers. When
-
-        returning a `partial_subscribers` field, the server guarantees
-
-        that all bot users and users active within the last 14 days will
-
-        be included. For other cases, the server may use its discretion
-
-        to determine which channels and users to include, balancing between
-
-        payload size and usefulness of the data provided to the client.
+          the channel.
 
 
-        **Changes**: The `partial` value is new in Zulip 11.0 (feature level 412).
+          **Changes**: New in Zulip 11.0 (feature level 396). Prior to this
+
+          change, only the users in `can_move_messages_between_channels_group` were able
+
+          move messages between channels.
 
 
-        New in Zulip 2.1.0.
+          [setting-values]: /api/group-setting-values
 
-        '
-      schema:
-        type: string
-        enum:
-        - 'true'
-        - 'false'
-        - partial
-        default: 'false'
-      example: 'true'
-    ChannelIdInPath:
-      name: stream_id
-      in: path
-      description: 'The ID of the channel to access.
+          '
+    GroupSettingValue:
+      oneOf:
+      - type: integer
+        description: 'The ID of the [user group](/help/user-groups) with this permission.
 
-        '
-      schema:
-        type: integer
-      example: 1
-      required: true
-    UserId:
-      name: user_id
-      in: path
-      description: 'The target user''s ID.
+          '
+      - type: object
+        additionalProperties: false
+        properties:
+          direct_members:
+            description: 'The list of IDs of individual users in the collection of users with this permission.
 
-        '
-      schema:
-        type: integer
-      example: 12
-      required: true
+
+              **Changes**: Prior to Zulip 10.0 (feature level 303), this list would include
+
+              deactivated users who had the permission before being deactivated.
+
+              '
+            type: array
+            items:
+              type: integer
+          direct_subgroups:
+            description: 'The list of IDs of the groups in the collection of users with this permission.
+
+              '
+            type: array
+            items:
+              type: integer
+        description: 'An object with these fields:
+
+          '
+    CanAdministerChannelGroup:
+      allOf:
+      - $ref: '#/components/schemas/GroupSettingValue'
+      - description: 'A [group-setting value][setting-values] defining the set of users
+
+          who have permission to administer this channel.
+
+
+          Organization administrators can administer every channel as though they were
+
+          in this group without being explicitly listed here.
+
+
+          Note that a user must have metadata access to a channel and permission
+
+          to administer the channel in order to modify this setting.
+
+
+          **Changes**: Prior to Zulip 10.0 (feature level 349) a user needed to
+
+          [have content access](/help/channel-permissions) to a channel in
+
+          order to modify it. The exception to this rule was that organization
+
+          administrators can edit channel names and descriptions without
+
+          having full access to the channel.
+
+
+          New in Zulip 10.0 (feature level 325). Prior to this
+
+          change, the permission to administer channels was limited to realm
+
+          administrators.
+
+
+          [setting-values]: /api/group-setting-values
+
+          '
   responses:
     SuccessIgnoredParameters:
       description: Success.

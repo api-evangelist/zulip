@@ -749,6 +749,104 @@ paths:
                       '
 components:
   schemas:
+    JsonSuccessBase:
+      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
+
+        parameters sent in the request are not supported by this
+
+        endpoint, a successful JSON response will include an
+
+        [`ignored_parameters_unsupported`][ignored_params] array.
+
+
+        A typical successful JSON response may look like:
+
+
+        [ignored_params]: /api/rest-error-handling#ignored-parameters
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        properties:
+          result:
+            enum:
+            - success
+          msg:
+            type: string
+          ignored_parameters_unsupported:
+            $ref: '#/components/schemas/IgnoredParametersUnsupported'
+    JsonSuccess:
+      allOf:
+      - $ref: '#/components/schemas/JsonSuccessBase'
+      - additionalProperties: false
+        properties:
+          result: {}
+          msg: {}
+          ignored_parameters_unsupported: {}
+        example:
+          msg: ''
+          result: success
+    CodedErrorBase:
+      allOf:
+      - $ref: '#/components/schemas/JsonResponseBase'
+      - required:
+        - result
+        - msg
+        - code
+        properties:
+          result:
+            enum:
+            - error
+          msg:
+            type: string
+          code:
+            type: string
+            description: 'A string that identifies the error.
+
+              '
+    JsonResponseBase:
+      type: object
+      properties:
+        result:
+          type: string
+    InviteExpirationParameter:
+      description: 'The number of minutes before the invitation will expire. If `null`, the
+
+        invitation will never expire. If unspecified, the server will use a default
+
+        value (based on the `INVITATION_LINK_VALIDITY_MINUTES` server setting, which
+
+        defaults to 14400, i.e. 10 days) for when the invitation will expire.
+
+
+        **Changes**: New in Zulip 6.0 (feature level 126). Previously, there was an
+
+        `invite_expires_in_days` parameter, which specified the duration in days instead
+
+        of minutes.
+
+        '
+      type:
+      - integer
+      - 'null'
+      example: 14400
+    IgnoredParametersUnsupported:
+      type: array
+      items:
+        type: string
+      description: 'An array of any parameters sent in the request that are not
+
+        supported by the endpoint.
+
+
+        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
+
+        for details on this and its change history.
+
+        '
     InviteRoleParameter:
       description: 'The [organization-level role](/api/roles-and-permissions) of the user that is
 
@@ -791,40 +889,14 @@ components:
       - 600
       default: 400
       example: 600
-    JsonSuccess:
+    CodedError:
       allOf:
-      - $ref: '#/components/schemas/JsonSuccessBase'
+      - $ref: '#/components/schemas/CodedErrorBase'
       - additionalProperties: false
         properties:
           result: {}
           msg: {}
-          ignored_parameters_unsupported: {}
-        example:
-          msg: ''
-          result: success
-    JsonResponseBase:
-      type: object
-      properties:
-        result:
-          type: string
-    CodedErrorBase:
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        - code
-        properties:
-          result:
-            enum:
-            - error
-          msg:
-            type: string
-          code:
-            type: string
-            description: 'A string that identifies the error.
-
-              '
+          code: {}
     InvitationFailedError:
       allOf:
       - $ref: '#/components/schemas/CodedErrorBase'
@@ -869,49 +941,6 @@ components:
               to invite specified number of users.
 
               '
-    InviteExpirationParameter:
-      description: 'The number of minutes before the invitation will expire. If `null`, the
-
-        invitation will never expire. If unspecified, the server will use a default
-
-        value (based on the `INVITATION_LINK_VALIDITY_MINUTES` server setting, which
-
-        defaults to 14400, i.e. 10 days) for when the invitation will expire.
-
-
-        **Changes**: New in Zulip 6.0 (feature level 126). Previously, there was an
-
-        `invite_expires_in_days` parameter, which specified the duration in days instead
-
-        of minutes.
-
-        '
-      type:
-      - integer
-      - 'null'
-      example: 14400
-    IgnoredParametersUnsupported:
-      type: array
-      items:
-        type: string
-      description: 'An array of any parameters sent in the request that are not
-
-        supported by the endpoint.
-
-
-        See [error handling](/api/rest-error-handling#ignored-parameters) documentation
-
-        for details on this and its change history.
-
-        '
-    CodedError:
-      allOf:
-      - $ref: '#/components/schemas/CodedErrorBase'
-      - additionalProperties: false
-        properties:
-          result: {}
-          msg: {}
-          code: {}
     Invite:
       type: object
       description: 'A dictionary containing details about an [invitation](/help/invite-new-users).
@@ -1022,35 +1051,6 @@ components:
             reusable invitation link or an email invitation.
 
             '
-    JsonSuccessBase:
-      description: '**Changes**: As of Zulip 7.0 (feature level 167), if any
-
-        parameters sent in the request are not supported by this
-
-        endpoint, a successful JSON response will include an
-
-        [`ignored_parameters_unsupported`][ignored_params] array.
-
-
-        A typical successful JSON response may look like:
-
-
-        [ignored_params]: /api/rest-error-handling#ignored-parameters
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/JsonResponseBase'
-      - required:
-        - result
-        - msg
-        properties:
-          result:
-            enum:
-            - success
-          msg:
-            type: string
-          ignored_parameters_unsupported:
-            $ref: '#/components/schemas/IgnoredParametersUnsupported'
   responses:
     SimpleSuccess:
       description: Success.
